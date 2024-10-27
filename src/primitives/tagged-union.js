@@ -19,7 +19,8 @@ export class TaggedUnionConstructor {
 
     /**
      * Static method to create a new TaggedUnion instance.
-     * @returns {TaggedUnionConstructor} - A new TaggedUnion instance.
+     * @template {Tuple} T
+     * @returns {TaggedUnionConstructor<T>} - A new TaggedUnion instance.
      */
     static new() {
         return new TaggedUnionConstructor();
@@ -31,7 +32,7 @@ export class TaggedUnionConstructor {
      * @param {T} [fields] - The field names associated with the variant.
      * @returns {TaggedUnionConstructor} - Returns the TaggedUnion instance for chaining.
      */
-    variant(tag, fields = undefined) {
+    variant(tag, fields = /** @type {Tuple0} */ undefined) {
         if (fields === undefined || fields === null) {
             return this;
         }

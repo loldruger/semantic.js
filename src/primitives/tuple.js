@@ -32,6 +32,11 @@ export class Tuple1 {
         Object.freeze(this);
     }
 
+    /**
+     * @template T
+     * @param {T} _0
+     * @returns {Tuple1<T>}
+     */
     static new(_0) {
         return new Tuple1(_0);
     }

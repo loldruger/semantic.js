@@ -1,10 +1,11 @@
 //@ts-check
 
 import { TaggedUnionConstructor, TaggedUnion } from "../src/lib.js";
+import { Tuple1 } from "../src/primitives/tuple.js";
 
-const main = () => {
+const test1 = (() => {
     const option = TaggedUnionConstructor.new()
-        .variant('Some', { value: null })
+        .variant('Some', Tuple1.new('value'))
         .variant('None')
         .build();
 
@@ -14,6 +15,4 @@ const main = () => {
 
     console.log(some);
     console.log(none);
-}
-
-main();
+})();
