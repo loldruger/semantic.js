@@ -1,7 +1,7 @@
 // @ts-check
 
-import { Matchable } from "../lib";
-import { Tuple, Tuple0 } from "./tuple";
+import { Matchable } from "../interfaces/matchable.js";
+import { Tuple } from "./tuple.js";
 
 /**
  * @template {Tuple} T
