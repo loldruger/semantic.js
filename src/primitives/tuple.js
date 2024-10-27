@@ -1,0 +1,178 @@
+// @ts-check
+
+/**
+ * @interface
+ */
+export class Tuple {}
+
+/**
+ * @implements {Tuple}
+ */
+export class Tuple0 {
+    constructor() {
+        Object.freeze(this);
+    }
+
+    static new() {
+        return new Tuple0();
+    }
+}
+
+/**
+ * @template T1
+ * @implements {Tuple}
+ */
+export class Tuple1 {
+    /**
+     * @param {T1} _0
+     */
+    constructor(_0) {
+        /** @readonly */
+        this._0 = _0;
+        Object.freeze(this);
+    }
+
+    static new(_0) {
+        return new Tuple1(_0);
+    }
+}
+
+/**
+ * @template T1, T2
+ * @implements {Tuple}
+ */
+export class Tuple2 {
+    /**
+     * @param {T1} _0
+     * @param {T2} _1
+     */
+    constructor(_0, _1) {
+        /** @readonly */
+        this._0 = _0;
+        /** @readonly */
+        this._1 = _1;
+        Object.freeze(this);
+    }
+
+    static new(_0, _1) {
+        return new Tuple2(_0, _1);
+    }
+}
+
+/**
+ * @template T1, T2, T3
+ * @implements {Tuple}
+ */
+export class Tuple3 {
+    /**
+     * @param {T1} _0
+     * @param {T2} _1
+     * @param {T3} _2
+     */
+    constructor(_0, _1, _2) {
+        /** @readonly */
+        this._0 = _0;
+        /** @readonly */
+        this._1 = _1;
+        /** @readonly */
+        this._2 = _2;
+        Object.freeze(this);
+    }
+
+    static new(_0, _1, _2) {
+        return new Tuple3(_0, _1, _2);
+    }
+}
+
+/**
+ * @template T1, T2, T3, T4
+ * @implements {Tuple}
+ */
+export class Tuple4 {
+    /**
+     * @param {T1} _0
+     * @param {T2} _1
+     * @param {T3} _2
+     * @param {T4} _3
+     */
+    constructor(_0, _1, _2, _3) {
+        /** @readonly */
+        this._0 = _0;
+        /** @readonly */
+        this._1 = _1;
+        /** @readonly */
+        this._2 = _2;
+        /** @readonly */
+        this._3 = _3;
+        Object.freeze(this);
+    }
+
+    static new(_0, _1, _2, _3) {
+        return new Tuple4(_0, _1, _2, _3);
+    }
+}
+
+/**
+ * @template T1, T2, T3, T4, T5
+ * @implements {Tuple}
+ */
+export class Tuple5 {
+    /**
+     * @param {T1} _0
+     * @param {T2} _1
+     * @param {T3} _2
+     * @param {T4} _3
+     * @param {T5} _4
+     */
+    constructor(_0, _1, _2, _3, _4) {
+        /** @readonly */
+        this._0 = _0;
+        /** @readonly */
+        this._1 = _1;
+        /** @readonly */
+        this._2 = _2;
+        /** @readonly */
+        this._3 = _3;
+        /** @readonly */
+        this._4 = _4;
+        Object.freeze(this);
+    }
+
+    static new(_0, _1, _2, _3, _4) {
+        return new Tuple5(_0, _1, _2, _3, _4);
+    }
+}
+
+/**
+ * @template T1, T2, T3, T4, T5, T6
+ * @implements {Tuple}
+ */
+export class Tuple6 {
+    /**
+     * @param {T1} _0
+     * @param {T2} _1
+     * @param {T3} _2
+     * @param {T4} _3
+     * @param {T5} _4
+     * @param {T6} _5
+     */
+    constructor(_0, _1, _2, _3, _4, _5) {
+        /** @readonly */
+        this._0 = _0;
+        /** @readonly */
+        this._1 = _1;
+        /** @readonly */
+        this._2 = _2;
+        /** @readonly */
+        this._3 = _3;
+        /** @readonly */
+        this._4 = _4;
+        /** @readonly */
+        this._5 = _5;
+        Object.freeze(this);
+    }
+
+    static new(_0, _1, _2, _3, _4, _5) {
+        return new Tuple6(_0, _1, _2, _3, _4, _5);
+    }
+}
