@@ -33,9 +33,9 @@ export class Tuple1 {
     }
 
     /**
-     * @template T
-     * @param {T} _0
-     * @returns {Tuple1<T>}
+     * @template T1
+     * @param {T1} _0
+     * @returns {Tuple1<T1>}
      */
     static new(_0) {
         return new Tuple1(_0);
@@ -59,6 +59,12 @@ export class Tuple2 {
         Object.freeze(this);
     }
 
+    /**
+     * @template T1, T2
+     * @param {T1} _0
+     * @param {T2} _1
+     * @returns {Tuple2<T1, T2>}
+     */
     static new(_0, _1) {
         return new Tuple2(_0, _1);
     }
