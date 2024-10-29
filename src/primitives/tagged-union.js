@@ -1,64 +1,43 @@
 // @ts-check
 
 import { Matchable } from "../interfaces/matchable.js";
-import { Tuple } from "./tuple.js";
+import { Tuple, Tuple0 } from "./tuple.js";
 
+/**
+ * @template Variants
+ */
 export class TaggedUnion {
     /**
-     * @type {Record<String, Tuple|undefined>}
+     * @type {Variants}
      */
-    #variants = {};
+    #variants = /** @type {Variants} */ ({});
 
-    /**
-     * @private
-     */
     constructor() { }
 
-    /**
-     * @returns {TaggedUnion} - A new TaggedUnion instance.
-     */
     static new() {
         return new TaggedUnion();
     }
 
     /**
-     * @param {String} tag - The name of the variant.
-     * @param {Tuple|undefined} fields - The field names associated with the variant.
-     * @returns {TaggedUnion} - Returns the TaggedUnion instance for chaining.
+     * @template {String} Tag
+     * @template {Tuple} Constructor
+     * @template V
+     * @param {Tag} tag
+     * @param {Constructor=} constructor
+     * @returns {TaggedUnion<V & Record<Tag, Constructor>>}
      */
-    variant(tag, fields = undefined) {
-        if (fields === undefined || fields === null) {
-            return this;
-        }
-        
-        this.#variants[tag] = fields;
-
-        return this;
+    variant(tag, constructor) {
+        this.#variants = {
+            ...this.#variants,
+            [tag]: constructor,
+        };
+        return /** @type {TaggedUnion<V & Record<Tag, Constructor>>} */ (this);
     }
 
     /**
-     * @returns {Readonly<Record<String, Tuple>>} - An object containing constructors for each variant.
+     * @returns {Readonly<Variants>}
      */
     build() {
-        const variants = { ...this.#variants };
-
-        const union = Object
-            .keys(variants)
-            .reduce((acc, tag) => {
-                acc[tag] = (...args) => {
-                    const fields = variants[tag];
-                    const obj = Object.create(null);
-
-                    for (const key in fields) {
-                        obj[key] = args.shift();
-                    }
-
-                    return obj;
-                };
-                return acc;
-
-            }, Object.create(null));
-
-        return Object.freeze(union);
+        return Object.freeze(this.#variants);
     }
 }

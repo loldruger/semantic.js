@@ -1,4 +1,6 @@
 {
     "livePreview.defaultPreviewPath": "/index.html",
-    "editor.formatOnType": true
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
