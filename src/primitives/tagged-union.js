@@ -1,8 +1,5 @@
 // @ts-check
 
-import { Matchable } from "../interfaces/matchable.js";
-import { Tuple, Tuple0 } from "./tuple.js";
-
 /**
  * @template Variants
  */
@@ -27,24 +24,27 @@ export class TaggedUnion {
 
     /**
      * @template {String} Tag
-     * @template {Array<Function>=} Constructor
+     * @template {Array<new (...args: Array<any>) => any>} Constructor
+     * @template {Constructor extends Array<any> ? Constructor : null} ActualConstructor
      * @param {Tag} tag
      * @param {Constructor=} constructor
-     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, Constructor>>}
+     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, ActualConstructor>>}
      */
     variant(tag, constructor) {
-        const fns = constructor?.map(fn => {
-            return (arg) => {
-                return { arg };
+        const fn = constructor?.reduce((acc, x) => {
+            acc = {
+                ...acc,
+                x
             };
-        });
+            return x;
+        }, {});
 
         this.#variants = {
             ...this.#variants,
-            [tag]: fns,
+            [tag]: fn,
         };
 
-        return /** @type {TaggedUnion<Readonly<Variants> & Record<Tag, Constructor>>} */ (this);
+        return /** @type {TaggedUnion<Readonly<Variants> & Record<Tag, ActualConstructor>>} */ (this);
     }
 
     /**
