@@ -12,32 +12,46 @@ export class TaggedUnion {
      */
     #variants = /** @type {Variants} */ ({});
 
+    /**
+     * @private
+     */
     constructor() { }
 
+    /**
+     * @template Variants
+     * @returns {TaggedUnion<Variants>}
+     */
     static new() {
         return new TaggedUnion();
     }
 
     /**
      * @template {String} Tag
-     * @template {Tuple} Constructor
-     * @template V
+     * @template {Array<Function>=} Constructor
      * @param {Tag} tag
      * @param {Constructor=} constructor
-     * @returns {TaggedUnion<V & Record<Tag, Constructor>>}
+     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, Constructor>>}
      */
     variant(tag, constructor) {
+        const fns = constructor?.map(fn => {
+            return (arg) => {
+                return { arg };
+            };
+        });
+
         this.#variants = {
             ...this.#variants,
-            [tag]: constructor,
+            [tag]: fns,
         };
-        return /** @type {TaggedUnion<V & Record<Tag, Constructor>>} */ (this);
+
+        return /** @type {TaggedUnion<Readonly<Variants> & Record<Tag, Constructor>>} */ (this);
     }
 
     /**
-     * @returns {Readonly<Variants>}
+     * @returns {Variants}
      */
     build() {
         return Object.freeze(this.#variants);
     }
 }
+

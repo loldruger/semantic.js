@@ -95,7 +95,7 @@ export class Tuple3 {
      * @param {T1} _0
      * @param {T2} _1
      * @param {T3} _2
-     * @returns {Tuple3<T1, T2, T3>}
+     * @returns {Readonly<Tuple3<T1, T2, T3>>}
      */
     static new(_0, _1, _2) {
         return new Tuple3(_0, _1, _2);
