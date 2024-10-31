@@ -23,24 +23,36 @@ export class TaggedUnion {
     }
 
     /**
-     * @template {keyof Variants} Tag
-     * @template {Array<new (...args: Array<any>) => any>} Constructor
-     * @template {(Constructor extends Array<any> ? (...args: Constructor extends Array<infer U> ? Array<U> : never) => any : null)} ActualConstructor
-     * @param {Tag} tag
-     * @param {Constructor=} constructor
-     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, ActualConstructor>>}
+     * @template {any} T
+     * @typedef {new (...args: any) => T} Constructor
      */
-    variant(tag, constructor) {
-        if (constructor) {
-            /**
-             * @param {Array<String>} args
-             */
-            this.#variants[tag] = (...args) => constructor.map(C => new C(...args))
-        } else {
-            this.#variants[tag] = null; // constructor가 없으면 null 할당
-        }
 
-        return /** @type {TaggedUnion<Readonly<Variants> & Record<Tag, ActualConstructor>>} */ (this);
+    /**
+     * @template {String} Tag
+     * @template {Array<Constructor<any>>} Constructors
+     * @template {{ [K in keyof Constructors]: Constructors[K] extends Constructor<infer U> ? U : never }} Params
+     * @param {Tag} tag
+     * @param {Constructors=} constructors
+     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: Params) => args>>}
+     */
+    variant(tag, constructors) {
+        /**
+         * @type {(...args: Params) => args?}
+         */
+        const fn = (...args) => {
+            if (constructors) {
+                return /** @type {Params} */ (args.map((arg, _) => arg))
+            } else {
+                return null;
+            }
+        };
+
+        this.#variants = {
+            ...this.#variants,
+            [tag]: fn,
+        };
+
+        return /** @type {any} */ (this);
     }
 
     /**
