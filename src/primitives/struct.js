@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Tuple } from "./tuple";
+import { TupleType } from "./tuple";
 
 export class Struct {
     /**
@@ -30,7 +30,7 @@ export class Struct {
         if (type === undefined || type === null) {
             return this;
         }
-        
+
         this.#fields[tag] = type;
 
         return this;
@@ -57,7 +57,7 @@ export class Struct {
                     return obj;
                 };
                 return acc;
-                
+
             }, Object.create(null));
 
         return Object.freeze(union);

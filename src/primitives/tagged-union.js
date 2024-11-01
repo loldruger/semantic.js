@@ -23,16 +23,21 @@ export class TaggedUnion {
     }
 
     /**
-     * @template {any} T
-     * @typedef {new (...args: any) => T} Constructor
+     * @template T
+     * @typedef {new (...args: Array<any>) => T} Tuple
+     */
+
+    /**
+     * @template T
+     * @typedef {Array<Tuple<any>|Tuples<T>>} Tuples
      */
 
     /**
      * @template {String} Tag
-     * @template {Array<Constructor<any>>} Constructors
-     * @template {{ [K in keyof Constructors]: Constructors[K] extends Constructor<infer U> ? U : never }} Params
+     * @template {Array<Tuple<any>>} Constructors
+     * @template {{ [K in keyof Constructors]: Constructors[K] extends Tuple<infer U> ? U : never }} Params
      * @param {Tag} tag
-     * @param {Constructors=} constructors
+     * @param {Tuples<any>=} constructors
      * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: Params) => args>>}
      */
     variant(tag, constructors) {
