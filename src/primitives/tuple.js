@@ -1,12 +1,18 @@
 // @ts-check
 
 /**
- * @interface
+ * @template {Array<any>} T
+ * @type {(...args: [...any]) => any}
  */
-export class Tuple { }
+export const Tuple = (...args) => args;
 
 /**
- * @implements {Tuple}
+ * @interface
+ */
+export class BaseTuple { }
+
+/**
+ * @implements {BaseTuple}
  */
 export class Tuple0 {
     constructor() {
@@ -20,7 +26,7 @@ export class Tuple0 {
 
 /**
  * @template T1
- * @implements {Tuple}
+ * @implements {BaseTuple}
  */
 export class Tuple1 {
     /**
@@ -44,7 +50,7 @@ export class Tuple1 {
 
 /**
  * @template T1, T2
- * @implements {Tuple}
+ * @implements {BaseTuple}
  */
 export class Tuple2 {
     /**
@@ -72,7 +78,7 @@ export class Tuple2 {
 
 /**
  * @template T1, T2, T3
- * @implements {Tuple}
+ * @implements {BaseTuple}
  */
 export class Tuple3 {
     /**
@@ -104,7 +110,7 @@ export class Tuple3 {
 
 /**
  * @template T1, T2, T3, T4
- * @implements {Tuple}
+ * @implements {BaseTuple}
  */
 export class Tuple4 {
     /**
@@ -132,7 +138,7 @@ export class Tuple4 {
 
 /**
  * @template T1, T2, T3, T4, T5
- * @implements {Tuple}
+ * @implements {BaseTuple}
  */
 export class Tuple5 {
     /**
@@ -163,7 +169,7 @@ export class Tuple5 {
 
 /**
  * @template T1, T2, T3, T4, T5, T6
- * @implements {Tuple}
+ * @implements {BaseTuple}
  */
 export class Tuple6 {
     /**
