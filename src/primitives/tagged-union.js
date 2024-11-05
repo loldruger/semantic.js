@@ -58,9 +58,14 @@ export class TaggedUnion {
      */
 
     /**
+     * @template T
+     * @template [U = T]
+     * @typedef {UnionToTuple<T> extends infer R ? R extends Array<any> ? { [K in keyof R]: Extract<U, R[K]> } : never : never} SortUnion<T>
+     */
+    /**
      * @template {Tuple<any> | Tuples<any>} T
      * @typedef {T extends Array<infer U> 
-     *     ? [U extends Tuples<any> ? RecursiveInstanceType<U> : U extends Tuple<any> ? InstanceType<U> : InstanceType<Tuple<U>>]
+     *     ? ReturnType<typeof TupleFn<UnionToTuple<U extends Tuples<any> ? RecursiveInstanceType<U> : U extends Tuple<any> ? InstanceType<U> : InstanceType<Tuple<U>>>>>
      *     : (T extends Tuple<any> ? InstanceType<T> : never)
      * } RecursiveInstanceType<T>
      */
@@ -71,11 +76,16 @@ export class TaggedUnion {
      */
 
     /**
+     * @template {Tuples<any>} T
+     * @typedef {Params<T> extends Array<infer U> ? Array<SortUnion<U>> : never} RecursiveUnionToTuple<T>
+     */
+
+    /**
      * @template {String} Tag
      * @template {Tuples<any>} Constructors
      * @param {Tag} tag
      * @param {Constructors=} constructors
-     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: UnionToTuple<Params<Constructors> extends Array<infer U> ? U : never>) => args>>}
+     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: RecursiveUnionToTuple<Constructors>) => args>>}
      */
     variant(tag, constructors) {
         // /**
