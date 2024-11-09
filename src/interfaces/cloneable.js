@@ -9,7 +9,8 @@ export class Cloneable {
 	 */
 	constructor() { }
 
-	clone() {
-		throw new Error("Method not implemented.");
-	}
+	/**
+	 * @returns {ThisType}
+	 */
+	clone() { return this; }
 };

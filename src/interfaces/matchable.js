@@ -10,10 +10,8 @@ export class Matchable {
 	constructor() { }
 
 	/**
-     * @returns {Boolean}
-     * @param {Object} pattern
+	 * @param {Object} pattern
+	 * @returns {Boolean}
 	 */
-	match(pattern) {
-		throw new Error("Method not implemented.");
-	}
+	match(pattern) { return true; }
 };

@@ -1,9 +1,12 @@
 // @ts-check
 
-import { TupleType } from "./tuple.js";
+/**
+ * @template {Array<any>} T
+ * @typedef {Record<String, (...args: T) => T>} Form<T>
+ */
 
 /**
- * @template Variants
+ * @template {Form<any>} Variants
  */
 export class TaggedUnion {
     /**
@@ -17,55 +20,27 @@ export class TaggedUnion {
     constructor() { }
 
     /**
-     * @template Variants
-     * @returns {TaggedUnion<Variants>}
+     * @returns {TaggedUnion<Form<any>>}
      */
     static new() {
         return new TaggedUnion();
     }
 
     /**
-     * @template T
-     * @typedef {new (...args: any) => T} Tuple<T>
-     */
-
-    /**
-     * @template T
-     * @typedef {Array<Tuple<any>|Tuples<T>>} Tuples<T>
-     */
-
-    /**
-     * @template {Tuples<any>} T
-     * @typedef {T extends Array<any>
-     *     ? {[K in keyof T]: Iterate<T[K]>}
-     *     : T extends Tuple<any>
-     *         ? InstanceType<T>
-     *         : never
-     * } Iterate<T>
-     */
-
-    /**
      * @template {String} Tag
      * @template {Tuple<any>|Tuples<any>} Constructors
      * @param {Tag} tag
      * @param {Constructors=} constructors
-     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: Array<Iterate<Constructors>>) => args>>}
+     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: Array<ToInstanceType<Constructors>>) => args>>}
      */
     variant(tag, constructors) {
-        // /**
-        //  * @type {(...args: Params) => args?}
-        //  */
-        // const fn = (...args) => {
-        //     if (constructors) {
-        //         return /** @type {Params} */ (args.map((arg, _) => arg))
-        //     } else {
-        //         return null;
-        //     }
-        // };
+        const fn = constructors
+            ? (/** @type {Array<ToInstanceType<Constructors>>} */...args) => args.at(0)
+            : null;
 
         this.#variants = {
             ...this.#variants,
-            [tag]: null//fn,
+            [tag]: fn
         };
 
         return /** @type {any} */ (this);

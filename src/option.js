@@ -3,7 +3,7 @@
 import { Cloneable } from './interfaces/cloneable.js';
 import { Matchable } from './interfaces/matchable.js';
 
-import { TaggedUnionConstructor } from './primitives/tagged-union.js';
+import { TaggedUnion } from './primitives/tagged-union.js';
 
 /**
  * @template T
@@ -22,8 +22,8 @@ export class Option {
     /**
      * @type {OptionType<T>}
      */
-    #state = TaggedUnionConstructor.new()
-        .variant('Some', {})
+    #state = TaggedUnion.new()
+        .variant('Some', [])
         .variant('None')
         .build();
 
@@ -31,7 +31,7 @@ export class Option {
      * @private
      * @param {T} value
      */
-    constructor(value) { 
+    constructor(value) {
         this.#state.Some(value);
     }
 
@@ -92,7 +92,7 @@ export class Option {
      * @template U
      * @param {(value: T) => Option<U>} op
      * @return {Option<U>?}
-     */ 
+     */
     andThen(op) {
         return this.match({
             Some: (value) => op(value),
