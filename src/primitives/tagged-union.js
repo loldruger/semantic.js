@@ -27,11 +27,16 @@ export class TaggedUnion {
     }
 
     /**
+     * @template T
+     * @typedef {T extends any ? T : null} SomeOrNone<T>
+     */
+
+    /**
      * @template {String} Tag
      * @template {Tuple<any>|Tuples<any>} Constructors
      * @param {Tag} tag
      * @param {Constructors=} constructors
-     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: Array<ToInstanceType<Constructors>>) => args>>}
+     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: Array<ToInstanceType<Constructors>>) => UnwrapArray<args>>>}
      */
     variant(tag, constructors) {
         const fn = constructors

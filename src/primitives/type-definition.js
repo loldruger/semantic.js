@@ -19,3 +19,8 @@
 *         : never
 * } ToInstanceType<T>
 */
+
+/**
+ * @template T
+ * @typedef {T extends Array<infer U> ? U : T} UnwrapArray<T>
+ */
