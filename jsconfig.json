@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "ES2022",
+    "target": "ES2023",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"]
+}

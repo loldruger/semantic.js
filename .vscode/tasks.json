@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Minify and Copy Files to dist",
+            "type": "shell",
+            "command": "mkdir -p dist && for file in src/**/*.js; do ./uglify-js/bin/uglifyjs \"$file\" -o \"dist/$(basename \"$file\")\" --compress --mangle; done",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

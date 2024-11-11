@@ -1,7 +1,8 @@
 // @ts-check
 
 /**
- * @interface Cloneable
+ * @template T
+ * @interface Cloneable<T>
  */
 export class Cloneable {
 	/**
@@ -10,7 +11,9 @@ export class Cloneable {
 	constructor() { }
 
 	/**
-	 * @returns {ThisType}
+	 * @returns {T}
 	 */
-	clone() { return this; }
+	clone() {
+		throw new Error('Method not implemented.');
+	}
 };

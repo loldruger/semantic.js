@@ -1,24 +1,31 @@
 //@ts-check
 
 /**
- * @template T
- * @typedef {new (...args: any) => Readonly<T>} Tuple<T>
+ * @typedef {new (...args: any) => any} InstantiableType
  */
 
 /**
- * @template T
- * @typedef {Array<Tuple<any>|Tuples<T>>} Tuples<T>
+ * @typedef {InstantiableType} Tuple
  */
 
 /**
- * @template {Tuples<any>} T
+ * @typedef {Array<Tuple|Tuples>} Tuples
+ */
+
+/**
+ * @template {Tuple|Tuples} T
  * @typedef {T extends Array<any>
-*     ? {[K in keyof T]: ToInstanceType<T[K]>}
-*     : T extends Tuple<any>
-*         ? InstanceType<T>
-*         : never
-* } ToInstanceType<T>
-*/
+ *     ? {[K in keyof T]: (T[K] extends Tuples
+ *         ? IterInstanceType<T[K]>
+ *         : T[K] extends Tuple
+ *             ? InstanceType<T[K]>
+ *             : never
+ *       )} 
+ *     : T extends Tuple 
+ *         ? InstanceType<T>
+ *         : never
+ * } IterInstanceType<T>
+ */
 
 /**
  * @template T

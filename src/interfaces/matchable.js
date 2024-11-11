@@ -1,6 +1,7 @@
 // @ts-check
 
 /**
+ * @template T
  * @interface Matchable
  */
 export class Matchable {
@@ -13,5 +14,7 @@ export class Matchable {
 	 * @param {Object} pattern
 	 * @returns {Boolean}
 	 */
-	match(pattern) { return true; }
+	match(pattern) {
+		throw new Error('Method not implemented.');
+	}
 };

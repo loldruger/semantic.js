@@ -1,12 +1,18 @@
 // @ts-check
 
 /**
- * @template {Array<any>} T
- * @typedef {Record<String, (...args: T) => T>} Form<T>
+ * @template T
+ * @typedef {T extends undefined ? null : T} SomeOrNone<T>
  */
 
 /**
- * @template {Form<any>} Variants
+ * @template {String} Tag
+ * @template {Array<T>} T
+ * @typedef {Record<Tag, SomeOrNone<(...args: Array<IterInstanceType<T>>) => IterInstanceType<T>>>} Form<Tag, T>
+ */
+
+/**
+ * @template {Form<String, any>} Variants
  */
 export class TaggedUnion {
     /**
@@ -20,27 +26,22 @@ export class TaggedUnion {
     constructor() { }
 
     /**
-     * @returns {TaggedUnion<Form<any>>}
+     * @returns {TaggedUnion<any>}
      */
     static new() {
         return new TaggedUnion();
     }
 
     /**
-     * @template T
-     * @typedef {T extends any ? T : null} SomeOrNone<T>
-     */
-
-    /**
      * @template {String} Tag
-     * @template {Tuple<any>|Tuples<any>} Constructors
+     * @template {Tuple|Tuples|undefined} Fields
      * @param {Tag} tag
-     * @param {Constructors=} constructors
-     * @returns {TaggedUnion<Readonly<Variants> & Record<Tag, (...args: Array<ToInstanceType<Constructors>>) => UnwrapArray<args>>>}
+     * @param {Fields=} fields
+     * @returns {TaggedUnion<Readonly<Variants> & Form<Tag, Fields>>}
      */
-    variant(tag, constructors) {
-        const fn = constructors
-            ? (/** @type {Array<ToInstanceType<Constructors>>} */...args) => args.at(0)
+    variant(tag, fields) {
+        const fn = fields
+            ? (/** @type {Array<Fields>} */...args) => args[0]
             : null;
 
         this.#variants = {
@@ -58,4 +59,3 @@ export class TaggedUnion {
         return Object.freeze(this.#variants);
     }
 }
-
