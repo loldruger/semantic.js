@@ -3,11 +3,19 @@
     "module": "ES2022",
     "target": "ES2023",
     "noImplicitAny": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "sourceMap": true,
+    "strict": true,
     "strictNullChecks": true,
-    "outDir": "./dist"
-  },
-  "include": ["src/**/*"]
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "checkJs": true,
+    "noErrorTruncation": true
+  }
+  // "include": ["src/**/*"]
 }

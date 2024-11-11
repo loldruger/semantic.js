@@ -11,15 +11,9 @@ import { TaggedUnion } from './primitives/tagged-union.js';
  * @implements {Matchable<T>}
  */
 export class Option {
-    /**
-     * @type {InstantiableType=}
-     */
-    #type = undefined;
+    #type;
 
-    #option = TaggedUnion.new()
-        .variant('Some', /** @type {InstantiableType=} */(this.#type))
-        .variant('None')
-        .build();
+    #option;
 
     /**
      * @private
@@ -27,6 +21,10 @@ export class Option {
      */
     constructor(value) {
         this.#type = value;
+        this.#option = TaggedUnion.new()
+            .variant('Some', this.#type)
+            .variant('None')
+            .build();
     }
 
     /**
@@ -113,8 +111,8 @@ export class Option {
             case true: {
                 const value = this.unwrap();
 
-                return (value) => 
-            };
+                return Some(value);
+            }
             case false: return None();
         }
     }

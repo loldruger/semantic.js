@@ -1,6 +1,6 @@
 # #What is Semantic.js
 
-Semantic.js introduces just a pure Javascript but Rustified. Which means it contains utilizable types like `Option<T>`, `Result<T, E>`, `Tagged Union` or also mocked `struct` etc, fully documented by `Jsdoc`. This indicates that this project is entirely typesafe!
+`Semantic.js` introduces just a pure `Javascript, ES2023` but Rustified. Which means it contains utilizable types like `Option<T>`, `Result<T, E>`, `Tagged Union` or also mocked `struct` etc, like `The Rust Programming language`. With fully documented by `Jsdoc`, this project is entirely type-safe!
 
 Currently this project is in `WIP` (Work in process).
 

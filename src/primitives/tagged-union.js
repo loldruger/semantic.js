@@ -8,7 +8,7 @@
 /**
  * @template {String} Tag
  * @template {Array<T>} T
- * @typedef {Record<Tag, SomeOrNone<(...args: Array<IterInstanceType<T>>) => IterInstanceType<T>>>} Form<Tag, T>
+ * @typedef {T extends undefined ? Record<Tag, null> : Record<Tag, (...args: Array<IterInstanceType<T>>) => IterInstanceType<T>>} Form<Tag, T>
  */
 
 /**
