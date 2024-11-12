@@ -1,7 +1,7 @@
 //@ts-check
 
 /**
- * @typedef {new (...args: any) => any} InstantiableType
+ * @typedef {new (...args: any) => any} ConcreteType
  */
 
 /**
@@ -28,23 +28,23 @@
 
 /**
  * @template T
- * @typedef {T extends InstantiableType ? true : false} IsInstantiableType<T>
+ * @typedef {T extends ConcreteType ? true : false} IsInstantiableType<T>
  */
 
 /**
- * @typedef {Array<InstantiableType|InstantiableTypes>} InstantiableTypes
+ * @typedef {Array<ConcreteType|ConcreteTypes>} ConcreteTypes
  */
 
 /**
- * @template {InstantiableType|InstantiableTypes} T
+ * @template {ConcreteType|ConcreteTypes} T
  * @typedef {T extends Array<any>
- *     ? {[K in keyof T]: (T[K] extends InstantiableTypes
+ *     ? {[K in keyof T]: (T[K] extends ConcreteTypes
  *         ? IterInstanceType<T[K]>
- *         : T[K] extends InstantiableType
+ *         : T[K] extends ConcreteType
  *             ? InstanceType<T[K]>
  *             : never
  *       )} 
- *     : T extends InstantiableType 
+ *     : T extends ConcreteType 
  *         ? InstanceType<T>
  *         : never
  * } IterInstanceType<T>

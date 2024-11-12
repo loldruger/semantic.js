@@ -1,11 +1,13 @@
 // @ts-check
 
 /**
- * @template {Readonly<Array<any>>} T 
+ * @template {ReadonlyArray<any>} T 
  * @param  {T} args 
  * @returns {T}
  */
 export const TupleType = (...args) => args;
+
+
 /**
  * @interface
  */

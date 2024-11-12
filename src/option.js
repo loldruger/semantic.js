@@ -6,7 +6,7 @@ import { Matchable } from './interfaces/matchable.js';
 import { TaggedUnion } from './primitives/tagged-union.js';
 
 /**
- * @template {InstantiableType|InstantiableTypes} T
+ * @template {ConcreteType|ConcreteTypes} T
  * @implements {Cloneable<Option<T>>}
  * @implements {Matchable<T>}
  */
@@ -14,29 +14,29 @@ export class Option {
     /**
      * @type {T}
      */
-    #typeInfo;
+    typeInfo;
 
     /**
      * @type {IterInstanceType<T>?=}
      */
     #value;
 
-    #option;
+    option;
 
     /**
      * @private
      * @param {T} type
      */
     constructor(type) {
-        this.#typeInfo = type;
-        this.#option = TaggedUnion.new()
-            .variant('Some', this.#typeInfo)
+        this.typeInfo = type;
+        this.option = TaggedUnion.new()
+            .variant('Some', this.typeInfo)
             .variant('None')
             .build();
     }
 
     /**
-     * @template {InstantiableType|InstantiableTypes} T
+     * @template {ConcreteType|ConcreteTypes} T
      * @param {T} type
      * @returns {Option<T>}
      */
@@ -45,14 +45,13 @@ export class Option {
     }
 
     /**
-     * @template {IterInstanceType<InstantiableType|InstantiableTypes>} T
-     * @template {ConstructorType<T>} TypeInfo
-    
+     * @template {IterInstanceType<ConcreteType|ConcreteTypes>} T
      * @param {T} value
      * @returns {Option<ConstructorType<T>>}
      */
     static Some(value) {
-        return new Option(/** @type {TypeInfo} */(typeof value));
+
+        return new Option(/** @type {ConstructorType<T>} */(value));
     }
 
     /**
@@ -62,7 +61,7 @@ export class Option {
     some(value) {
         this.#value = value;
 
-        return this.#option.Some(value);
+        return this.option.Some(value);
     }
 
     /**
@@ -71,7 +70,7 @@ export class Option {
     get none() {
         this.#value = null;
 
-        return this.#option.None;
+        return this.option.None;
     }
 
     /**
@@ -89,7 +88,7 @@ export class Option {
     }
 
     /**
-     * @template {InstantiableType} U
+     * @template {ConcreteType} U
      * @param {(value: T) => Option<U>} op
      * @return {Option<U>?}
      */
@@ -106,7 +105,7 @@ export class Option {
      */
     orElse(op) {
         return this.match({
-            Some: () => this.#option.Some(this.#value),
+            Some: () => this.option.Some(this.#value),
             None: () => op()
         });
     }
@@ -116,7 +115,7 @@ export class Option {
      */
     unwrap() {
         switch (this.isSome()) {
-            case true: return this.#option.Some(this.#value);
+            case true: return this.option.Some(this.#value);
             case false: throw new Error('Option is None');
         }
     }
@@ -125,7 +124,7 @@ export class Option {
      * @returns {Option<T>}
      */
     clone() {
-        const cloned = Option.Of(this.#typeInfo);
+        const cloned = Option.Of(this.typeInfo);
         cloned.#value = this.#value;
 
         return cloned;

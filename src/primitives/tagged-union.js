@@ -2,19 +2,19 @@
 
 /**
  * @template {String} Tag
- * @template {[InstantiableType]} T
+ * @template {[ConcreteType]} T
  * @typedef {IsTupleType<T> extends true
  *     ? Record<Tag, (...args: [IterInstanceType<T>]) => IterInstanceType<T>>
  *     : IsInstantiableType<T> extends true
- *         ? T extends InstantiableType
- *             ? Record<Tag, (a: InstanceType<T>) => InstanceType<T>>
+ *         ? T extends ConcreteType
+ *             ? Record<Tag, (x: InstanceType<T>) => InstanceType<T>>
  *             : never
  *         : Record<Tag, null>
  * } Form<Tag, [T]>
  */
 
 /**
- * @template {Form<String, [InstantiableType]>} Variants
+ * @template {Form<String, [ConcreteType]>} Variants
  */
 export class TaggedUnion {
     /**
@@ -28,7 +28,7 @@ export class TaggedUnion {
     constructor() { }
 
     /**
-     * @returns {TaggedUnion<Form<String, [InstantiableType]>>}
+     * @returns {TaggedUnion<Form<String, [ConcreteType]>>}
      */
     static new() {
         return new TaggedUnion();
@@ -36,7 +36,7 @@ export class TaggedUnion {
 
     /**
      * @template {String} Tag
-     * @template {InstantiableType|InstantiableTypes|undefined} TypeInfo
+     * @template {ConcreteType|ConcreteTypes} TypeInfo
      * @param {Tag} tag
      * @param {TypeInfo=} typeInfo
      * @returns {TaggedUnion<Readonly<Variants> & Form<Tag, TypeInfo>>}
