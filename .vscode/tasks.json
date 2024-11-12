@@ -4,10 +4,20 @@
         {
             "label": "Minify and Copy Files to dist",
             "type": "shell",
-            "command": "mkdir -p dist && for file in src/**/*.js; do ./dependencies/uglify-js/bin/uglifyjs \"$file\" -o \"dist/$(basename \"$file\")\" --compress --mangle; done",
+            "command": "mkdir -p dist && for file in $(find src -name '*.js'); do mkdir -p \"dist/$(dirname \"$file\")\" && ./dependencies/uglify-js/bin/uglifyjs \"$file\" -o \"dist/$file\" --compress --mangle; done && cat src/**/*.js > dist/semantic.js && ./dependencies/uglify-js/bin/uglifyjs dist/semantic.js -o dist/semantic.min.js --compress --mangle && rm dist/semantic.js",
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Integrated Tests",
+            "type": "shell",
+            "command": "for file in tests/**/*.js; do echo 'hello, world!'; done",
+            "group": {
+                "kind": "test",
+                "isDefault": false
             },
             "problemMatcher": []
         }

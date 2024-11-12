@@ -7,59 +7,80 @@ import { TaggedUnion } from './primitives/tagged-union.js';
 
 /**
  * @template {InstantiableType} T
- * @implements {Cloneable<T>}
+ * @implements {Cloneable<Option<T>>}
  * @implements {Matchable<T>}
  */
 export class Option {
-    #type;
+    /**
+     * @type {T}
+     */
+    #typeInfo;
+
+    /**
+     * @type {InstanceType<T>?=}
+     */
+    #value;
 
     #option;
 
     /**
      * @private
-     * @param {InstantiableType} value
+     * @param {T} type
      */
-    constructor(value) {
-        this.#type = value;
+    constructor(type) {
+        this.#typeInfo = type;
         this.#option = TaggedUnion.new()
-            .variant('Some', this.#type)
+            .variant('Some', this.#typeInfo)
             .variant('None')
             .build();
     }
 
     /**
-     * @param {T} value
+     * @template {InstantiableType} T
+     * @param {T} type
+     * @returns {Option<T>}
+     */
+    static new(type) {
+        return new Option(type);
+    }
+
+    /**
+     * @param {InstanceType<T>} value
      * @returns {Option<T>}
      */
     some(value) {
+        this.#value = value;
+
         return this.#option.Some(value);
     }
 
     /**
-     * @returns {Option<T>}
+     * @returns {null}
      */
     get none() {
-        return this.#option.None;
+        this.#value = null;
+
+        return /** @type {null}*/ (this.#option.None);
     }
 
     /**
      * @returns {Boolean}
      */
     isSome() {
-        return this.#option.None ? false : true;
+        return this.#value ? false : true;
     }
 
     /**
      * @returns {Boolean}
      */
     isNone() {
-        return this.#option.None ? true : false;
+        return this.#value ? true : false;
     }
 
     /**
      * @template {InstantiableType} U
      * @param {(value: T) => Option<U>} op
-     * @return {Option<U>}
+     * @return {Option<U>?}
      */
     andThen(op) {
         return this.match({
@@ -74,29 +95,29 @@ export class Option {
      */
     orElse(op) {
         return this.match({
-            Some: () => this.some(this.#value),
+            Some: () => this.#option.Some(this.#value),
             None: () => op()
         });
     }
 
     /**
-     * @returns {T}
+     * @returns {InstanceType<T>}
      */
     unwrap() {
         switch (this.isSome()) {
-            case true: return this.some();
+            case true: return this.#option.Some(this.#value);
             case false: throw new Error('Option is None');
         }
     }
 
     /**
-     * @returns {Option<T>|Option<null>}
+     * @returns {Option<T>}
      */
     clone() {
-        return this.match({
-            Some: (value) => Option.Some(value),
-            None: () => Option.none
-        });
+        const cloned = Option.new(this.#typeInfo);
+        cloned.#value = this.#value;
+
+        return cloned;
     }
 
     /**
@@ -108,11 +129,7 @@ export class Option {
      */
     match({ Some, None }) {
         switch (this.isSome()) {
-            case true: {
-                const value = this.unwrap();
-
-                return Some(value);
-            }
+            case true: return Some(this.unwrap());
             case false: return None();
         }
     }

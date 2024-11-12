@@ -5,8 +5,8 @@ import { Matchable } from './interfaces/matchable.js';
 
 /**
  * @template T
- * @implements {Cloneable}
- * @implements {Matchable}
+ * @implements {Cloneable<T>}
+ * @implements {Matchable<T>}
  */
 export class OptionBaked {
     /**

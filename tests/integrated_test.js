@@ -1,6 +1,7 @@
 //@ts-check
 
 import { TaggedUnion, TupleType } from "../src/lib.js";
+import { Option } from "../src/option.js";
 
 const test1 = (() => {
     const Option = TaggedUnion.new()
@@ -34,4 +35,10 @@ const test2 = (() => {
 
     console.log(some);
     console.log(none);
+})();
+
+const test3 = (() => {
+    const option = Option.new(1);
+
+    console.log("asdf " + option.unwrap());
 })();
