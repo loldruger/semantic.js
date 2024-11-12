@@ -6,7 +6,7 @@ import { Matchable } from './interfaces/matchable.js';
 import { TaggedUnion } from './primitives/tagged-union.js';
 
 /**
- * @template {InstantiableType} T
+ * @template {Tuple|Tuples} T
  * @implements {Cloneable<Option<T>>}
  * @implements {Matchable<T>}
  */
@@ -17,7 +17,7 @@ export class Option {
     #typeInfo;
 
     /**
-     * @type {InstanceType<T>?=}
+     * @type {IterInstanceType<T>?=}
      */
     #value;
 
@@ -36,12 +36,27 @@ export class Option {
     }
 
     /**
-     * @template {InstantiableType} T
+     * @template {Tuple|Tuples} T
      * @param {T} type
      * @returns {Option<T>}
      */
-    static new(type) {
+    static Of(type) {
         return new Option(type);
+    }
+
+    /**
+     * @template {IterInstanceType<Tuple|Tuples>} T
+     * @template {T} TypeInfo
+     * @param {T} value
+     * @returns {Option<ConstructorType<T>>}
+     */
+    static Some(value) {
+        const option = TaggedUnion.new()
+            .variant('Some', /** @type {TypeInfo} */(typeof value))
+            .variant('None')
+            .build();
+
+        return option;
     }
 
     /**
@@ -114,7 +129,7 @@ export class Option {
      * @returns {Option<T>}
      */
     clone() {
-        const cloned = Option.new(this.#typeInfo);
+        const cloned = Option.Of(this.#typeInfo);
         cloned.#value = this.#value;
 
         return cloned;
