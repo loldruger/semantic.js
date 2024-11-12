@@ -1,18 +1,20 @@
 // @ts-check
 
 /**
- * @template T
- * @typedef {T extends undefined ? null : T} SomeOrNone<T>
- */
-
-/**
  * @template {String} Tag
- * @template {Array<T>} T
- * @typedef {T extends undefined ? Record<Tag, null> : Record<Tag, (...args: Array<IterInstanceType<T>>) => IterInstanceType<T>>} Form<Tag, T>
+ * @template {[InstantiableType]} T
+ * @typedef {IsTupleType<T> extends true
+ *     ? Record<Tag, (...args: [IterInstanceType<T>]) => IterInstanceType<T>>
+ *     : IsInstantiableType<T> extends true
+ *         ? T extends InstantiableType
+ *             ? Record<Tag, (a: InstanceType<T>) => InstanceType<T>>
+ *             : never
+ *         : Record<Tag, null>
+ * } Form<Tag, [T]>
  */
 
 /**
- * @template {Form<String, any>} Variants
+ * @template {Form<String, [InstantiableType]>} Variants
  */
 export class TaggedUnion {
     /**
@@ -26,7 +28,7 @@ export class TaggedUnion {
     constructor() { }
 
     /**
-     * @returns {TaggedUnion<any>}
+     * @returns {TaggedUnion<Form<String, [InstantiableType]>>}
      */
     static new() {
         return new TaggedUnion();
@@ -34,14 +36,14 @@ export class TaggedUnion {
 
     /**
      * @template {String} Tag
-     * @template {Tuple|Tuples|undefined} Fields
+     * @template {InstantiableType|InstantiableTypes|undefined} TypeInfo
      * @param {Tag} tag
-     * @param {Fields=} fields
-     * @returns {TaggedUnion<Readonly<Variants> & Form<Tag, Fields>>}
+     * @param {TypeInfo=} typeInfo
+     * @returns {TaggedUnion<Readonly<Variants> & Form<Tag, TypeInfo>>}
      */
-    variant(tag, fields) {
-        const fn = fields
-            ? (/** @type {Array<Fields>} */...args) => args[0]
+    variant(tag, typeInfo) {
+        const fn = typeInfo
+            ? (/** @type {[TypeInfo]} */...args) => args[0]
             : null;
 
         this.#variants = {

@@ -22,7 +22,7 @@ This project has been worked only on modern web browser environment like `firefo
 
 ### #to Distribution Ready
 
-Before doing this process, you should execute a shell script named `init.sh` in root of proect.
+Before doing this process, you should execute a shell script named `init.sh` in the root of proect.
 
 After `init.sh`, to make this project distribution ready, Uglify the entire project with uglify-js:
 

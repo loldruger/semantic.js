@@ -17,33 +17,34 @@
  */
 
 /**
- * @template {ReadonlyArray<any>} T
- * @typedef {number extends T['length'] ? false : true} IsTupleType<T>
- */
-
-/**
  * @template {Array<any>} T
  * @typedef {T extends [] ? [] : T extends [infer Head, ...infer Tail] ? [ConstructorType<Head>, ...TupleConstructors<Tail extends any[] ? Tail : []>] : []} TupleConstructors<T>
  */
 
 /**
- * @typedef {InstantiableType} Tuple
+ * @template {ReadonlyArray<any>} T
+ * @typedef {number extends T['length'] ? false : true} IsTupleType<T>
  */
 
 /**
- * @typedef {Array<Tuple|Tuples>} Tuples
+ * @template T
+ * @typedef {T extends InstantiableType ? true : false} IsInstantiableType<T>
  */
 
 /**
- * @template {Tuple|Tuples} T
+ * @typedef {Array<InstantiableType|InstantiableTypes>} InstantiableTypes
+ */
+
+/**
+ * @template {InstantiableType|InstantiableTypes} T
  * @typedef {T extends Array<any>
- *     ? {[K in keyof T]: (T[K] extends Tuples
+ *     ? {[K in keyof T]: (T[K] extends InstantiableTypes
  *         ? IterInstanceType<T[K]>
- *         : T[K] extends Tuple
+ *         : T[K] extends InstantiableType
  *             ? InstanceType<T[K]>
  *             : never
  *       )} 
- *     : T extends Tuple 
+ *     : T extends InstantiableType 
  *         ? InstanceType<T>
  *         : never
  * } IterInstanceType<T>
