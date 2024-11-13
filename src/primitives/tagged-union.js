@@ -4,12 +4,12 @@
  * @template {String} Tag
  * @template {[ConcreteType]} T
  * @typedef {IsTupleType<T> extends true
- *     ? Record<Tag, (..._: [IterInstanceType<T>]) => IterInstanceType<T>>
+ *     ? Readonly<Record<Tag, (..._: [IterInstanceType<T>]) => IterInstanceType<T>>>
  *     : IsConcreteType<T> extends true
  *         ? T extends ConcreteType
- *             ? Record<Tag, (x: InstanceType<T>) => InstanceType<T>>
+ *             ? Readonly<Record<Tag, (x: InstanceType<T>) => InstanceType<T>>>
  *             : never
- *         : Record<Tag, null>
+ *         : Readonly<Record<Tag, null>>
  * } Form<Tag, [T]>
  */
 
@@ -39,7 +39,7 @@ export class TaggedUnion {
      * @template {ConcreteType|ConcreteTypes} TypeInfo
      * @param {Tag} tag
      * @param {TypeInfo=} typeInfo
-     * @returns {TaggedUnion<Readonly<Variants> & Form<Tag, TypeInfo>>}
+     * @returns {TaggedUnion<Variants & Form<Tag, TypeInfo>>}
      */
     variant(tag, typeInfo) {
         const fn = typeInfo
@@ -55,7 +55,7 @@ export class TaggedUnion {
     }
 
     /**
-     * @returns {{[K in keyof Variants]: Variants[K]}}
+     * @returns {Readonly<{[K in keyof Variants]: Variants[K]}>}
      */
     build() {
         return Object.freeze(this.#variants);
