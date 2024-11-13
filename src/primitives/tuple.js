@@ -2,10 +2,10 @@
 
 /**
  * @template {ReadonlyArray<any>} T 
- * @param  {T} args 
+ * @param  {T} _ 
  * @returns {T}
  */
-export const TupleType = (...args) => args;
+export const TupleType = (..._) => _;
 
 
 /**

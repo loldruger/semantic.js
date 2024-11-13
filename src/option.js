@@ -6,7 +6,7 @@ import { Matchable } from './interfaces/matchable.js';
 import { TaggedUnion } from './primitives/tagged-union.js';
 
 /**
- * @template {ConcreteType|ConcreteTypes} T
+ * @template {AbstConcreteType|AbstConcreteTypes} T
  * @implements {Cloneable<Option<T>>}
  * @implements {Matchable<T>}
  */
@@ -36,7 +36,7 @@ export class Option {
     }
 
     /**
-     * @template {ConcreteType|ConcreteTypes} T
+     * @template {AbstConcreteType|AbstConcreteTypes} T
      * @param {T} type
      * @returns {Option<T>}
      */
@@ -45,13 +45,15 @@ export class Option {
     }
 
     /**
-     * @template {IterInstanceType<ConcreteType|ConcreteTypes>} T
+     * @template {IterInstanceType<AbstConcreteType|AbstConcreteTypes>} T
      * @param {T} value
-     * @returns {Option<ConstructorType<T>>}
+     * @returns {Option<ToConcreteType<T>>}
      */
     static Some(value) {
-
-        return new Option(/** @type {ConstructorType<T>} */(value));
+        /**
+         * 
+         */
+        return new Option(/** @type {ToConcreteType<T>} */(value));
     }
 
     /**
@@ -88,7 +90,7 @@ export class Option {
     }
 
     /**
-     * @template {ConcreteType} U
+     * @template {AbstConcreteType} U
      * @param {(value: T) => Option<U>} op
      * @return {Option<U>?}
      */
