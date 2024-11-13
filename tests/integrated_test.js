@@ -39,8 +39,8 @@ const test2 = (() => {
 
 const test3 = (() => {
     const option = Option.Of(TupleType(Number, String));
-    const option2 = Option.Some(TupleType(1, "2"));
+    const option2 = Option.Some(TupleType("1", "2"));
 
 
-    console.log("asdf " + option.unwrap());
+    console.log("asdf " + option2.typeInfo);
 })();

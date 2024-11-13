@@ -28,7 +28,7 @@
 
 /**
  * @template T
- * @typedef {T extends ConcreteType ? true : false} IsInstantiableType<T>
+ * @typedef {T extends ConcreteType ? true : false} IsConcreteType<T>
  */
 
 /**
