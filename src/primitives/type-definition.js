@@ -15,25 +15,31 @@ const TYPES = Object.freeze({
 
 /**
  * @template {number} T
- * @template {Array<unknown>} [Arr=[]]
- * @typedef {Arr['length'] extends T ? [...Arr, unknown]['length'] : IncrementOf<T, [...Arr, unknown]>} IncrementOf<T>
+ * @template {Array<any>} [Arr=[]]
+ * @typedef {Arr['length'] extends T
+ *     ? [...Arr, any]['length']
+ *     : IncrementOf<T, [...Arr, any]>
+ * } IncrementOf<T>
  */
 
 /**
  * @template {number} T
- * @template {Array<unknown>} [Arr=[]]
- * @typedef {Arr['length'] extends T ? (Arr extends [unknown, ...infer F] ? F['length'] : never) : DecrementOf<T, [unknown, ...Arr]>} DecrementOf
+ * @template {Array<any>} [Arr=[]]
+ * @typedef {Arr['length'] extends T
+ *     ? (Arr extends [...infer F, any] ? F['length'] : undefined)
+ *     : DecrementOf<T, [...Arr, any]>
+ * } DecrementOf<T>
  */
 
 /**
  * @template T
  * @typedef {T extends number ? NumberConstructor :
- *   T extends string ? StringConstructor :
- *   T extends boolean ? BooleanConstructor :
- *   T extends Function ? FunctionConstructor :
- *   T extends Array<any> ? (IsTupleType<T> extends true ? ToTupleType<T> : ArrayConstructor) :
- *   T extends object ? { new (...args: Array<any>): T } :
- *   never
+ *     T extends string ? StringConstructor :
+ *     T extends boolean ? BooleanConstructor :
+ *     T extends Function ? FunctionConstructor :
+ *     T extends Array<any> ? (IsTupleType<T> extends true ? ToTupleType<T> : ArrayConstructor) :
+ *     T extends object ? { new (...args: Array<any>): T } :
+ *     never
  * } ToConcreteType<T>
  */
 
