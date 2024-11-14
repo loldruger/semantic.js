@@ -14,15 +14,16 @@ const TYPES = Object.freeze({
 });
 
 /**
- * @template {Number} Num
- * @template {Array<0>} [Arr=[]]
- * @typedef {Num extends Arr['length'] ? [...Arr, 0]['length'] : Increment<Num, [...Arr, 0]>} Increment<T>
+ * @template {number} T
+ * @template {Array<unknown>} [Arr=[]]
+ * @typedef {Arr['length'] extends T ? [...Arr, unknown]['length'] : IncrementOf<T, [...Arr, unknown]>} IncrementOf<T>
  */
 
 /**
- * @typedef {Increment<50>} A
+ * @template {number} T
+ * @template {Array<unknown>} [Arr=[]]
+ * @typedef {Arr['length'] extends T ? (Arr extends [unknown, ...infer F] ? F['length'] : never) : DecrementOf<T, [unknown, ...Arr]>} DecrementOf
  */
-let a;
 
 /**
  * @template T
