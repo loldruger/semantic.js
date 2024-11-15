@@ -1,33 +1,20 @@
 //@ts-check
 
 /**
- * @enum {AbstConcreteType}
- * @type {{[K in keyof TYPES]: Readonly<TYPES[K]>}}
- */
-const TYPES = Object.freeze({
-    NUMBER: Number,
-    STRING: String,
-    BOOLEAN: Boolean,
-    FUNCTION: Function,
-    ARRAY: Array,
-    OBJECT: Object
-});
-
-/**
  * @template {number} T
- * @template {Array<any>} [Arr=[]]
+ * @template {Array<unknown>} [Arr=[]]
  * @typedef {Arr['length'] extends T
- *     ? [...Arr, any]['length']
- *     : IncrementOf<T, [...Arr, any]>
+ *     ? [...Arr, unknown]['length']
+ *     : IncrementOf<T, [...Arr, unknown]>
  * } IncrementOf<T>
  */
 
 /**
  * @template {number} T
- * @template {Array<any>} [Arr=[]]
+ * @template {Array<unknown>} [Arr=[]]
  * @typedef {Arr['length'] extends T
- *     ? (Arr extends [...infer F, any] ? F['length'] : undefined)
- *     : DecrementOf<T, [...Arr, any]>
+ *     ? (Arr extends [...infer F, unknown] ? F['length'] : undefined)
+ *     : DecrementOf<T, [...Arr, unknown]>
  * } DecrementOf<T>
  */
 
@@ -37,18 +24,18 @@ const TYPES = Object.freeze({
  *     T extends string ? StringConstructor :
  *     T extends boolean ? BooleanConstructor :
  *     T extends Function ? FunctionConstructor :
- *     T extends Array<any> ? (IsTupleType<T> extends true ? ToTupleType<T> : ArrayConstructor) :
- *     T extends object ? { new (...args: Array<any>): T } :
+ *     T extends Array<unknown> ? (IsTupleType<T> extends true ? ToTupleType<T> : ArrayConstructor) :
+ *     T extends object ? { new (...args: Array<unknown>): T } :
  *     never
  * } ToConcreteType<T>
  */
 
 /**
- * @template {Array<any>} T
+ * @template {Array<unknown>} T
  * @typedef {T extends [] 
  *     ? []
  *     : T extends [infer Head, ...infer Tail]
- *         ? [ToConcreteType<Head>, ...ToTupleType<Tail extends Array<any>
+ *         ? [ToConcreteType<Head>, ...ToTupleType<Tail extends Array<unknown>
  *             ? Tail
  *             : []>
  *         ] : []
@@ -56,7 +43,7 @@ const TYPES = Object.freeze({
  */
 
 /**
- * @template {ReadonlyArray<any>} T
+ * @template {ReadonlyArray<unknown>} T
  * @typedef {number extends T['length'] ? false : true} IsTupleType<T>
  */
 
@@ -66,14 +53,14 @@ const TYPES = Object.freeze({
  */
 
 /**
- * @template [T=any]
- * @template [U=any]
+ * @template [T=unknown]
+ * @template [U=unknown]
  * @typedef {new (...args: Array<T>) => U} ConcreteType<T, U>
  */
 
 /**
- * @template [T=any]
- * @template [U=any]
+ * @template [T=unknown]
+ * @template [U=unknown]
  * @typedef {abstract new (...args: Array<T>) => U} AbstConcreteType<T, U>
  */
 
@@ -83,7 +70,7 @@ const TYPES = Object.freeze({
 
 /**
  * @template {AbstConcreteType|AbstConcreteTypes} T
- * @typedef {T extends Array<any>
+ * @typedef {T extends Array<unknown>
  *     ? {[K in keyof T]: (T[K] extends AbstConcreteTypes
  *         ? IterInstanceType<T[K]>
  *         : T[K] extends AbstConcreteType

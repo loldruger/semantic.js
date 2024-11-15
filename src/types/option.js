@@ -1,14 +1,16 @@
 // @ts-check
 
-import { Cloneable } from './interfaces/cloneable.js';
-import { Matchable } from './interfaces/matchable.js';
+import { Cloneable } from '../interfaces/cloneable.js';
+import { Matchable } from '../interfaces/matchable.js';
 
-import { TaggedUnion } from './primitives/tagged-union.js';
+import { TaggedUnion } from '../primitives/tagged-union.js';
+
+import { ConcreteTypes } from './enums.js';
 
 /**
  * @template {AbstConcreteType|AbstConcreteTypes} T
  * @implements {Cloneable<Option<T>>}
- * @implements {Matchable<T>}
+ * @implements {Matchable<Option<T>>}
  */
 export class Option {
     /**
@@ -30,7 +32,7 @@ export class Option {
     constructor(type) {
         this.typeInfo = type;
         this.option = TaggedUnion.new()
-            .variant('Some', this.typeInfo)
+            .variant('Some', type)
             .variant('None')
             .build();
     }
@@ -45,19 +47,16 @@ export class Option {
     }
 
     /**
-     * @template {IterInstanceType<AbstConcreteType|AbstConcreteTypes>} T
+     * @template {InstanceType<AbstConcreteType>|IterInstanceType<AbstConcreteTypes>} T
      * @param {T} value
      * @returns {Option<ToConcreteType<T>>}
      */
     static Some(value) {
-        /**
-         * 
-         */
-        return new Option(/** @type {ToConcreteType<T>} */(value));
+        return new Option(/** @type {ConcreteTypes} */(ConcreteTypes[typeof value]));
     }
 
     /**
-     * @param {InstanceType<T>} value
+     * @param {IterInstanceType<T>} value
      * @returns {Option<T>}
      */
     some(value) {

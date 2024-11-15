@@ -2,7 +2,7 @@
 
 /**
  * @template {String} Tag
- * @template {[AbstConcreteType]} T
+ * @template {AbstConcreteTypes} T
  * @typedef {IsTupleType<T> extends true
  *     ? Readonly<Record<Tag, (..._: [IterInstanceType<T>]) => IterInstanceType<T>>>
  *     : IsConcreteType<T> extends true
@@ -14,7 +14,7 @@
  */
 
 /**
- * @template {Form<String, [AbstConcreteType]>} Variants
+ * @template {Form<String, AbstConcreteTypes>} Variants
  */
 export class TaggedUnion {
     /**
@@ -51,7 +51,7 @@ export class TaggedUnion {
             [tag]: fn
         };
 
-        return /** @type {any} */ (this);
+        return  /** @type {any} */ (this);
     }
 
     /**

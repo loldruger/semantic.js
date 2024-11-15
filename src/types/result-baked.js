@@ -1,7 +1,7 @@
 // @ts-check
 
-import { Cloneable } from './interfaces/cloneable.js';
-import { Matchable } from './interfaces/matchable.js';
+import { Cloneable } from '../interfaces/cloneable.js';
+import { Matchable } from '../interfaces/matchable.js';
 
 /**
  * @readonly
@@ -17,7 +17,7 @@ const ResultType = Object.freeze({
  * @implements {Matchable}
  * @implements {Cloneable}
  */
-export class ResultBaked {    
+export class ResultBaked {
     /**
      * @type {ResultType}
      */
@@ -51,7 +51,7 @@ export class ResultBaked {
      * @return {ResultBaked<T, E>}
      */
     static Ok(value) {
-        return new ResultBaked(ResultType.Ok, value, /** @type {E} */ (undefined));
+        return new ResultBaked(ResultType.Ok, value, /** @type {E} */(undefined));
     }
 
     /**
@@ -60,7 +60,7 @@ export class ResultBaked {
      * @return {ResultBaked<T, E>}
      */
     static Err(error) {
-        return new ResultBaked(ResultType.Err, /** @type {T} */ (undefined), error);
+        return new ResultBaked(ResultType.Err, /** @type {T} */(undefined), error);
     }
 
     /**

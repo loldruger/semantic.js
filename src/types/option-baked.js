@@ -1,7 +1,7 @@
 // @ts-check
 
-import { Cloneable } from './interfaces/cloneable.js';
-import { Matchable } from './interfaces/matchable.js';
+import { Cloneable } from '../interfaces/cloneable.js';
+import { Matchable } from '../interfaces/matchable.js';
 
 /**
  * @template T

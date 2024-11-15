@@ -1,7 +1,7 @@
 //@ts-check
 
 import { TaggedUnion, TupleType } from "../src/lib.js";
-import { Option } from "../src/option.js";
+import { Option } from "../src/types/option.js";
 
 const test1 = (() => {
     const Option = TaggedUnion.new()
@@ -38,9 +38,10 @@ const test2 = (() => {
 })();
 
 const test3 = (() => {
-    const option = Option.Of(TupleType(Number, String));
+    const option = Option.Of(String);
+    const option1 = Option.Of(TupleType(Number, String));
     const option2 = Option.Some(TupleType(1, "2"));
+    const option3 = Option.Some(3);
 
-
-    console.log("asdf " + option2.typeInfo);
+    console.log("asdf " + option3.typeInfo);
 })();

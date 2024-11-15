@@ -2,20 +2,25 @@
   "compilerOptions": {
     "module": "ES2022",
     "target": "ES2023",
-    "noImplicitAny": true,
+    "alwaysStrict": true,
     "strict": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
     "strictPropertyInitialization": true,
+    "strictBuiltinIteratorReturn": true,
+    "noImplicitAny": true,
     "noImplicitThis": true,
-    "alwaysStrict": true,
     "noUnusedLocals": true,
+    "noImplicitOverride": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noErrorTruncation": true,
     "checkJs": true,
-    "noErrorTruncation": true
+    "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": true,
+    "exactOptionalPropertyTypes": true
   }
   // "include": ["src/**/*"]
 }
