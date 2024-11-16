@@ -1,20 +1,7 @@
 // @ts-check
 
 /**
- * @template {String} Tag
- * @template {AbstConcreteTypes} T
- * @typedef {IsTupleType<T> extends true
- *     ? Readonly<Record<Tag, (..._: [IterInstanceType<T>]) => IterInstanceType<T>>>
- *     : IsConcreteType<T> extends true
- *         ? T extends AbstConcreteType
- *             ? Readonly<Record<Tag, (x: InstanceType<T>) => InstanceType<T>>>
- *             : never
- *         : Readonly<Record<Tag, null>>
- * } Form<Tag, [T]>
- */
-
-/**
- * @template {Form<String, AbstConcreteTypes>} Variants
+ * @template {TaggedUnionType<String, AbstConcreteTypes>} Variants
  */
 export class TaggedUnion {
     /**
@@ -39,7 +26,7 @@ export class TaggedUnion {
      * @template {AbstConcreteType|AbstConcreteTypes} TypeInfo
      * @param {Tag} tag
      * @param {TypeInfo=} typeInfo
-     * @returns {TaggedUnion<Variants & Form<Tag, TypeInfo>>}
+     * @returns {TaggedUnion<Variants & TaggedUnionType<Tag, TypeInfo>>}
      */
     variant(tag, typeInfo) {
         const fn = typeInfo

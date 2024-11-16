@@ -47,12 +47,12 @@ export class Option {
     }
 
     /**
-     * @template {InstanceType<AbstConcreteType>|IterInstanceType<AbstConcreteTypes>} T
+     * @template {IterInstanceType<AbstConcreteType|AbstConcreteTypes>} T
      * @param {T} value
      * @returns {Option<ToConcreteType<T>>}
      */
     static Some(value) {
-        return new Option(/** @type {ConcreteTypes} */(ConcreteTypes[typeof value]));
+        return new Option(/** @type {ConcreteTypes} */(value.map()ConcreteTypes[typeof value]));
     }
 
     /**
