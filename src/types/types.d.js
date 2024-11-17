@@ -1,24 +1,6 @@
 //@ts-check
 
 /**
- * @template {number} T
- * @template {Array<unknown>} [Arr=[]]
- * @typedef {Arr['length'] extends T
- *     ? [...Arr, unknown]['length']
- *     : IncrementOf<T, [...Arr, unknown]>
- * } IncrementOf<T>
- */
-
-/**
- * @template {number} T
- * @template {Array<unknown>} [Arr=[]]
- * @typedef {Arr['length'] extends T
- *     ? (Arr extends [...infer F, unknown] ? F['length'] : undefined)
- *     : DecrementOf<T, [...Arr, unknown]>
- * } DecrementOf<T>
- */
-
-/**
  * @template T
  * @typedef {T extends number ? NumberConstructor :
  *     T extends string ? StringConstructor :

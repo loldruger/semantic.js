@@ -5,17 +5,17 @@ import { Matchable } from '../interfaces/matchable.js';
 
 /**
  * @template T
- * @implements {Cloneable<T>}
- * @implements {Matchable<T>}
+ * @implements {Cloneable<OptionBaked<T>>}
+ * @implements {Matchable<OptionBaked<T>>}
  */
 export class OptionBaked {
     /**
-     * @type {{ tag: 'Some', value: T } | { tag: 'None', value: never }}
+     * @type {{ tag: 'Some', value: T } | { tag: 'None', value: null }}
      */
     #state;
 
     constructor() {
-        this.#state = { tag: 'None', value: /** @type {never} */ (undefined) };
+        this.#state = { tag: 'None', value: null };
     }
 
     /**
@@ -31,7 +31,7 @@ export class OptionBaked {
      * @returns {this}
      */
     none() {
-        this.#state = { tag: 'None', value: /** @type {never} */ (undefined) };
+        this.#state = { tag: 'None', value: null };
         return this;
     }
 
