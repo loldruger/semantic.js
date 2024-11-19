@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {TaggedUnionType<String, AbstConcreteTypes>} Variants
+ * @template {TaggedUnionType<String, ConstructableTypes>} Variants
  */
 export class TaggedUnion {
     /**
@@ -23,7 +23,7 @@ export class TaggedUnion {
 
     /**
      * @template {String} Tag
-     * @template {AbstConcreteType|AbstConcreteTypes} TypeInfo
+     * @template {ConstructableTypeUnion} TypeInfo
      * @param {Tag} tag
      * @param {TypeInfo=} typeInfo
      * @returns {TaggedUnion<Variants & TaggedUnionType<Tag, TypeInfo>>}

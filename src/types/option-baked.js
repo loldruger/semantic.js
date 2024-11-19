@@ -10,7 +10,7 @@ import { Matchable } from '../interfaces/matchable.js';
  */
 export class OptionBaked {
     /**
-     * @type {{ tag: 'Some', value: T } | { tag: 'None', value: null }}
+     * @type {{ tag: 'Some'|'None' , value: T? }}
      */
     #state;
 

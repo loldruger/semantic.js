@@ -5,10 +5,10 @@ import { Matchable } from '../interfaces/matchable.js';
 
 import { TaggedUnion } from '../primitives/tagged-union.js';
 
-import { ConcreteTypes } from './enums.js';
+import { EnumConcreteTypeBaked } from './enums.js';
 
 /**
- * @template {AbstConcreteType|AbstConcreteTypes} T
+ * @template {ConstructableTypeUnion} T
  * @implements {Cloneable<Option<T>>}
  * @implements {Matchable<Option<T>>}
  */
@@ -19,7 +19,7 @@ export class Option {
     typeInfo;
 
     /**
-     * @type {IterInstanceType<T>?=}
+     * @type {ToRecursivelyInstanceType<T>?=}
      */
     #value;
 
@@ -38,7 +38,7 @@ export class Option {
     }
 
     /**
-     * @template {AbstConcreteType|AbstConcreteTypes} T
+     * @template {ConstructableTypeUnion} T
      * @param {T} type
      * @returns {Option<T>}
      */
@@ -47,16 +47,16 @@ export class Option {
     }
 
     /**
-     * @template {IterInstanceType<AbstConcreteType|AbstConcreteTypes>} T
+     * @template {ToRecursivelyInstanceType<ConstructableTypeUnion>} T
      * @param {T} value
      * @returns {Option<ToConcreteType<T>>}
      */
     static Some(value) {
-        return new Option(/** @type {ConcreteTypes} */(value.map()ConcreteTypes[typeof value]));
+        return new Option(/** @type {ConcreteTypes} */(EnumConcreteTypeBaked[typeof value]));
     }
 
     /**
-     * @param {IterInstanceType<T>} value
+     * @param {ToRecursivelyInstanceType<T>} value
      * @returns {Option<T>}
      */
     some(value) {

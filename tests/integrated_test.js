@@ -38,6 +38,26 @@ const test2 = (() => {
 })();
 
 const test3 = (() => {
+    const closure = () => "Hello, World!";
+
+    const SomeUnion = TaggedUnion.new()
+        .variant("callable", closure)
+        .build();
+
+    console.log(SomeUnion.callable());
+})();
+
+const test4 = (() => {
+    const closure = () => "Hello, World!";
+
+    const SomeUnion = TaggedUnion.new()
+        .variant("callable", TupleType(closure))
+        .build();
+
+    console.log(SomeUnion.callable([() => "Hello, World!"]));
+})();
+
+const test5 = (() => {
     const option = Option.Of(String);
     const option1 = Option.Of(TupleType(Number, String));
     const option2 = Option.Some(TupleType(1, "2"));
