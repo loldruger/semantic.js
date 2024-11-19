@@ -5,6 +5,10 @@
 //////////////////////
 
 /**
+ * @typedef {undefined} UndefinedType
+ */
+
+/**
  * @template [T=unknown]
  * @typedef {(...args: Array<String>) => T} CallableType
  */
@@ -48,11 +52,6 @@
  *             : []>
  *         ] : []
  * } ToTupleType<T>
- */
-
-/**
- * @template {[CallableType, AbstConcreteType, ConstructableTypes]} Map
- * @typedef {{[K in keyof Map]: Transformer<M[K]>[K]}}
  */
 
 /**

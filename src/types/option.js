@@ -5,7 +5,7 @@ import { Matchable } from '../interfaces/matchable.js';
 
 import { TaggedUnion } from '../primitives/tagged-union.js';
 
-import { EnumConcreteTypeBaked } from './enums.js';
+import { EnumConcreteType, EnumConcreteTypeBaked } from './enums.js';
 
 /**
  * @template {ConstructableTypeUnion} T
@@ -52,7 +52,7 @@ export class Option {
      * @returns {Option<ToConcreteType<T>>}
      */
     static Some(value) {
-        return new Option(/** @type {ConcreteTypes} */(EnumConcreteTypeBaked[typeof value]));
+        return new Option(/** @type {ToConcreteType<T>} */(EnumConcreteType[typeof value]));
     }
 
     /**

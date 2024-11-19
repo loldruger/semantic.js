@@ -54,7 +54,7 @@ const test4 = (() => {
         .variant("callable", TupleType(closure))
         .build();
 
-    console.log(SomeUnion.callable([() => "Hello, World!"]));
+    console.log(SomeUnion.callable([() => "Hello, World!"])[0]());
 })();
 
 const test5 = (() => {
