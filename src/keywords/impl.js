@@ -26,7 +26,7 @@ export class Impl {
 
     /**
      * @template {Object} T
-     * @param {IsReadonlyType<T> extends true ? never : T} target
+     * @param {IsExtensible<T> extends true ? T : never} target
      * @returns {Impl<T>}
      */
     static for(target) {    

@@ -31,6 +31,7 @@ const test2 = (() => {
 
     // console.log(Option);
     const some = Option.Some(["1", 1, "1", [true, 1, [1]]]);
+    
     const none = Option.None;
 
     console.log(some);
@@ -38,23 +39,19 @@ const test2 = (() => {
 })();
 
 const test3 = (() => {
-    const closure = () => "Hello, World!";
-
     const SomeUnion = TaggedUnion.new()
-        .variant("callable", closure)
+        .variant("callable", () => String)
         .build();
 
-    console.log(SomeUnion.callable());
+    console.log(SomeUnion.callable(() => "Hello, World!"));
 })();
 
 const test4 = (() => {
-    const closure = () => "Hello, World!";
-
     const SomeUnion = TaggedUnion.new()
-        .variant("callable", TupleType(closure))
+        .variant("callable", TupleType(() => String))
         .build();
 
-    console.log(SomeUnion.callable([() => "Hello, World!"])[0]());
+    console.log(SomeUnion.callable([() => "Hello, World!"]));
 })();
 
 const test5 = (() => {
@@ -73,8 +70,6 @@ const test6 = (() => {
         .variant("None")
         .build();
 
-    let ad = 0;
-
     Impl.for(Option)
         .fn("nameOfFn", (self) => {
 
@@ -85,6 +80,4 @@ const test6 = (() => {
         .build();
         
     console.log(Option);
-
-    
 })();

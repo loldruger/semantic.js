@@ -1,10 +1,5 @@
 //@ts-check
 
-/**
- * @template T
- * @typedef {T extends Readonly<infer U> ? never : T} Mutable<T>
- */
-
 //////////////////////
 // Type Definitions //
 //////////////////////
@@ -97,21 +92,29 @@
  * @typedef {T extends CallableType ? true : false} IsFunctionType<T>
  */
 
-/**
- * @template T
- * @typedef { IsEqual<T, { -readonly [K in keyof T]: T[K] }> extends true ? false : true } IsReadonlyType<T>
- */
-
 ////////////////////
 // Type Utilities //
 ////////////////////
 
 /**
  * @template T
- * @typedef {T extends Array<infer U> ? U : T} UnwrapArray<T>
+ * @typedef { T extends infer U 
+ *     ? U extends object 
+ *         ? { [key: string]: any } extends U 
+ *             ? true
+ *             : false 
+ *         : false 
+ *     : false
+ * } IsExtensible<T>
  */
 
 /**
  * @template X, Y
  * @typedef { (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false } IsEqual<X, Y>
  */
+
+/**
+ * @template T
+ * @typedef {T extends Array<infer U> ? U : T} UnwrapArray<T>
+ */
+
