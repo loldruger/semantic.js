@@ -1,5 +1,7 @@
 //@ts-check
 
+export {Impl} from './keywords/impl.js';
+
 export { Cloneable } from "./interfaces/cloneable.js";
 export { Matchable } from "./interfaces/matchable.js";
 

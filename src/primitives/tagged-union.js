@@ -42,9 +42,12 @@ export class TaggedUnion {
     }
 
     /**
-     * @returns {Readonly<{[K in keyof Variants]: Variants[K]}>}
+     * @returns {{[K in keyof Variants]: Variants[K]}}
      */
     build() {
-        return Object.freeze(this.#variants);
+        return this.#variants;
     }
 }
+
+Object.setPrototypeOf(TaggedUnion, null);
+Object.setPrototypeOf(TaggedUnion.prototype, null);

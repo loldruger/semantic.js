@@ -1,7 +1,7 @@
 // @ts-check
 
-import { Cloneable } from '../interfaces/cloneable.js';
-import { Matchable } from '../interfaces/matchable.js';
+import { Cloneable } from "../interfaces/cloneable.js";
+import { Matchable } from "../interfaces/matchable.js";
 
 /**
  * @template T
@@ -15,7 +15,7 @@ export class OptionBaked {
     #state;
 
     constructor() {
-        this.#state = { tag: 'None', value: null };
+        this.#state = { tag: "None", value: null };
     }
 
     /**
@@ -23,7 +23,7 @@ export class OptionBaked {
      * @returns {this}
      */
     some(value) {
-        this.#state = { tag: 'Some', value };
+        this.#state = { tag: "Some", value };
         return this;
     }
 
@@ -31,7 +31,7 @@ export class OptionBaked {
      * @returns {this}
      */
     none() {
-        this.#state = { tag: 'None', value: null };
+        this.#state = { tag: "None", value: null };
         return this;
     }
 
@@ -39,14 +39,14 @@ export class OptionBaked {
      * @returns {Boolean}
      */
     isSome() {
-        return this.#state.tag === 'Some';
+        return this.#state.tag === "Some";
     }
 
     /**
      * @returns {Boolean}
      */
     isNone() {
-        return this.#state.tag === 'None';
+        return this.#state.tag === "None";
     }
 
     /**
@@ -57,7 +57,7 @@ export class OptionBaked {
         if (this.isSome()) {
             return this.#state.value;
         }
-        throw new Error('Called unwrap on a None value.');
+        throw new Error("Called unwrap on a None value.");
     }
 
     /**

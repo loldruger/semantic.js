@@ -1,6 +1,6 @@
 //@ts-check
 
-import { TaggedUnion, TupleType } from "../src/lib.js";
+import { Impl, TaggedUnion, TupleType } from "../src/lib.js";
 import { Option } from "../src/types/option.js";
 
 const test1 = (() => {
@@ -58,10 +58,33 @@ const test4 = (() => {
 })();
 
 const test5 = (() => {
-    const option = Option.Of(String);
-    const option1 = Option.Of(TupleType(Number, String));
-    const option2 = Option.Some(TupleType(1, "2"));
+    // const option = Option.Of(String);
+    // const option1 = Option.Of(TupleType(Number, String));
+    // const option2 = Option.Some(TupleType(1, "2"));
     const option3 = Option.Some(3);
 
     console.log("asdf " + option3.typeInfo);
+
+})();
+
+const test6 = (() => {
+    const Option = TaggedUnion.new()
+        .variant("Some", Number)
+        .variant("None")
+        .build();
+
+    let ad = 0;
+
+    Impl.for(Option)
+        .fn("nameOfFn", (self) => {
+
+        })
+        .fnStatic("asdf", (Self) => {
+
+        })
+        .build();
+        
+    console.log(Option);
+
+    
 })();
