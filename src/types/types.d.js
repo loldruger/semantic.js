@@ -9,18 +9,19 @@
  */
 
 /**
- * @template [T=unknown]
- * @typedef {(...args: Array<String>) => T|void} CallableType
+ * @template [P=any]
+ * @template [R=unknown]
+ * @typedef {(...args: ReadonlyArray<P>) => R|void} CallableType<P, R>
  */
 
 /**
- * @template [T=unknown]
- * @template [U=unknown]
- * @typedef {abstract new (...args: Array<T>) => U} AbstConcreteType<T, U>
+ * @template [P=unknown]
+ * @template [R=unknown]
+ * @typedef {abstract new (...args: ReadonlyArray<P>) => R} AbstConcreteType<P, R>
  */
 
 /**
- * @typedef {Array<ConstructableTypeUnion>} ConstructableTypes
+ * @typedef {ReadonlyArray<ConstructableTypeUnion>} ConstructableTypes
  */
 
 /**
@@ -30,6 +31,12 @@
 /////////////////////////////////
 // Conversion Type Definitions //
 /////////////////////////////////
+
+/**
+ * @template T, U
+ * @typedef {U} AsType<T, U>
+ */
+
 /**
  * @template T
  * @typedef {T extends number ? NumberConstructor :
@@ -56,30 +63,43 @@
 
 /**
  * @template {ConstructableTypeUnion} T
- * @typedef {T extends Array<unknown>
-*     ? {[K in keyof T]: (T[K] extends ConstructableTypes
-*         ? ToRecursivelyInstanceType<T[K]>
-*         : T[K] extends AbstConcreteType
-*             ? InstanceType<T[K]>
-*             : T[K] extends CallableType
-*                 ? T[K]
-*                 : never
-*       )}
-*     : T extends AbstConcreteType
-*         ? InstanceType<T>
-*         : T extends CallableType
-*             ? T
-*             : never
-* } ToRecursivelyInstanceType<T>
-*/
+ * @typedef {IsTupleType<T> extends true
+ *     ? {[K in keyof T]: (T[K] extends ConstructableTypes
+ *         ? ToRecursivelyInstanceType<T[K]>
+ *         : T[K] extends AbstConcreteType
+ *             ? InstanceType<T[K]>
+ *             : T[K] extends CallableType
+ *                 ? T[K] extends (x: infer P) => infer R
+ *                     ? true extends true
+ *                          ? IsTupleType<R> extends true ? 'P R' : 'P'
+ *                          : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
+ *                     : T[K] extends (...x: infer B) => infer A
+ *                          ? true extends true
+ *                              ? IsTupleType<R> extends true ? 'P R' : 'B'
+ *                              : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
+ *                          : never
+ *                 : never
+ *       )}
+ *     : T extends AbstConcreteType
+ *         ? InstanceType<T>
+ *         : T extends CallableType
+ *             ? T
+ *             : never
+ * } ToRecursivelyInstanceType<T>
+ */
 
 ///////////////////
 // Type Checkers //
 ///////////////////
 
+// /**
+//  * @template {ReadonlyArray<unknown>} T
+//  * @typedef {number extends T['length'] ? false : true} IsTupleType<T>
+//  */
+
 /**
- * @template {ReadonlyArray<unknown>} T
- * @typedef {number extends T['length'] ? false : true} IsTupleType<T>
+ * @template T
+ * @typedef {T extends ReadonlyArray<unknown> ? number extends T['length'] ? false : true : false} IsTupleType<T>
  */
 
 /**
@@ -117,4 +137,3 @@
  * @template T
  * @typedef {T extends Array<infer U> ? U : T} UnwrapArray<T>
  */
-
