@@ -57,7 +57,7 @@ export class Option {
     }
 
     static get None() {
-        return new Option(()=>{});
+        return new Option(() => { });
     }
     /**
      * @param {ToRecursivelyInstanceType<T>} value

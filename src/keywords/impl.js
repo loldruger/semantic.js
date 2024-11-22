@@ -29,7 +29,7 @@ export class Impl {
      * @param {IsExtensible<T> extends true ? T : never} target
      * @returns {Impl<T>}
      */
-    static for(target) {    
+    static for(target) {
         return new Impl(target);
     }
 
@@ -47,7 +47,7 @@ export class Impl {
      * @return {this}
      */
     fn(name, func) {
-        this.#fns.push({...this.#fns, name: func});
+        this.#fns.push({ ...this.#fns, name: func });
 
         return this;
     }
@@ -67,7 +67,7 @@ export class Impl {
      * @returns {T}
      */
     build() {
-        Object.setPrototypeOf(this.#target, {...this.#fns})
+        Object.setPrototypeOf(this.#target, { ...this.#fns })
         return this.#target;
     }
 }

@@ -1,8 +1,4 @@
-/**
- * @template {String} K
- * @template V
- * @typedef {Record<K, V>} Pair<T, V>
- */
+//@ts-check
 
 /**
  * @template {ReadonlyArray<Pair<String, unknown>>} T
@@ -21,13 +17,38 @@
  */
 
 /**
- * @template {CodeBlock<unknown>} T
+ * @template {ReadonlyArray<CodeBlock<unknown>>} T
  * @typedef {{[K in keyof T]: T[K]}} Process<T>
  */
 
 /**
+ * @template {ReadonlyArray<CodeBlock<unknown>>} T
+ * @typedef {T extends [infer First, ...infer Rest]
+ *     ? IsEqual<>
+ *         ? []
+ *         : [First, ...Switch<Rest>]
+ *     : T
+ * } Switch<T>
+ */
+
+/**
+ * @template Condition
+ * @template {CodeBlock<unknown>} Body
+ * @template {false} [Break=false]
+ * @typedef {Condition extends true ? Body : never} Case<Condition, Body, Break>
+ */
+
+/**
+ * @template {ReadonlyArray<unknown>} T
+ * @typedef {Switch<[
+ *     Case<>,
+ *     Case<>,
+ * ]>} TestFn2<T>
+ */
+
+/**
  * @template Code
- * @typedef {ReadonlyArray<Code>} CodeBlock<Code>
+ * @typedef {Code} CodeBlock<Code>
  */
 
 /**
@@ -48,4 +69,3 @@
  * @template {ReadonlyArray<CodeBlock<Else>> | unknown} Else
  * @typedef {Condition extends true ? Then : Else} If<Condition, Then, Else>
  */
-

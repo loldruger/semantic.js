@@ -9,6 +9,11 @@
  * @typedef {undefined} UndefinedType
  */
 
+/**
+ * @template {String} K
+ * @template V
+ * @typedef {Record<K, V>} Pair<T, V>
+ */
 
 /**
  * @template [P=any]
@@ -95,7 +100,10 @@
  * @typedef {Process<[
  *     If<
  *         IsTupleType<Arg_T>,
- *         IterToMap<AsType<Arg_T, ReadonlyArray<unknown>>, (i: any) => ''>,
+ *         IterToMap<
+ *             AsType<Arg_T, ReadonlyArray<unknown>>,
+ *             (i: any) => Switch<AsType<Arg_T, ReadonlyArray<unknown>>>
+ *         >,
  *         never
  *     >
  * ]>} TestFn
