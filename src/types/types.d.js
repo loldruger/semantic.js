@@ -5,8 +5,10 @@
 //////////////////////
 
 /**
+ * @typedef {'EvalFailed'} EvalFailed
  * @typedef {undefined} UndefinedType
  */
+
 
 /**
  * @template [P=any]
@@ -34,7 +36,7 @@
 
 /**
  * @template T, U
- * @typedef {U} AsType<T, U>
+ * @typedef {T extends U ? T : never} AsType<T, U>
  */
 
 /**
@@ -50,11 +52,11 @@
  */
 
 /**
- * @template {Array<unknown>} T
+ * @template {ReadonlyArray<unknown>} T
  * @typedef {T extends []
  *     ? []
  *     : T extends [infer Head, ...infer Tail]
- *         ? [ToConcreteType<Head>, ...ToTupleType<Tail extends Array<unknown>
+ *         ? [ToConcreteType<Head>, ...ToTupleType<Tail extends ReadonlyArray<unknown>
  *             ? Tail
  *             : []>
  *         ] : []
@@ -88,14 +90,24 @@
  * } ToRecursivelyInstanceType<T>
  */
 
+/**
+ * @template {ConstructableTypeUnion} Arg_T
+ * @typedef {Process<[
+ *     If<
+ *         IsTupleType<Arg_T>,
+ *         IterToMap<AsType<Arg_T, ReadonlyArray<unknown>>, (i: any) => ''>,
+ *         never
+ *     >
+ * ]>} TestFn
+ */
+
+/**
+ * @typedef {TestFn<[NumberConstructor, BooleanConstructor]>} Test
+ */
+
 ///////////////////
 // Type Checkers //
 ///////////////////
-
-// /**
-//  * @template {ReadonlyArray<unknown>} T
-//  * @typedef {number extends T['length'] ? false : true} IsTupleType<T>
-//  */
 
 /**
  * @template T
@@ -126,6 +138,12 @@
  *         : false 
  *     : false
  * } IsExtensible<T>
+ */
+
+/**
+ * @template T
+ * @template U
+ * @typedef {T extends U ? true : false} IsSubType<T, U>
  */
 
 /**
