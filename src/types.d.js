@@ -1,11 +1,6 @@
 //@ts-check
 
 /**
- * @template {ReadonlyArray<Pair<String, unknown>>} T
- * @typedef {T} ListOfPair<T>
- */
-
-/**
  * @template {ReadonlyArray<Pair<String, unknown>>} PairMap
  * @template {String} Keyword
  * @typedef {PairMap extends ReadonlyArray<infer P>
@@ -22,28 +17,39 @@
  */
 
 /**
- * @template {ReadonlyArray<CodeBlock<unknown>>} T
- * @typedef {T extends [infer First, ...infer Rest]
- *     ? IsEqual<>
- *         ? []
- *         : [First, ...Switch<Rest>]
- *     : T
- * } Switch<T>
+ * @template {PropertyKey} Key
+ * @template {ReadonlyArray<CodeBlock<unknown>> | unknown} Body
+ * @template {'break'=} [Break=undefined]
+ * @typedef {Body} Case<Key, Body, Break>
  */
 
 /**
- * @template Condition
- * @template {CodeBlock<unknown>} Body
- * @template {false} [Break=false]
- * @typedef {Condition extends true ? Body : never} Case<Condition, Body, Break>
+ * @template {PropertyKey} Key
+ * @template {ReadonlyArray<Case<Key, unknown>>} Cases
+ * @typedef {Cases extends ReadonlyArray<infer K>
+ *     ? K extends Case<Key, infer Body, infer Break>
+ *         ? Break extends 'break'
+ *             ? Body
+ *             : Cases extends [unknown, ...infer Rest] ? Switch<Key, Rest> : never
+ *         : never
+ *     : never
+ * } Switch<Key, Cases>
  */
 
 /**
- * @template {ReadonlyArray<unknown>} T
- * @typedef {Switch<[
- *     Case<>,
- *     Case<>,
- * ]>} TestFn2<T>
+ * @typedef {Switch<'type_tuple', [
+ *     Case<'type_tuple',
+ *         [true, false]
+ *     >,
+ *     Case<'type_abst_concrete',
+ *         false,
+ *         'break'
+ *     >,
+ *     Case<'type_abst_concrete2',
+ *         'false',
+ *         'break'
+ *     >
+ * ]>} TestFn2
  */
 
 /**
