@@ -5,12 +5,24 @@
 //////////////////////
 
 /**
+ * @template {number} A
+ * @template {number} B
+ * @typedef {Pair<A, B>} RangeType<A, B>
+ */
+
+/**
+ * @template {number} A
+ * @template {RangeType<A, B>} T
+ * @typedef {{[K in keyof T]: T}} IsInRange<A, T>
+ */
+
+/**
  * @typedef {'EvalFailed'} EvalFailed
  * @typedef {undefined} UndefinedType
  */
 
 /**
- * @template {String} K
+ * @template {PropertyKey} K
  * @template V
  * @typedef {Record<K, V>} Pair<T, V>
  */
@@ -102,7 +114,7 @@
  *         IsTupleType<Arg_T>,
  *         IterToMap<
  *             AsType<Arg_T, ReadonlyArray<unknown>>,
- *             (i: any) => Switch<AsType<Arg_T, ReadonlyArray<unknown>>>
+ *             (i: any) => Match<AsType<Arg_T, ReadonlyArray<unknown>>>
  *         >,
  *         never
  *     >

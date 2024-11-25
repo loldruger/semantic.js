@@ -1,55 +1,30 @@
 //@ts-check
 
 /**
- * @template {ReadonlyArray<Pair<String, unknown>>} PairMap
- * @template {String} Keyword
- * @typedef {PairMap extends ReadonlyArray<infer P>
- *     ? P extends Pair<Keyword, infer V>
- *         ? V
- *         : never
- *     : never
- * } Find
- */
-
-/**
  * @template {ReadonlyArray<CodeBlock<unknown>>} T
  * @typedef {{[K in keyof T]: T[K]}} Process<T>
  */
 
 /**
- * @template {PropertyKey} Key
- * @template {ReadonlyArray<CodeBlock<unknown>> | unknown} Body
- * @template {'break'=} [Break=undefined]
- * @typedef {Body} Case<Key, Body, Break>
- */
-
-/**
- * @template {PropertyKey} Key
- * @template {ReadonlyArray<Case<Key, unknown>>} Cases
- * @typedef {Cases extends ReadonlyArray<infer K>
- *     ? K extends Case<Key, infer Body, infer Break>
- *         ? Break extends 'break'
- *             ? Body
- *             : Cases extends [unknown, ...infer Rest] ? Switch<Key, Rest> : never
- *         : never
+ * @template P
+ * @template {ReadonlyArray<<Binding>(a?: any, binding?: Binding) => unknown>} MatchCases
+ * @typedef {MatchCases extends [infer First, ...infer Rest]
+ *     ? First extends (a: P) => infer S
+ *         ? S
+ *         : First extends () => infer DS
+ *            ? DS
+ *            : Match<P, AsType<Rest, ReadonlyArray<<Binding>(a?: any, binding?: Binding) => unknown>>>
  *     : never
- * } Switch<Key, Cases>
+ * } Match<P, Cases>
  */
 
 /**
- * @typedef {Switch<'type_tuple', [
- *     Case<'type_tuple',
- *         [true, false]
- *     >,
- *     Case<'type_abst_concrete',
- *         false,
- *         'break'
- *     >,
- *     Case<'type_abst_concrete2',
- *         'false',
- *         'break'
- *     >
- * ]>} TestFn2
+ * @typedef {Match<0, [
+ *     (a: 0) => [true],
+ *     (a: 1) => false,
+ *     (a: 2) => 'false',
+ *     () => 'Default'
+ * ]>} TestMatch
  */
 
 /**
