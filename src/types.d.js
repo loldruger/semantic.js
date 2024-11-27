@@ -6,25 +6,41 @@
  */
 
 /**
- * @template P
- * @template {ReadonlyArray<<Binding>(a?: any, binding?: Binding) => unknown>} MatchCases
+ * @template {unknown} P
+ * @template {ReadonlyArray<
+ *     (<Binding>(p?: any) => unknown) | 
+ *     (<Binding>(p: any, when: true) => unknown) |
+ *     (<Binding>(p: any, when: false) => unknown)
+ * >} MatchCases
  * @typedef {MatchCases extends [infer First, ...infer Rest]
- *     ? First extends (a: P) => infer S
+ *     ? First extends (p: P) => infer S
  *         ? S
- *         : First extends () => infer DS
- *            ? DS
- *            : Match<P, AsType<Rest, ReadonlyArray<<Binding>(a?: any, binding?: Binding) => unknown>>>
- *     : never
- * } Match<P, Cases>
+ *         : First extends (p: P, when: infer Cond) => infer CS
+ *             ? Cond extends true 
+ *                 ? CS
+ *                 : never
+ *             : First extends (when: infer Cond) => infer WCS
+ *                 ? Cond extends true
+ *                     ? WCS
+ *                     : Match<P, AsType<Rest, ReadonlyArray<
+ *                         (<Binding>(p?: any) => unknown) |
+ *                         (<Binding>(p: any, when: true) => unknown) |
+ *                         (<Binding>(p: any, when: false) => unknown)
+ *                     >>>
+ *                 : First extends () => infer DS
+ *                     ? DS
+ *                     : Match<P, AsType<Rest, ReadonlyArray<
+ *                         (<Binding>(p?: any) => unknown) |
+ *                         (<Binding>(p: any, when: true) => unknown) |
+ *                         (<Binding>(p: any, when: false) => unknown)
+ *                     >>>
+ *     : ErrorType<'Not all cases are handled'>
+ * } Match<P, MatchCases>
  */
 
 /**
- * @typedef {Match<0, [
- *     (a: 0) => [true],
- *     (a: 1) => false,
- *     (a: 2) => 'false',
- *     () => 'Default'
- * ]>} TestMatch
+ * @template {String} L
+ * @typedef {L} Label<L>
  */
 
 /**
@@ -34,8 +50,22 @@
 
 /**
  * @template {Boolean} Condition
- * @template {ReadonlyArray<CodeBlock<Exec>> | unknown} Exec
- * @typedef {Condition extends true ? Loop<Condition, Exec> : never} Loop<Condition, Exec>
+ * @template {ReadonlyArray<CodeBlock<Exec> | Label<String>>} Exec
+ * @typedef {If<Condition,
+ *     Match<Exec, [
+ *          <Binding = String>(p: any) => Binding,
+ *          () => 'Exec'
+ *     ]>, never>
+ * } Loop<Condition, Exec>
+ */
+
+/**
+ * @template {Boolean} T
+ * @typedef {Loop<T, []>} TestLoop<T>
+ */
+
+/**
+ * @typedef {TestLoop<true>} TestLoopTrue
  */
 
 /**

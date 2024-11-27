@@ -12,8 +12,18 @@
 
 /**
  * @template {number} A
- * @template {RangeType<A, B>} T
- * @typedef {{[K in keyof T]: T}} IsInRange<A, T>
+ * @template {RangeType<number, number>} T
+ * @typedef {{[K in keyof T]: T[K]}} IsInRange<A, T>
+ */
+
+/**
+ * @typedef {IsInRange<5, RangeType<0, 10>>} TestRangeType
+ */
+
+/**
+ * @template {String} M
+ * @template {String} [E='ERROR: ']
+ * @typedef {`${E}${M}`} ErrorType<M>
  */
 
 /**
@@ -90,15 +100,15 @@
  *             : T[K] extends CallableType
  *                 ? T[K] extends (x: infer P) => infer R
  *                     ? true extends true
- *                          ? IsTupleType<R> extends true ? 'P R' : 'P'
- *                          : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
+ *                         ? IsTupleType<R> extends true ? 'P R' : 'P'
+ *                         : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
  *                     : T[K] extends (...x: infer B) => infer A
- *                          ? true extends true
- *                              ? IsTupleType<R> extends true ? 'P R' : 'B'
- *                              : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
- *                          : never
+ *                         ? true extends true
+ *                             ? IsTupleType<R> extends true ? 'P R' : 'B'
+ *                             : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
+ *                         : never
  *                 : never
- *       )}
+ *     )}
  *     : T extends AbstConcreteType
  *         ? InstanceType<T>
  *         : T extends CallableType
@@ -109,20 +119,35 @@
 
 /**
  * @template {ConstructableTypeUnion} Arg_T
- * @typedef {Process<[
- *     If<
- *         IsTupleType<Arg_T>,
- *         IterToMap<
- *             AsType<Arg_T, ReadonlyArray<unknown>>,
- *             (i: any) => Match<AsType<Arg_T, ReadonlyArray<unknown>>>
- *         >,
- *         never
- *     >
- * ]>} TestFn
+ * @typedef {Loop<IsTupleType<Arg_T>, [
+ *     Label<"Label:">,
+ *         Match<Arg_T, [
+ *             (p: ConstructableTypes) => Arg_T,
+ *             (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *             (p: CallableType) => Match<Arg_T, [
+ *                 (p: (Arg_T extends (i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *                 (p: (Arg_T extends (...i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *             ]>,
+ *             () => 'Default'
+ *         ]>
+ * ]>} TestFn<Arg_T>
  */
 
 /**
- * @typedef {TestFn<[NumberConstructor, BooleanConstructor]>} Test
+ * @typedef {TestFn<NumberConstructor>} Test1
+ * @typedef {TestFn<[NumberConstructor, BooleanConstructor, StringConstructor]>} Test2
+ * @typedef {TestFn<[NumberConstructor, [BooleanConstructor, StringConstructor]]>} Test3
+ * @typedef {TestFn<[[NumberConstructor], BooleanConstructor, StringConstructor, ObjectConstructor]>} Test4
+ * @typedef {TestFn<(a: any) => any>} Test5
+ * @typedef {TestFn<(a: [any]) => any>} Test6
+ * @typedef {TestFn<(a: [any, any]) => any>} Test7
+ * @typedef {TestFn<(a: [any, [any]]) => any>} Test8
+ * @typedef {TestFn<(a: any) => [any]>} Test9
+ * @typedef {TestFn<(a: any) => [any, any]>} Test10
+ * @typedef {TestFn<(a: any) => [any, [any]]>} Test11
+ * @typedef {TestFn<(a: [any]) => [any]>} Test12
+ * @typedef {TestFn<(a: [any]) => [any, any]>} Test13
+ *
  */
 
 ///////////////////
