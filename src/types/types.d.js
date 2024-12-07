@@ -119,17 +119,14 @@
 
 /**
  * @template {ConstructableTypeUnion} Arg_T
- * @typedef {Loop<IsTupleType<Arg_T>, [
- *     Label<"Label:">,
- *         Match<Arg_T, [
- *             (p: ConstructableTypes) => Arg_T,
- *             (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *             (p: CallableType) => Match<Arg_T, [
- *                 (p: (Arg_T extends (i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *                 (p: (Arg_T extends (...i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *             ]>,
- *             () => 'Default'
- *         ]>
+ * @typedef {Match<Arg_T, [
+ *     (p: ConstructableTypes) => Arg_T,
+ *     (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *     (p: CallableType) => Match<Arg_T, [
+ *         (p: (Arg_T extends (i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *         (p: (Arg_T extends (...i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *     ]>,
+ *     () => 'Default'
  * ]>} TestFn<Arg_T>
  */
 
