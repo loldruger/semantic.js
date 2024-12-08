@@ -7,19 +7,36 @@
 
 /**
  * @template T
- * @typedef {{ v: T }} At<T>
+ * @typedef {{ v: T }} Binding<T>
  */
 
 /**
  * @template {unknown} P
  * @typedef {ReadonlyArray<
- *     | ((p: any, at: At<P>, when: true) => unknown)
- *     | ((p: any, at: At<P>, when: false) => unknown)
- *     | ((p: any, at: At<P>) => unknown)
+ *     | ((p: any, b: Binding<P>, when: true) => unknown)
+ *     | ((p: any, b: Binding<P>, when: false) => unknown)
+ *     | ((p: any, when: true, b: Binding<P>) => unknown)
+ *     | ((p: any, when: false, b: Binding<P>) => unknown)
+ *     | ((b: Binding<P>, p: any, when: true) => unknown)
+ *     | ((b: Binding<P>, p: any, when: false) => unknown)
+ *     | ((b: Binding<P>, when: true, p: any) => unknown)
+ *     | ((b: Binding<P>, when: false, p: any) => unknown)
+ *     | ((when: true, p: any, b: Binding<P>) => unknown)
+ *     | ((when: true, b: Binding<P>, p: any) => unknown)
+ *     | ((when: false, p: any, b: Binding<P>) => unknown)
+ *     | ((when: false, b: Binding<P>, p: any) => unknown)
+ *     | ((p: any, b: Binding<P>) => unknown)
  *     | ((p: any, when: true) => unknown)
  *     | ((p: any, when: false) => unknown)
+ *     | ((b: Binding<P>, p: any) => unknown)
+ *     | ((b: Binding<P>, when: true) => unknown)
+ *     | ((b: Binding<P>, when: false) => unknown)
+ *     | ((when: true, p: any) => unknown)
+ *     | ((when: true, b: Binding<P>) => unknown)
+ *     | ((when: false, p: any) => unknown)
+ *     | ((when: false, b: Binding<P>) => unknown)
  *     | ((p: any) => unknown)
- *     | ((at: At<P>) => unknown)
+ *     | ((b: Binding<P>) => unknown)
  *     | ((when: true) => unknown)
  *     | ((when: false) => unknown)
  *     | (() => unknown)
@@ -30,44 +47,96 @@
  * @template {unknown} P
  * @template {MatchCases<P>} MatchArm
  * @typedef {MatchArm extends []
- *       ? ErrorType<"No match case found">
- *       : MatchArm extends [infer First, ...infer Rest]
- *           ? First extends (() => infer S)
- *               ? S
- *               : First extends ((a: infer A) => infer S)
- *                   ? [A] extends [false]
- *                       ? Match<P, AsType<Rest, MatchCases<P>>>
- *                       : [A] extends [true] | [At<P>]
- *                           ? S
- *                           : [A] extends [P]
- *                               ? S
- *                               : Match<P, AsType<Rest, MatchCases<P>>>
- *               : First extends ((a: infer A, b: infer B) => infer S)
- *                   ? [B] extends [false]
- *                       ? Match<P, AsType<Rest, MatchCases<P>>>
- *                       : [B] extends [true]
- *                           ? [A] extends [P]
- *                               ? S
- *                               : Match<P, AsType<Rest, MatchCases<P>>>
- *                           : [B] extends [At<P>]
- *                               ? [A] extends [P]
- *                                   ? S
- *                                   : Match<P, AsType<Rest, MatchCases<P>>>
- *                               : ErrorType<"Invalid match case">
- *               : First extends ((a: infer A, b: infer B, c: infer C) => infer S)
- *                   ? [C] extends [false]
- *                       ? Match<P, AsType<Rest, MatchCases<P>>>
- *                       : [C] extends [true]
- *                           ? [A] extends [P]
- *                               ? [B] extends [At<P>]
- *                                   ? S
- *                                   : Match<P, AsType<Rest, MatchCases<P>>>
- *                               : Match<P, AsType<Rest, MatchCases<P>>>
- *                           : ErrorType<"Invalid match case">
- *               : Match<P, AsType<Rest, MatchCases<P>>>
- *     : never
- *   } Match<P, MatchArm>
+ *     ? ErrorType<"No match case found">
+ *     : MatchArm extends [infer First, ...infer Rest]
+ *         ? First extends (() => infer S)
+ *             ? S
+ *             : First extends ((a: infer A) => infer S)
+ *                 ? [A] extends [false]
+ *                     ? Match<P, AsType<Rest, MatchCases<P>>>
+ *                     : [A] extends [true]
+ *                         ? S
+ *                         : [A] extends [Binding<P>] | [P]
+ *                             ? S
+ *                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                 : First extends ((a: infer A, b: infer B) => infer S)
+ *                     ? [B] extends [false]
+ *                         ? [A] extends [false]
+ *                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                             : [A] extends [true]
+ *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                         : [B] extends [true]
+ *                             ? [A] extends [false]
+ *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                 : [A] extends [true]
+ *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                     : [A] extends [Binding<P>] | [P]
+ *                                         ? S
+ *                                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *                             : [A] extends [false]
+ *                                 ? [B] extends [false]
+ *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                     : [B] extends [true]
+ *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                 : [A] extends [true]
+ *                                     ? [B] extends [false]
+ *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                         : [B] extends [true]
+ *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                             : [B] extends [Binding<P>] | [P]
+ *                                                 ? S
+ *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                     : [A] extends [P]
+ *                                         ? [B] extends [P]
+ *                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
+ *                                             : [B] extends [Binding<P>]
+ *                                                 ? S
+ *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                     : First extends ((a: infer A, b: infer B, c: infer C) => infer S)
+ *                         ? [A] extends [true] | [false]
+ *                             ? [A] extends [false]
+ *                                 ? Match<P, AsType<Rest, MatchCases<P>>>
+ *                                 : [B] extends [P]
+ *                                     ? [C] extends [Binding<P>]
+ *                                         ? S
+ *                                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                     : [B] extends [Binding<P>]
+ *                                         ? [C] extends [P]
+ *                                             ? S
+ *                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *                             : [B] extends [true] | [false]
+ *                                 ? [B] extends [false]
+ *                                     ? Match<P, AsType<Rest, MatchCases<P>>>
+ *                                     : [A] extends [P]
+ *                                         ? [C] extends [Binding<P>]
+ *                                             ? S
+ *                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                         : [A] extends [Binding<P>]
+ *                                             ? [C] extends [P]
+ *                                                 ? S
+ *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                 : [C] extends [true] | [false]
+ *                                     ? [C] extends [false]
+ *                                         ? Match<P, AsType<Rest, MatchCases<P>>>
+ *                                         : [A] extends [P]
+ *                                             ? [B] extends [Binding<P>]
+ *                                                 ? S
+ *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                             : [A] extends [Binding<P>]
+ *                                                 ? [B] extends [P]
+ *                                                     ? S
+ *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *         : never
+ * } Match<P, MatchArm>
  */
+
 
 /**
  * @template {String} L
