@@ -72,8 +72,6 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: String) => 'String',
- *     (p: Number) => 'Number',
  *     (p: Boolean, b: Binding<P>) => 'Boolean with binding',
  * ]>} TestMatch8<P>
  */
@@ -81,8 +79,6 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: String) => 'String',
- *     (p: Number) => 'Number',
  *     (b: Binding<P>, p: Boolean) => 'Boolean with binding, swapping a and b parameters',
  *     () => 'Default',
  * ]>} TestMatch9<P>
@@ -91,8 +87,6 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: String) => 'String',
- *     (p: Number) => 'Number',
  *     (when: false, p: Boolean) => 'Swapping a and b parameters. Should never happen',
  *     () => 'Default',
  * ]>} TestMatch10<P>
@@ -101,8 +95,6 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: String) => 'String',
- *     (p: Number) => 'Number',
  *     (when: false, p: Boolean) => 'Should never happen',
  *     (when: true, p: Boolean) => 'Boolean with true, swapping a and b parameters.',
  *     () => 'Default',
@@ -112,13 +104,46 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: String) => 'String',
- *     (p: Number) => 'Number',
  *     (when: false, p: Boolean) => 'Should never happen',
  *     (at: Binding<P>, p: String) => 'String with binding, swapping a and b parameters.',
  *     (at: Binding<P>, p: Boolean) => 'Boolean with binding, swapping a and b parameters.',
  *     () => 'Default',
  * ]>} TestMatch12<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (when: true, b: Binding<P>) => b['v'],
+ *     () => 'Default',
+ * ]>} TestMatch13<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: Boolean, when: false, b: Binding<P>) => 'Feels Bad',
+ *     (p: Boolean, when: true, b: Binding<P>) => 'Feels Good',
+ *     () => 'Default',
+ * ]>} TestMatch14<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: Boolean, when: false, b: Binding<P>) => 'Feels Bad',
+ *     (when: true, p: Boolean, b: Binding<P>) => 'Feels Good',
+ *     () => 'Default',
+ * ]>} TestMatch15<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: Boolean, b: Binding<P>, when: false) => 'Feels Bad',
+ *     (p: Boolean, b: Binding<P>, when: true) => 'Feels Good',
+ *     () => 'Default',
+ * ]>} TestMatch16<P>
  */
 
 /**
@@ -135,4 +160,8 @@
  * @typedef {TestMatch10<Boolean>} MatchTestCase10_Should_Default
  * @typedef {TestMatch11<Boolean>} MatchTestCase11_Should_Boolean_With_True_Swapped_Params
  * @typedef {TestMatch12<Boolean>} MatchTestCase12_Should_Default_With_Binding_Swapped_Params
+ * @typedef {TestMatch13<Boolean>} MatchTestCase13_Should_Boolean
+ * @typedef {TestMatch14<Boolean>} MatchTestCase14_Should_Feels_Good
+ * @typedef {TestMatch15<Boolean>} MatchTestCase15_Should_Feels_Good
+ * @typedef {TestMatch16<Boolean>} MatchTestCase16_Should_Feels_Good
  */
