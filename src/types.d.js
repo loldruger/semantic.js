@@ -94,44 +94,111 @@
  *                                             : [B] extends [Binding<P>]
  *                                                 ? S
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                     : First extends ((a: infer A, b: infer B, c: infer C) => infer S)
- *                         ? [A] extends [true] | [false]
- *                             ? [A] extends [false]
- *                                 ? Match<P, AsType<Rest, MatchCases<P>>>
- *                                 : [B] extends [P]
- *                                     ? [C] extends [Binding<P>]
- *                                         ? S
- *                                         : Match<P, AsType<Rest, MatchCases<P>>>
- *                                     : [B] extends [Binding<P>]
- *                                         ? [C] extends [P]
- *                                             ? S
- *                                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                                         : Match<P, AsType<Rest, MatchCases<P>>>
- *                             : [B] extends [true] | [false]
- *                                 ? [B] extends [false]
- *                                     ? Match<P, AsType<Rest, MatchCases<P>>>
- *                                     : [A] extends [P]
- *                                         ? [C] extends [Binding<P>]
- *                                             ? S
- *                                             : Match<P, AsType<Rest, MatchCases<P>>>
  *                                         : [A] extends [Binding<P>]
- *                                             ? [C] extends [P]
- *                                                 ? S
- *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                                 : [C] extends [true] | [false]
- *                                     ? [C] extends [false]
- *                                         ? Match<P, AsType<Rest, MatchCases<P>>>
- *                                         : [A] extends [P]
  *                                             ? [B] extends [Binding<P>]
- *                                                 ? S
- *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                             : [A] extends [Binding<P>]
- *                                                 ? [B] extends [P]
+ *                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
+ *                                                 : [B] extends [P]
+ *                                                     ? S
+ *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                             : [B] extends [P]
+ *                                                 ? [A] extends [Binding<P>]
  *                                                     ? S
  *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                     : First extends ((a: infer A, b: infer B, c: infer C) => infer S)
+ *                         ? [C] extends [false]
+ *                             ? [B] extends [false]
+ *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                 : [B] extends [true]
+ *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                     : [A] extends [false]
+ *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                         : [A] extends [true]
+ *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                             : [C] extends [true]
+ *                                 ? [B] extends [false]
+ *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                     : [B] extends [true]
+ *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                         : [A] extends [false]
+ *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                             : [A] extends [true]
+ *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                 : [A] extends [Binding<P>]
+ *                                                     ? [B] extends [Binding<P>]
+ *                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
+ *                                                         : [B] extends [P]
+ *                                                             ? S
+ *                                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                      : [A] extends [P]
+ *                                                         ? [B] extends [P]
+ *                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
+ *                                                             : [B] extends [Binding<P>]
+ *                                                                 ? S
+ *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                 : [B] extends [false]
+ *                                     ? [C] extends [false]
+ *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                         : [C] extends [true]
+ *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                             : [A] extends [false]
+ *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                 : [A] extends [true]
+ *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                     : [B] extends [true]
+ *                                         ? [C] extends [false]
+ *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                             : [C] extends [true]
+ *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                 : [A] extends [false]
+ *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                     : [A] extends [true]
+ *                                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                         : [A] extends [Binding<P>]
+ *                                                             ? [C] extends [Binding<P>]
+ *                                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
+ *                                                                 : [C] extends [P]
+ *                                                                     ? S
+ *                                                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                             : [C] extends [P]
+ *                                                                 ? [A] extends [Binding<P>]
+ *                                                                     ? S
+ *                                                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                         : [A] extends [false]
+ *                                             ? [B] extends [false]
+ *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                 : [B] extends [true]
+ *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                     : [C] extends [false]
+ *                                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                         : [C] extends [true]
+ *                                                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                             : [A] extends [true]
+ *                                                 ? [B] extends [false]
+ *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                     : [B] extends [true]
+ *                                                         ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                         : [B] extends [false]
+ *                                                             ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                             : [B] extends [true]
+ *                                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
+ *                                                                 : [B] extends [Binding<P>]
+ *                                                                     ? [B] extends [Binding<P>]
+ *                                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
+ *                                                                         : [B] extends [P]
+ *                                                                             ? S
+ *                                                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                                     : [B] extends [P]
+ *                                                                         ? [B] extends [Binding<P>]
+ *                                                                             ? S
+ *                                                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                 : never
  *                         : Match<P, AsType<Rest, MatchCases<P>>>
  *         : never
  * } Match<P, MatchArm>

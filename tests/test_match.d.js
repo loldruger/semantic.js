@@ -63,7 +63,7 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: Boolean, when: false) => 'Boolean never happens',
+ *     (p: Boolean, when: false) => 'Should never happen',
  *     (p: Boolean, when: true) => 'Boolean when true',
  *     () => 'Default',
  * ]>} TestMatch7<P>
@@ -93,9 +93,32 @@
  * @typedef {Match<P, [
  *     (p: String) => 'String',
  *     (p: Number) => 'Number',
- *     (when: false, p: Boolean) => 'swapping a and b parameters. never happenes',
+ *     (when: false, p: Boolean) => 'Swapping a and b parameters. Should never happen',
  *     () => 'Default',
  * ]>} TestMatch10<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: String) => 'String',
+ *     (p: Number) => 'Number',
+ *     (when: false, p: Boolean) => 'Should never happen',
+ *     (when: true, p: Boolean) => 'Boolean with true, swapping a and b parameters.',
+ *     () => 'Default',
+ * ]>} TestMatch11<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: String) => 'String',
+ *     (p: Number) => 'Number',
+ *     (when: false, p: Boolean) => 'Should never happen',
+ *     (at: Binding<P>, p: String) => 'String with binding, swapping a and b parameters.',
+ *     (at: Binding<P>, p: Boolean) => 'Boolean with binding, swapping a and b parameters.',
+ *     () => 'Default',
+ * ]>} TestMatch12<P>
  */
 
 /**
@@ -109,5 +132,7 @@
  * @typedef {TestMatch7<Boolean>} MatchTestCase7_Should_Boolean_With_True
  * @typedef {TestMatch8<Boolean>} MatchTestCase8_Should_Boolean_With_Binding
  * @typedef {TestMatch9<Boolean>} MatchTestCase9_Should_Default_With_Binding_Swapped_Params
- * @typedef {TestMatch10<Boolean>} MatchTestCase10_Should_Default_With_Binding_Swapped_Params
+ * @typedef {TestMatch10<Boolean>} MatchTestCase10_Should_Default
+ * @typedef {TestMatch11<Boolean>} MatchTestCase11_Should_Boolean_With_True_Swapped_Params
+ * @typedef {TestMatch12<Boolean>} MatchTestCase12_Should_Default_With_Binding_Swapped_Params
  */
