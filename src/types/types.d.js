@@ -195,5 +195,16 @@
 
 /**
  * @template T
- * @typedef {T extends Array<infer U> ? U : T} UnwrapArray<T>
+ * @typedef {T extends { [k: string]: any }
+ *     ? T extends { [K in keyof T]: infer U }[keyof T]
+ *         ? U
+ *         : never
+ *     : T extends Array<infer U>
+ *         ? U
+ *         : T extends (...args: any[]) => infer U
+ *             ? U
+ *             : T extends Promise<infer U>
+ *                 ? U
+ *                 : T
+ * } Unwrap<T>
  */

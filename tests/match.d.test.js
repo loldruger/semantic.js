@@ -147,21 +147,21 @@
  */
 
 /**
- * @typedef {TestMatch0<Boolean>} MatchTestCase0_Should_Error
- * @typedef {TestMatch1<Boolean>} MatchTestCase1_Should_Boolean
- * @typedef {TestMatch2<Boolean>} MatchTestCase2_Should_Boolean
- * @typedef {TestMatch3<Boolean>} MatchTestCase3_Should_Default
- * @typedef {TestMatch4<Boolean>} MatchTestCase4_Should_Value_Of_P
- * @typedef {TestMatch5<Boolean>} MatchTestCase5_Should_Default
- * @typedef {TestMatch6<Boolean>} MatchTestCase6_Should_Boolean_With_True
- * @typedef {TestMatch7<Boolean>} MatchTestCase7_Should_Boolean_With_True
- * @typedef {TestMatch8<Boolean>} MatchTestCase8_Should_Boolean_With_Binding
- * @typedef {TestMatch9<Boolean>} MatchTestCase9_Should_Default_With_Binding_Swapped_Params
- * @typedef {TestMatch10<Boolean>} MatchTestCase10_Should_Default
- * @typedef {TestMatch11<Boolean>} MatchTestCase11_Should_Boolean_With_True_Swapped_Params
- * @typedef {TestMatch12<Boolean>} MatchTestCase12_Should_Default_With_Binding_Swapped_Params
- * @typedef {TestMatch13<Boolean>} MatchTestCase13_Should_Boolean
- * @typedef {TestMatch14<Boolean>} MatchTestCase14_Should_Feels_Good
- * @typedef {TestMatch15<Boolean>} MatchTestCase15_Should_Feels_Good
- * @typedef {TestMatch16<Boolean>} MatchTestCase16_Should_Feels_Good
+ * @typedef {TestMatch0<Boolean>} MatchTestCase0_ShouldBe_Error
+ * @typedef {TestMatch1<Boolean>} MatchTestCase1_ShouldBe_Boolean
+ * @typedef {TestMatch2<Boolean>} MatchTestCase2_ShouldBe_Boolean
+ * @typedef {TestMatch3<Boolean>} MatchTestCase3_ShouldBe_Default
+ * @typedef {TestMatch4<Boolean>} MatchTestCase4_ShouldBe_Value_Of_P
+ * @typedef {TestMatch5<Boolean>} MatchTestCase5_ShouldBe_Default
+ * @typedef {TestMatch6<Boolean>} MatchTestCase6_ShouldBe_Boolean_With_True
+ * @typedef {TestMatch7<Boolean>} MatchTestCase7_ShouldBe_Boolean_With_True
+ * @typedef {TestMatch8<Boolean>} MatchTestCase8_ShouldBe_Boolean_With_Binding
+ * @typedef {TestMatch9<Boolean>} MatchTestCase9_ShouldBe_Default_With_Binding_Swapped_Params
+ * @typedef {TestMatch10<Boolean>} MatchTestCase10_ShouldBe_Default
+ * @typedef {TestMatch11<Boolean>} MatchTestCase11_ShouldBe_Boolean_With_True_Swapped_Params
+ * @typedef {TestMatch12<Boolean>} MatchTestCase12_ShouldBe_Default_With_Binding_Swapped_Params
+ * @typedef {TestMatch13<Boolean>} MatchTestCase13_ShouldBe_Boolean
+ * @typedef {TestMatch14<Boolean>} MatchTestCase14_ShouldBe_Feels_Good
+ * @typedef {TestMatch15<Boolean>} MatchTestCase15_ShouldBe_Feels_Good
+ * @typedef {TestMatch16<Boolean>} MatchTestCase16_ShouldBe_Feels_Good
  */

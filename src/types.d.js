@@ -1,11 +1,6 @@
 //@ts-check
 
 /**
- * @template {ReadonlyArray<CodeBlock<unknown>>} T
- * @typedef {{[K in keyof T]: T[K]}} Process<T>
- */
-
-/**
  * @template T
  * @typedef {{ v: T }} Binding<T>
  */
@@ -208,50 +203,32 @@
  * } Match<P, MatchArm>
  */
 
+/**
+ * @template {ReadonlyArray<CodeBlock<unknown>>} T
+ * @typedef {{[K in keyof T]: T[K]}} Process<T>
+ */
 
 /**
  * @template {String} L
- * @typedef {L} Label<L>
+ * @typedef {{label: L}} Label<L>
  */
 
 /**
  * @template Code
- * @typedef {Code} CodeBlock<Code>
+ * @typedef {{code: Code}} CodeBlock<Code>
  */
 
 /**
  * @template {Boolean} Condition
  * @template {ReadonlyArray<CodeBlock<Exec> | Label<String>>} Exec
  * @typedef {If<Condition,
- *     Match<Infer<ReadonlyArray<Exec>, Exec>, [
- *          (p: Label<String>) => "Label",
+ *     Match<Exec, [
+ *          (p: Label<String>, b: Binding<Exec>) => b["v"],
  *          (p: CodeBlock<Exec>) => "CodeBlock",
  *          () => "Default"
  *     ]>,
  *     never>
  * } Loop<Condition, Exec>
- */
-
-/**
- * @template {unknown} T
- * @typedef {T extends infer E ? E : never} ContainerType<T>
- */
-
-/**
- * @template T
- * @template {T extends ContainerType<infer E> ? E : never} W
- * @typedef {W} Infer<W, T>
- */
-
-/**
- * @template {Boolean} T
- * @typedef {Loop<T, [
- *     Label<any>,
- * ]>} TestLoop<T>
- */
-
-/**
- * @typedef {TestLoop<true>} TestLoopTrue
  */
 
 /**
