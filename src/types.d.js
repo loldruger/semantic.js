@@ -163,10 +163,12 @@
  *                                                                 : [C] extends [P]
  *                                                                     ? S
  *                                                                     : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                             : [C] extends [P]
- *                                                                 ? [A] extends [Binding<P>]
- *                                                                     ? S
- *                                                                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                             : [A] extends [P]
+ *                                                                 ? [C] extends [P]
+ *                                                                     ? ErrorType<"Pattern parameter 'p' is duplicated">
+ *                                                                     : [C] extends [Binding<P>]
+ *                                                                         ? S
+ *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                         : [A] extends [false]
  *                                             ? [B] extends [false]
@@ -193,10 +195,12 @@
  *                                                                         : [B] extends [P]
  *                                                                             ? S
  *                                                                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                                     : [B] extends [P]
- *                                                                         ? [B] extends [Binding<P>]
- *                                                                             ? S
- *                                                                             : Match<P, AsType<Rest, MatchCases<P>>>
+ *                                                                     : [C] extends [P]
+ *                                                                         ? [B] extends [P]
+ *                                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
+ *                                                                             : [B] extends [Binding<P>]
+ *                                                                                 ? S
+ *                                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                 : never
  *                         : Match<P, AsType<Rest, MatchCases<P>>>
