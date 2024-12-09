@@ -105,7 +105,7 @@
  *                     : T[K] extends (...x: infer B) => infer A
  *                         ? true extends true
  *                             ? IsTupleType<R> extends true ? 'P R' : 'B'
- *                             : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
+ *                             : IsTupleType<R> extends true ? 'R' : (x: Params) => InstanceType<R extends AbstConcreteType ? R : never>
  *                         : never
  *                 : never
  *     )}

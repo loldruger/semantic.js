@@ -114,7 +114,7 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (when: true, b: Binding<P>) => b['v'],
+ *     (when: true, b: Binding<P>) => b['binding'],
  *     () => 'Default',
  * ]>} TestMatch13<P>
  */
@@ -147,6 +147,36 @@
  */
 
 /**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: Number) => 'Number',
+ *     (p: (a: Number) => Boolean) => 'Num to Bool',
+ *     (p: () => Boolean) => 'Function to Boolean',
+ *     () => 'Default',
+ * ]>} TestMatch17<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: Number) => 'Number',
+ *     (p: (a: (a: Number) => Boolean) => Boolean) => 'Num to Bool to Bool',
+ *     (p: () => Boolean) => 'Function to Boolean',
+ *     () => 'Default',
+ * ]>} TestMatch18<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: Number) => 'Number',
+ *     (p: (a: (a: Number) => Boolean) => (a: Boolean) => Number) => 'Num to Bool to Fn of (Bool to Num)',
+ *     (p: () => Boolean) => 'Function to Boolean',
+ *     () => 'Default',
+ * ]>} TestMatch19<P>
+ */
+
+/**
  * @typedef {TestMatch0<Boolean>} MatchTestCase0_ShouldBe_Error
  * @typedef {TestMatch1<Boolean>} MatchTestCase1_ShouldBe_Boolean
  * @typedef {TestMatch2<Boolean>} MatchTestCase2_ShouldBe_Boolean
@@ -164,4 +194,8 @@
  * @typedef {TestMatch14<Boolean>} MatchTestCase14_ShouldBe_Feels_Good
  * @typedef {TestMatch15<Boolean>} MatchTestCase15_ShouldBe_Feels_Good
  * @typedef {TestMatch16<Boolean>} MatchTestCase16_ShouldBe_Feels_Good
+ * @typedef {TestMatch17<(a: Number) => Boolean>} MatchTestCase17_ShouldBe_Num_To_Bool
+ * @typedef {TestMatch17<(a: String) => Boolean>} MatchTestCase18_ShouldBe_Default
+ * @typedef {TestMatch18<(a: (a: Number) => Boolean) => Boolean>} MatchTestCase19_ShouldBe_Num_To_Bool_To_Bool
+ * @typedef {TestMatch19<(a: (a: Number) => Boolean) => (a: Boolean) => Number>} MatchTestCase20_ShouldBe_Num_To_Bool_To_Fn_Of_Bool_To_Num
  */
