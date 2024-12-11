@@ -21,9 +21,13 @@
  */
 
 /**
- * @template {String} M
+ * @template {String} Message
  * @template {String} [E='ERROR: ']
- * @typedef {`${E}${M}`} ErrorType<M>
+ * @typedef {never extends never ? `${E}${Message}` : never} ErrorType<Message>
+ */
+
+/**
+ * @typedef {ErrorType<'This is an error message'>} TestErrorType
  */
 
 /**
@@ -63,7 +67,7 @@
 
 /**
  * @template T, U
- * @typedef {T extends U ? T : never} AsType<T, U>
+ * @typedef {T extends U ? T : String extends U ? ErrorType<"AsType<T, U> casting failed"> : never} AsType<T, U>
  */
 
 /**
@@ -208,3 +212,13 @@
  *                 : T
  * } Unwrap<T>
  */
+
+/**
+ * @template {ReadonlyArray<any>} T
+ * @typedef {T extends [infer First, ...infer Rest]
+*     ? First extends Rest[number]
+*         ? true
+*         : HasArrayDuplication<Rest> 
+*     : false
+* } HasArrayDuplication<T>
+*/

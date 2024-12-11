@@ -35,7 +35,8 @@
  *     | ((when: true) => unknown)
  *     | ((when: false) => unknown)
  *     | (() => unknown)
- * >} MatchCases
+ * >
+ * } MatchCases
  */
 
 /**
@@ -232,22 +233,7 @@
  */
 
 /**
- * @template P
- * @typedef {Match<P, [
- *     (p: Number) => 'Number',
- *     (p: (a: Number) => Boolean) => 'Num to Bool',
- *     (p: () => Boolean) => 'Function to Boolean',
- *     () => 'Default',
- * ]>} TestMatch171<P>
- */
-
-/**
- * @typedef {TestMatch17<(a: Number, b: String) => Boolean>} MatchTestCase171_ShouldBe_Num_To_Bool
- */
-
-
-/**
- * @template {ReadonlyArray<CodeBlock<unknown>>} T
+ * @template {ReadonlyArray<any>} T
  * @typedef {{[K in keyof T]: T[K]}} Process<T>
  */
 
@@ -263,19 +249,24 @@
 
 /**
  * @template Code
- * @typedef {Code} CodeBlock<Code>
+ * @typedef {{code: Code}} CodeBlock<Code>
+ */
+
+/**
+ * @template {CodeBlock<any>|Label<any>} Exec
+ * @typedef {Match<Exec, [
+ *     (p: Label<any>, b: Binding<Exec>) => AsType<b["binding"], Label<any>>["label"],
+ *     (p: CodeBlock<any>, b: Binding<Exec>) => AsType<b["binding"], CodeBlock<any>>["code"],
+ *     (b: Binding<Exec>) => b["binding"],
+ * ]>} LoopMatcher<Exec>
  */
 
 /**
  * @template {Boolean} Condition
- * @template {ReadonlyArray<CodeBlock<any> | Label<String>>} Exec
- * @typedef {If<Condition,
- *     Match<Exec, [
- *         (p: Label<any>, b: Binding<Exec>) => b["binding"],
- *         (p: CodeBlock<any>) => "CodeBlock",
- *         () => Exec
- *     ]>,
- *     never>
+ * @template {ReadonlyArray<CodeBlock<any>|Label<any>>} Exec
+ * @typedef {If<Condition, {
+ *         [K in keyof Exec]: LoopMatcher<Exec[K]>
+ *     }, never>
  * } Loop<Condition, Exec>
  */
 
