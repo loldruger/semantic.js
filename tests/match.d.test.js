@@ -7,6 +7,14 @@
 /**
  * @template P
  * @typedef {Match<P, [
+ *     () => void
+ * ]>} TestMatch023<P>
+ */
+
+
+/**
+ * @template P
+ * @typedef {Match<P, [
  *     (p: Boolean) => 'Boolean',
  *     (p: String) => 'String',
  *     () => void,
@@ -36,8 +44,8 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: Boolean, when: false) => 'Should never happen',
- *     (p: Boolean, when: true) => 'Boolean when true',
+ *     (p: Boolean, o?: {when?: false}) => 'Should never happen',
+ *     (p: Boolean, o?: {when?: true}) => 'Boolean when true',
  *     () => void,
  * ]>} TestMatch4<P>
  */
@@ -45,25 +53,7 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (when: true, p: Boolean) => 'Boolean with true, swapping params',
- *     () => void,
- * ]>} TestMatch5<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (when: false, p: Boolean) => 'Boolean with false, Swapping a and b parameters. Should never happen',
- *     () => void,
- * ]>} TestMatch6<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (p: Boolean, when: false) => 'Feels Bad',
- *     (when: true, p: Boolean) => 'Feels Good',
- *     () => void,
+ *     (p: Number, o?: {when?: true, e?: true}) => 'Number',
  * ]>} TestMatch7<P>
  */
 
@@ -131,8 +121,6 @@
  * @typedef {TestMatch2<Boolean>} MatchTestCase4_ShouldBe_Void
  * @typedef {TestMatch3<Boolean>} MatchTestCase5_ShouldBe_Boolean_With_True
  * @typedef {TestMatch4<Boolean>} MatchTestCase6_ShouldBe_Boolean_With_True
- * @typedef {TestMatch5<Boolean>} MatchTestCase7_ShouldBe_Boolean_With_True_Swapping_Params
- * @typedef {TestMatch6<Boolean>} MatchTestCase8_ShouldBe_Void
  * @typedef {TestMatch7<Boolean>} MatchTestCase9_ShouldBe_Feels_Good
  * @typedef {TestMatch8<(a: Number) => Boolean>} MatchTestCase10_ShouldBe_Num_To_Bool
  * @typedef {TestMatch8<(a: String) => Boolean>} MatchTestCase11_ShouldBe_Void
@@ -150,12 +138,5 @@
  */
 
 /**
- * @typedef {Parameters<() => () => (a: () => Boolean) => void>} AP
- * @typedef {ReturnType<() => () => (a: () => Boolean) => void>} AR
- * @typedef {ReturnType<() => (a: Boolean) => void>} A1RC
- * 
- * @typedef {Parameters<() => () => void>} BP
- * @typedef {ReturnType<() => () => void>} BR
- * @typedef {ReturnType<() => (a: Boolean) => void>} BRC
- * @typedef {IsEqual<BR, BRC>} BRC_EQ_BR
+ * @typedef {{a: true, when: true} extends {a: true, when: true} ? 'yes' : 'no'} Egfgfd
  */

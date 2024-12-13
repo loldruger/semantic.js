@@ -8,56 +8,45 @@
 /**
  * @template {unknown} P
  * @typedef {ReadonlyArray<
- *     | ((p: any, e: ExactMatch<Boolean>, when: true) => unknown)
- *     | ((p: any, e: ExactMatch<Boolean>, when: false) => unknown)
- *     | ((p: any, when: true, e: ExactMatch<Boolean>) => unknown)
- *     | ((p: any, when: false, e: ExactMatch<Boolean>) => unknown)
- *     | ((e: ExactMatch<Boolean>, p: any, when: true) => unknown)
- *     | ((e: ExactMatch<Boolean>, p: any, when: false) => unknown)
- *     | ((e: ExactMatch<Boolean>, when: true, p: any) => unknown)
- *     | ((e: ExactMatch<Boolean>, when: false, p: any) => unknown)
- *     | ((when: true, p: any, e: ExactMatch<Boolean>) => unknown)
- *     | ((when: true, e: ExactMatch<Boolean>, p: any) => unknown)
- *     | ((when: false, p: any, e: ExactMatch<Boolean>) => unknown)
- *     | ((when: false, e: ExactMatch<Boolean>, p: any) => unknown)
- *     | ((p: any, e: ExactMatch<Boolean>) => unknown)
- *     | ((p: any, when: true) => unknown)
- *     | ((p: any, when: false) => unknown)
- *     | ((e: ExactMatch<Boolean>, p: any) => unknown)
- *     | ((e: ExactMatch<Boolean>, when: true) => unknown)
- *     | ((e: ExactMatch<Boolean>, when: false) => unknown)
- *     | ((when: true, p: any) => unknown)
- *     | ((when: true, e: ExactMatch<Boolean>) => unknown)
- *     | ((when: false, p: any) => unknown)
- *     | ((when: false, e: ExactMatch<Boolean>) => unknown)
- *     | ((p: any) => unknown)
- *     | ((when: true) => unknown)
- *     | ((when: false) => unknown)
- *     | (() => unknown)
- * >
- * } MatchCases
+ *     | ((p: any, o?: {e?: true, when?: true}) => unknown)
+ *     | ((p: any, o?: {e?: true, when?: false}) => unknown)
+ *     | ((p: any, o?: {e?: false, when?: true}) => unknown)
+ *     | ((p: any, o?: {e?: false, when?: false}) => unknown)
+ * >} MatchCases
  */
 
 /**
  * @template P, A, Rest, S
- * @typedef {P extends (...args: any) => infer RetA
- *     ? A extends (...args: any) => infer RetB
- *         ? IsEqual<Parameters<P>, Parameters<A>> extends true
- *             ? IsEqual<ReturnType<P>, ReturnType<A>> extends true
- *                 ? RetA extends (...args: any) => any
- *                     ? RetB extends (...args: any) => any
- *                         ? IsEqual<Parameters<RetA>, Parameters<RetB>> extends true
- *                             ? IsEqual<ReturnType<RetA>, ReturnType<RetB>> extends true
+ * @template {Boolean} When
+ * @template {Boolean} IsExactMatch
+ * @typedef {If<When, 
+ *     P extends (...args: any) => infer RetA
+ *         ? A extends (...args: any) => infer RetB
+ *             ? IsExactMatch extends true
+ *                 ? And<
+ *                     IsEqual<Parameters<P>, Parameters<A>>,
+ *                     IsEqual<ReturnType<P>, ReturnType<A>>
+ *                 > extends true
+ *                     ? RetA extends (...args: any) => any
+ *                         ? RetB extends (...args: any) => any
+ *                             ? And<
+ *                                 IsEqual<Parameters<RetA>, Parameters<RetB>>,
+ *                                 IsEqual<ReturnType<RetA>, ReturnType<RetB>>
+ *                             > extends true
  *                                 ? S
  *                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                         : never
- *                     : S
- *                 : Match<P, AsType<Rest, MatchCases<P>>>
- *             : Match<P, AsType<Rest, MatchCases<P>>>
- *         : S
- *     : S
- * } MatchMatcher<P, A, Rest, S>
+ *                             : never
+ *                         : S
+ *                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                 : P extends A
+ *                     ? S
+ *                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *             : S
+ *         : P extends A
+ *             ? S
+ *             : Match<P, AsType<Rest, MatchCases<P>>>,
+ *     Match<P, AsType<Rest, MatchCases<P>>>
+ * >} MatchEvaluator<P, A, Rest, S, When, IsExactMatch>
  */
 
 /**
@@ -68,159 +57,25 @@
  *     : MatchArm extends [infer First, ...infer Rest]
  *         ? First extends (() => infer S)
  *             ? S
- *             : First extends ((a: infer A) => infer S)
- *                 ? [A] extends [false]
- *                     ? Match<P, AsType<Rest, MatchCases<P>>>
- *                     : [A] extends [true]
- *                         ? S
- *                         : [P] extends [A]
- *                             ? MatchMatcher<P, A, Rest, S>
- *                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                 : First extends ((a: infer A, e: infer B) => infer S)
- *                     ? [B] extends [false]
- *                         ? [A] extends [false]
- *                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                             : [A] extends [true]
- *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                         : [B] extends [true]
- *                             ? [A] extends [false]
- *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                 : [A] extends [true]
- *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                     : [P] extends [A]
- *                                         ? MatchMatcher<P, A, Rest, S>
- *                                         : Match<P, AsType<Rest, MatchCases<P>>>
- *                             : [A] extends [false]
- *                                 ? [B] extends [false]
- *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                     : [B] extends [true]
- *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                         : Match<P, AsType<Rest, MatchCases<P>>>
- *                                 : [A] extends [true]
- *                                     ? [B] extends [false]
- *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                         : [B] extends [true]
- *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                             : [P] extends [B]
- *                                                 ? MatchMatcher<P, B, Rest, S>
- *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                     : [A] extends [P]
- *                                         ? [B] extends [P]
- *                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                             : [B] extends [ExactMatch<Boolean>]
- *                                                 ? MatchMatcher<P, A, Rest, S>
- *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                         : [A] extends [ExactMatch<Boolean>]
- *                                             ? [B] extends [ExactMatch<Boolean>]
- *                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
- *                                                 : [B] extends [P]
- *                                                     ? MatchMatcher<P, B, Rest, S>
- *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
- *                                             : [B] extends [P]
- *                                                 ? [A] extends [ExactMatch<Boolean>]
- *                                                     ? MatchMatcher<P, B, Rest, S>
- *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                     : First extends ((a: infer A, e: infer B, c: infer C) => infer S)
- *                         ? [C] extends [false]
- *                             ? [A] extends [false]
- *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                 : [A] extends [true]
- *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                     : [B] extends [false]
- *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                         : [B] extends [true]
- *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                             : [C] extends [true]
- *                                 ? [A] extends [false]
- *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                     : [A] extends [true]
- *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                         : [B] extends [false]
- *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                             : [B] extends [true]
- *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                 : [B] extends [ExactMatch<Boolean>]
- *                                                     ? [A] extends [ExactMatch<Boolean>]
- *                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
- *                                                         : [P] extends [B]
- *                                                             ? MatchMatcher<P, A, Rest, S>
- *                                                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                     : [B] extends [P]
- *                                                         ? [A] extends [P]
- *                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                                             : [A] extends [ExactMatch<Boolean>]
- *                                                                 ? MatchMatcher<P, B, Rest, S>
- *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                         : Match<P, AsType<Rest, MatchCases<P>>>
- *                                 : [B] extends [false]
- *                                     ? [C] extends [false]
- *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                         : [C] extends [true]
- *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                             : [A] extends [false]
- *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                 : [A] extends [true]
- *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
- *                                     : [B] extends [true]
- *                                         ? [C] extends [false]
- *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                             : [C] extends [true]
- *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                 : [A] extends [false]
- *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                     : [A] extends [true]
- *                                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                         : [A] extends [ExactMatch<Boolean>]
- *                                                             ? [C] extends [ExactMatch<Boolean>]
- *                                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
- *                                                                 : [P] extends [C]
- *                                                                     ? MatchMatcher<P, C, Rest, S>
- *                                                                     : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                             : [A] extends [P]
- *                                                                 ? [C] extends [P]
- *                                                                     ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                                                     : [C] extends [ExactMatch<Boolean>]
- *                                                                         ? MatchMatcher<P, A, Rest, S>
- *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                         : [A] extends [false]
- *                                             ? [B] extends [false]
- *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                 : [B] extends [true]
- *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                     : [C] extends [false]
- *                                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                         : [C] extends [true]
- *                                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                                             : [A] extends [true]
- *                                                 ? [B] extends [false]
- *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                     : [B] extends [true]
- *                                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                         : [C] extends [false]
- *                                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                             : [C] extends [true]
- *                                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                                 : [C] extends [ExactMatch<Boolean>]
- *                                                                     ? [A] extends [ExactMatch<Boolean>]
- *                                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
- *                                                                         : [P] extends [A]
- *                                                                             ? MatchMatcher<P, A, Rest, S>
- *                                                                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                                     : [C] extends [P]
- *                                                                         ? [B] extends [P]
- *                                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                                                             : [B] extends [ExactMatch<Boolean>]
- *                                                                                 ? MatchMatcher<P, C, Rest, S>
- *                                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
- *                                                 : never
- *                         : Match<P, AsType<Rest, MatchCases<P>>>
+ *             : First extends ((po: infer PO) => infer S)
+ *                 ? MatchEvaluator<
+ *                     P,
+ *                     MatchCases<P>,
+ *                     Rest,
+ *                     S,
+ *                     true,
+ *                     PO extends {e?: true} ? true : false
+ *                 >
+ *                 : First extends ((p: infer P, o?: infer O) => infer S)
+ *                     ? MatchEvaluator<
+ *                         P,
+ *                         MatchCases<P>,
+ *                         Rest,
+ *                         S,
+ *                         O extends {when?: true} ? true : false,
+ *                         O extends {e?: true} ? true : false
+ *                     >
+ *                     : Match<P, AsType<Rest, MatchCases<P>>>
  *         : never
  * } Match<P, MatchArm>
  */
@@ -277,4 +132,71 @@
  * @template {ReadonlyArray<CodeBlock<Then>> | unknown} Then
  * @template {ReadonlyArray<CodeBlock<Else>> | unknown} Else
  * @typedef {Condition extends true ? Then : Else} If<Condition, Then, Else>
+ */
+
+/**
+ * @template {Boolean} A
+ * @template {Boolean} B
+ * @typedef {A extends true
+*     ? B extends true
+*         ? true
+*         : false
+*     : false
+* } And<A, B>
+*/
+
+/**
+ * @template {Boolean} A
+ * @template {Boolean} B
+ * @template {Boolean} C
+ * @typedef {A extends true
+ *     ? B extends true
+ *         ? C extends true
+ *             ? true
+ *             : false
+ *         : false
+ *     : false
+ * } And3<A, B, C>
+ */
+
+/**
+ * @template {Boolean} T
+ * @template {Boolean} U
+ * @typedef {T extends true
+ *     ? true
+ *     : U extends true
+ *         ? true
+ *         : false
+ * } Or<A, B>
+ */
+
+/**
+ * @template {Boolean} A
+ * @template {Boolean} B
+ * @template {Boolean} C
+ * @typedef {A extends true
+ *     ? true
+ *     : B extends true
+ *         ? true
+ *         : C extends true
+ *             ? true
+ *             : false
+ * } Or3<A, B>
+ */
+
+/**
+ * @template {Boolean} A
+ * @template {Boolean} B
+ * @template {Boolean} C
+ * @template {Boolean} D
+ * @typedef {A extends true
+ *     ? true
+ *     : B extends true
+ *         ? true
+ *         : C extends true
+ *             ? true
+ *             : D extends true
+ *                 ? true
+ *                 : false
+ * } Or4<A, B, C, D>
  */

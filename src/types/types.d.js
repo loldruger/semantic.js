@@ -43,19 +43,19 @@
 
 /**
  * @template [P=any]
- * @template [R=unknown]
- * @typedef {(...args: ReadonlyArray<P>) => R|void} CallableType<P, R>
+ * @template [R=any|void]
+ * @typedef {(...args: ReadonlyArray<P>) => R} CallableType<P, R>
  */
 
 /**
- * @template [P=unknown]
- * @template [R=unknown]
+ * @template [P=any]
+ * @template [R=any]
  * @typedef {new (...args: ReadonlyArray<P>) => R} ConcreteType<P, R>
  */
 
 /**
- * @template [P=unknown]
- * @template [R=unknown]
+ * @template [P=any]
+ * @template [R=any]
  * @typedef {abstract new (...args: ReadonlyArray<P>) => R} AbstConcreteType<P, R>
  */
 
@@ -73,7 +73,7 @@
 
 /**
  * @template T, U
- * @typedef {T extends U ? T : String extends U ? ErrorType<"AsType<T, U> casting failed"> : never} AsType<T, U>
+ * @typedef {T extends U ? T : never} AsType<T, U>
  */
 
 /**
@@ -147,8 +147,8 @@
  *         (p: ConcreteType) => InstanceType<AsType<Arg_T, ConcreteType>>,
  *         (p: CallableType) => Match<Arg_T, [
  *                 (p: (a: any) => any) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *                 (p: ((...i: any) => any)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *                 () => void
+ *                 (p: ((...a: any) => any)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *                 () => "void"
  *             ]>,
  *         () => void
  *     ]>>
