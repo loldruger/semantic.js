@@ -50,6 +50,12 @@
 /**
  * @template [P=unknown]
  * @template [R=unknown]
+ * @typedef {new (...args: ReadonlyArray<P>) => R} ConcreteType<P, R>
+ */
+
+/**
+ * @template [P=unknown]
+ * @template [R=unknown]
  * @typedef {abstract new (...args: ReadonlyArray<P>) => R} AbstConcreteType<P, R>
  */
 
@@ -58,7 +64,7 @@
  */
 
 /**
- * @typedef {CallableType|AbstConcreteType|ConstructableTypes} ConstructableTypeUnion
+ * @typedef {CallableType|ConcreteType|AbstConcreteType|ConstructableTypes} ConstructableTypeUnion
  */
 
 /////////////////////////////////
@@ -123,32 +129,47 @@
 
 /**
  * @template {ConstructableTypeUnion} Arg_T
- * @typedef {Match<Arg_T, [
- *     (p: ConstructableTypes) => Arg_T,
- *     (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *     (p: CallableType) => Match<Arg_T, [
- *         (p: (Arg_T extends (i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *         (p: (Arg_T extends (...i: infer P) => infer R ? (a: P) => R : never)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *     ]>,
- *     () => 'Default'
- * ]>} TestFn<Arg_T>
+ * @typedef {If<IsTupleType<Arg_T>, {
+ *     [K in keyof Arg_T]: (
+ *         Match<Arg_T[K], [
+ *             (p: ConstructableTypes) => ToInstanceType<AsType<Arg_T[K], ConstructableTypes>>,
+ *             (p: AbstConcreteType) => InstanceType<AsType<Arg_T[K], AbstConcreteType>>,
+ *             (p: ConcreteType) => InstanceType<AsType<Arg_T[K], ConcreteType>>,
+ *             (p: CallableType) => Match<Arg_T[K], [
+ *                 <P, R>(p: (a: P) => R) => InstanceType<AsType<Arg_T[K], AbstConcreteType>>,
+ *                 (p: ((...i: any) => any)) => InstanceType<AsType<Arg_T[K], AbstConcreteType>>,
+ *                 () => void
+ *             ]>,
+ *             () => void
+ *         ]>)},
+ *     Match<Arg_T, [
+ *         (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *         (p: ConcreteType) => InstanceType<AsType<Arg_T, ConcreteType>>,
+ *         (p: CallableType) => Match<Arg_T, [
+ *                 (p: (a: any) => any) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *                 (p: ((...i: any) => any)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
+ *                 () => void
+ *             ]>,
+ *         () => void
+ *     ]>>
+ * } ToInstanceType<Arg_T>
  */
 
 /**
- * @typedef {TestFn<NumberConstructor>} Test1
- * @typedef {TestFn<[NumberConstructor, BooleanConstructor, StringConstructor]>} Test2
- * @typedef {TestFn<[NumberConstructor, [BooleanConstructor, StringConstructor]]>} Test3
- * @typedef {TestFn<[[NumberConstructor], BooleanConstructor, StringConstructor, ObjectConstructor]>} Test4
- * @typedef {TestFn<(a: any) => any>} Test5
- * @typedef {TestFn<(a: [any]) => any>} Test6
- * @typedef {TestFn<(a: [any, any]) => any>} Test7
- * @typedef {TestFn<(a: [any, [any]]) => any>} Test8
- * @typedef {TestFn<(a: any) => [any]>} Test9
- * @typedef {TestFn<(a: any) => [any, any]>} Test10
- * @typedef {TestFn<(a: any) => [any, [any]]>} Test11
- * @typedef {TestFn<(a: [any]) => [any]>} Test12
- * @typedef {TestFn<(a: [any]) => [any, any]>} Test13
- *
+ * @typedef {ToInstanceType<NumberConstructor>} Test1
+ * @typedef {ToInstanceType<[NumberConstructor, BooleanConstructor, StringConstructor]>} Test2
+ * @typedef {ToInstanceType<[NumberConstructor, [BooleanConstructor, StringConstructor]]>} Test3
+ * @typedef {ToInstanceType<[[NumberConstructor], BooleanConstructor, StringConstructor, ObjectConstructor]>} Test4
+ * @typedef {ToInstanceType<(a: BooleanConstructor) => StringConstructor>} Test5
+ * @typedef {ToInstanceType<(a: [any]) => any>} Test6
+ * @typedef {ToInstanceType<(a: [any, any]) => any>} Test7
+ * @typedef {ToInstanceType<(a: [any, [any]]) => any>} Test8
+ * @typedef {ToInstanceType<(a: any) => [any]>} Test9
+ * @typedef {ToInstanceType<(a: any) => [any, any]>} Test10
+ * @typedef {ToInstanceType<(a: any) => [any, [any]]>} Test11
+ * @typedef {ToInstanceType<(a: [any]) => [any]>} Test12
+ * @typedef {ToInstanceType<(a: [any]) => [any, any]>} Test13
+ * @typedef {ToInstanceType<[(a: [any]) => [any, any]]>} Test14
  */
 
 ///////////////////

@@ -9,45 +9,18 @@
  * @typedef {Match<P, [
  *     (p: Boolean) => 'Boolean',
  *     (p: String) => 'String',
- *     () => 'Default',
+ *     () => void,
  * ]>} TestMatch1<P>
  */
 
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: String) => 'String',
+ *     () => void,
  *     (p: Boolean) => 'Boolean',
- *     () => 'Default',
+ *     (p: Number) => 'Number',
+ *     (p: String) => 'String',
  * ]>} TestMatch2<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (p: String) => 'String',
- *     () => 'Default',
- * ]>} TestMatch3<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (p: Number) => 'Number',
- *     (b: Binding<P>) => 'Value of P',
- *     (p: String) => 'String',
- *     () => 'Default',
- * ]>} TestMatch4<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     () => 'Default',
- *     (p: Boolean) => 'Boolean',
- *     (p: Number) => 'Number',
- *     (p: String) => 'String',
- * ]>} TestMatch5<P>
  */
 
 /**
@@ -56,8 +29,8 @@
  *     (when: true) => 'Boolean with true',
  *     (p: Number) => 'Number',
  *     (p: String) => 'String',
- *     () => 'Default',
- * ]>} TestMatch6<P>
+ *     () => void,
+ * ]>} TestMatch3<P>
  */
 
 /**
@@ -65,85 +38,33 @@
  * @typedef {Match<P, [
  *     (p: Boolean, when: false) => 'Should never happen',
  *     (p: Boolean, when: true) => 'Boolean when true',
- *     () => 'Default',
- * ]>} TestMatch7<P>
+ *     () => void,
+ * ]>} TestMatch4<P>
  */
 
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: Boolean, b: Binding<P>) => 'Boolean with binding',
- * ]>} TestMatch8<P>
+ *     (when: true, p: Boolean) => 'Boolean with true, swapping params',
+ *     () => void,
+ * ]>} TestMatch5<P>
  */
 
 /**
  * @template P
  * @typedef {Match<P, [
- *     (b: Binding<P>, p: Boolean) => 'Boolean with binding, swapping a and b parameters',
- *     () => 'Default',
+ *     (when: false, p: Boolean) => 'Boolean with false, Swapping a and b parameters. Should never happen',
+ *     () => void,
  * ]>} TestMatch9<P>
  */
 
 /**
  * @template P
  * @typedef {Match<P, [
- *     (when: false, p: Boolean) => 'Swapping a and b parameters. Should never happen',
- *     () => 'Default',
+ *     (p: Boolean, when: false) => 'Feels Bad',
+ *     (when: true, p: Boolean) => 'Feels Good',
+ *     () => void,
  * ]>} TestMatch10<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (when: false, p: Boolean) => 'Should never happen',
- *     (when: true, p: Boolean) => 'Boolean with true, swapping a and b parameters.',
- *     () => 'Default',
- * ]>} TestMatch11<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (when: false, p: Boolean) => 'Should never happen',
- *     (at: Binding<P>, p: String) => 'String with binding, swapping a and b parameters.',
- *     (at: Binding<P>, p: Boolean) => 'Boolean with binding, swapping a and b parameters.',
- *     () => 'Default',
- * ]>} TestMatch12<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (when: true, b: Binding<P>) => b['binding'],
- *     () => 'Default',
- * ]>} TestMatch13<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (p: Boolean, when: false, b: Binding<P>) => 'Feels Bad',
- *     (p: Boolean, when: true, b: Binding<P>) => 'Feels Good',
- *     () => 'Default',
- * ]>} TestMatch14<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (p: Boolean, when: false, b: Binding<P>) => 'Feels Bad',
- *     (when: true, p: Boolean, b: Binding<P>) => 'Feels Good',
- *     () => 'Default',
- * ]>} TestMatch15<P>
- */
-
-/**
- * @template P
- * @typedef {Match<P, [
- *     (p: Boolean, b: Binding<P>, when: false) => 'Feels Bad',
- *     (p: Boolean, b: Binding<P>, when: true) => 'Feels Good',
- *     () => 'Default',
- * ]>} TestMatch16<P>
  */
 
 /**
@@ -151,9 +72,9 @@
  * @typedef {Match<P, [
  *     (p: Number) => 'Number',
  *     (p: (a: Number) => Boolean) => 'Num to Bool',
- *     (p: () => Boolean) => 'Function to Boolean',
- *     () => 'Default',
- * ]>} TestMatch17<P>
+ *     (p: () => Boolean) => 'Void to Boolean',
+ *     () => void,
+ * ]>} TestMatch11<P>
  */
 
 /**
@@ -161,9 +82,9 @@
  * @typedef {Match<P, [
  *     (p: Number) => 'Number',
  *     (p: (a: (a: Number) => Boolean) => Boolean) => 'Num to Bool to Bool',
- *     (p: () => Boolean) => 'Function to Boolean',
- *     () => 'Default',
- * ]>} TestMatch18<P>
+ *     (p: () => Boolean) => 'Void to Boolean',
+ *     () => void,
+ * ]>} TestMatch12<P>
  */
 
 /**
@@ -171,31 +92,69 @@
  * @typedef {Match<P, [
  *     (p: Number) => 'Number',
  *     (p: (a: (a: Number) => Boolean) => (a: Boolean) => Number) => 'Num to Bool to Fn of (Bool to Num)',
- *     (p: () => Boolean) => 'Function to Boolean',
- *     () => 'Default',
- * ]>} TestMatch19<P>
+ *     (p: (a: (a: Number) => Boolean) => Boolean) => 'Num to Bool to Bool',
+ *     (p: (a: (a: Boolean) => Boolean) => Boolean) => 'Intercepted',
+ *     (p: (a: (a: Number, b: Boolean) => void) => Boolean) => '(Number, Boolean) to void',
+ *     (p: (a: (a: Boolean, b: Number) => void) => Boolean) => '(Boolean, Number) to void',
+ *     (p: () => Boolean) => 'Void to Boolean',
+ *     () => void,
+ * ]>} TestMatch13<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: (a: (a: (a: Boolean) => void) => Boolean) => Boolean) => 'Intercepted',
+ *     (p: (a: (a: (a: String, b: Boolean) => void, b: Number) => void) => Boolean) => '((String, Boolean)=>void, Number) to void',
+ *     (p: (a: (a: (a: Boolean, b: String) => void, b: Number) => void) => Boolean) => '((Boolean, String)=>void, Number) to void',
+ *     () => void,
+ * ]>} TestMatch14<P>
+ */
+
+/**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: () => (a: Boolean) => void) => 'Intercepted',
+ *     (p: () => (a: Boolean, b: String) => void) => 'void to (Boolean, String) to void',
+ *     (p: () => (a: String, b: Boolean) => void) => 'void to (String, Boolean) to void',
+ *     (p: () => () => () => void) => 'void to void to void to void',
+ *     (p: () => () => (a: () => Boolean) => void) => 'void to void to Boolean to void',
+ *     () => void,
+ * ]>} TestMatch15<P>
  */
 
 /**
  * @typedef {TestMatch0<Boolean>} MatchTestCase0_ShouldBe_Error
  * @typedef {TestMatch1<Boolean>} MatchTestCase1_ShouldBe_Boolean
- * @typedef {TestMatch2<Boolean>} MatchTestCase2_ShouldBe_Boolean
- * @typedef {TestMatch3<Boolean>} MatchTestCase3_ShouldBe_Default
- * @typedef {TestMatch4<Boolean>} MatchTestCase4_ShouldBe_Value_Of_P
- * @typedef {TestMatch5<Boolean>} MatchTestCase5_ShouldBe_Default
- * @typedef {TestMatch6<Boolean>} MatchTestCase6_ShouldBe_Boolean_With_True
- * @typedef {TestMatch7<Boolean>} MatchTestCase7_ShouldBe_Boolean_With_True
- * @typedef {TestMatch8<Boolean>} MatchTestCase8_ShouldBe_Boolean_With_Binding
- * @typedef {TestMatch9<Boolean>} MatchTestCase9_ShouldBe_Default_With_Binding_Swapped_Params
- * @typedef {TestMatch10<Boolean>} MatchTestCase10_ShouldBe_Default
- * @typedef {TestMatch11<Boolean>} MatchTestCase11_ShouldBe_Boolean_With_True_Swapped_Params
- * @typedef {TestMatch12<Boolean>} MatchTestCase12_ShouldBe_Default_With_Binding_Swapped_Params
- * @typedef {TestMatch13<Boolean>} MatchTestCase13_ShouldBe_Boolean
- * @typedef {TestMatch14<Boolean>} MatchTestCase14_ShouldBe_Feels_Good
- * @typedef {TestMatch15<Boolean>} MatchTestCase15_ShouldBe_Feels_Good
- * @typedef {TestMatch16<Boolean>} MatchTestCase16_ShouldBe_Feels_Good
- * @typedef {TestMatch17<(a: Number) => Boolean>} MatchTestCase17_ShouldBe_Num_To_Bool
- * @typedef {TestMatch17<(a: String) => Boolean>} MatchTestCase18_ShouldBe_Default
- * @typedef {TestMatch18<(a: (a: Number) => Boolean) => Boolean>} MatchTestCase19_ShouldBe_Num_To_Bool_To_Bool
- * @typedef {TestMatch19<(a: (a: Number) => Boolean) => (a: Boolean) => Number>} MatchTestCase20_ShouldBe_Num_To_Bool_To_Fn_Of_Bool_To_Num
+ * @typedef {TestMatch1<String>} MatchTestCase2_ShouldBe_String
+ * @typedef {TestMatch1<Number>} MatchTestCase3_ShouldBe_Void
+ * @typedef {TestMatch2<Boolean>} MatchTestCase4_ShouldBe_Void
+ * @typedef {TestMatch3<Boolean>} MatchTestCase5_ShouldBe_Boolean_With_True
+ * @typedef {TestMatch4<Boolean>} MatchTestCase6_ShouldBe_Boolean_With_True
+ * @typedef {TestMatch5<Boolean>} MatchTestCase7_ShouldBe_Boolean_With_True_Swapping_Params
+ * @typedef {TestMatch9<Boolean>} MatchTestCase8_ShouldBe_Void
+ * @typedef {TestMatch10<Boolean>} MatchTestCase9_ShouldBe_Feels_Good
+ * @typedef {TestMatch11<(a: Number) => Boolean>} MatchTestCase10_ShouldBe_Num_To_Bool
+ * @typedef {TestMatch11<(a: String) => Boolean>} MatchTestCase11_ShouldBe_Void
+ * @typedef {TestMatch12<(a: (a: Number) => Boolean) => Boolean>} MatchTestCase12_ShouldBe_Num_To_Bool_To_Bool
+ * @typedef {TestMatch13<(a: (a: Number) => Boolean) => (a: Boolean) => Number>} MatchTestCase13_ShouldBe_Num_To_Bool_To_Fn_Of_Bool_To_Num
+ * @typedef {TestMatch13<(a: (a: Number, b: Boolean) => void) => Boolean>} MatchTestCase14_ShouldBe_Pair_Of_Number_Boolean_To_Void
+ * @typedef {TestMatch13<(a: (a: Boolean, b: Number) => void) => Boolean>} MatchTestCase15_ShouldBe_Pair_Of_Boolean_Number_To_Void
+ * @typedef {TestMatch14<(a: (a: (a: Boolean, b: String) => void, b: Number) => void) => Boolean>} MatchTestCase16_ShouldBe_Pair_Of_Fn_Of_Bool_String_To_Void_Number_To_Void
+ * @typedef {TestMatch15<() => () => void>} MatchTestCase17_ShouldBe_void
+ * @typedef {TestMatch15<() => (a: Boolean) => void>} MatchTestCase18_ShouldBe_Intercepted
+ * @typedef {TestMatch15<() => (a: Boolean, b: String) => void>} MatchTestCase19_ShouldBe_Void_To_Pair_Of_Boolean_String_To_Void
+ * @typedef {TestMatch15<() => (a: String, b: Boolean) => void>} MatchTestCase20_ShouldBe_Void_To_Pair_Of_String_Boolean_To_Void
+ * @typedef {TestMatch15<() => () => (a: () => Boolean) => void>} MatchTestCase21_ShouldBe_Void_To_Void_To_Boolean_To_Void
+ */
+
+/**
+ * @typedef {Parameters<() => () => (a: () => Boolean) => void>} AP
+ * @typedef {ReturnType<() => () => (a: () => Boolean) => void>} AR
+ * @typedef {ReturnType<() => (a: Boolean) => void>} A1RC
+ * 
+ * @typedef {Parameters<() => () => void>} BP
+ * @typedef {ReturnType<() => () => void>} BR
+ * @typedef {ReturnType<() => (a: Boolean) => void>} BRC
+ * @typedef {IsEqual<BR, BRC>} BRC_EQ_BR
  */

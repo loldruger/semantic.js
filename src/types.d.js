@@ -1,37 +1,36 @@
 //@ts-check
 
 /**
- * @template T
- * @typedef {{ binding: T }} Binding<T>
+ * @template {Boolean} B
+ * @typedef {{ flag: B }} ExactMatch<B>
  */
 
 /**
  * @template {unknown} P
  * @typedef {ReadonlyArray<
- *     | ((p: any, b: Binding<P>, when: true) => unknown)
- *     | ((p: any, b: Binding<P>, when: false) => unknown)
- *     | ((p: any, when: true, b: Binding<P>) => unknown)
- *     | ((p: any, when: false, b: Binding<P>) => unknown)
- *     | ((b: Binding<P>, p: any, when: true) => unknown)
- *     | ((b: Binding<P>, p: any, when: false) => unknown)
- *     | ((b: Binding<P>, when: true, p: any) => unknown)
- *     | ((b: Binding<P>, when: false, p: any) => unknown)
- *     | ((when: true, p: any, b: Binding<P>) => unknown)
- *     | ((when: true, b: Binding<P>, p: any) => unknown)
- *     | ((when: false, p: any, b: Binding<P>) => unknown)
- *     | ((when: false, b: Binding<P>, p: any) => unknown)
- *     | ((p: any, b: Binding<P>) => unknown)
+ *     | ((p: any, e: ExactMatch<Boolean>, when: true) => unknown)
+ *     | ((p: any, e: ExactMatch<Boolean>, when: false) => unknown)
+ *     | ((p: any, when: true, e: ExactMatch<Boolean>) => unknown)
+ *     | ((p: any, when: false, e: ExactMatch<Boolean>) => unknown)
+ *     | ((e: ExactMatch<Boolean>, p: any, when: true) => unknown)
+ *     | ((e: ExactMatch<Boolean>, p: any, when: false) => unknown)
+ *     | ((e: ExactMatch<Boolean>, when: true, p: any) => unknown)
+ *     | ((e: ExactMatch<Boolean>, when: false, p: any) => unknown)
+ *     | ((when: true, p: any, e: ExactMatch<Boolean>) => unknown)
+ *     | ((when: true, e: ExactMatch<Boolean>, p: any) => unknown)
+ *     | ((when: false, p: any, e: ExactMatch<Boolean>) => unknown)
+ *     | ((when: false, e: ExactMatch<Boolean>, p: any) => unknown)
+ *     | ((p: any, e: ExactMatch<Boolean>) => unknown)
  *     | ((p: any, when: true) => unknown)
  *     | ((p: any, when: false) => unknown)
- *     | ((b: Binding<P>, p: any) => unknown)
- *     | ((b: Binding<P>, when: true) => unknown)
- *     | ((b: Binding<P>, when: false) => unknown)
+ *     | ((e: ExactMatch<Boolean>, p: any) => unknown)
+ *     | ((e: ExactMatch<Boolean>, when: true) => unknown)
+ *     | ((e: ExactMatch<Boolean>, when: false) => unknown)
  *     | ((when: true, p: any) => unknown)
- *     | ((when: true, b: Binding<P>) => unknown)
+ *     | ((when: true, e: ExactMatch<Boolean>) => unknown)
  *     | ((when: false, p: any) => unknown)
- *     | ((when: false, b: Binding<P>) => unknown)
+ *     | ((when: false, e: ExactMatch<Boolean>) => unknown)
  *     | ((p: any) => unknown)
- *     | ((b: Binding<P>) => unknown)
  *     | ((when: true) => unknown)
  *     | ((when: false) => unknown)
  *     | (() => unknown)
@@ -41,14 +40,14 @@
 
 /**
  * @template P, A, Rest, S
- * @typedef {P extends (...args: infer ArgsA) => infer RetA
- *     ? A extends (...args: infer ArgsB) => infer RetB
- *         ? IsEqual<ArgsA, ArgsB> extends true
- *             ? IsEqual<RetA, RetB> extends true
- *                 ? RetA extends (...args: infer ArgsC) => infer RetC
- *                     ? RetB extends (...args: infer ArgsD) => infer RetD
- *                         ? IsEqual<ArgsC, ArgsD> extends true
- *                             ? IsEqual<RetC, RetD> extends true
+ * @typedef {P extends (...args: any) => infer RetA
+ *     ? A extends (...args: any) => infer RetB
+ *         ? IsEqual<Parameters<P>, Parameters<A>> extends true
+ *             ? IsEqual<ReturnType<P>, ReturnType<A>> extends true
+ *                 ? RetA extends (...args: any) => any
+ *                     ? RetB extends (...args: any) => any
+ *                         ? IsEqual<Parameters<RetA>, Parameters<RetB>> extends true
+ *                             ? IsEqual<ReturnType<RetA>, ReturnType<RetB>> extends true
  *                                 ? S
  *                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                             : Match<P, AsType<Rest, MatchCases<P>>>
@@ -74,12 +73,10 @@
  *                     ? Match<P, AsType<Rest, MatchCases<P>>>
  *                     : [A] extends [true]
  *                         ? S
- *                         : [A] extends [Binding<P>] | [P]
- *                             ? [A] extends [P]
- *                                 ? MatchFnMatcher<P, A, Rest, S>
- *                                 : S
+ *                         : [P] extends [A]
+ *                             ? MatchFnMatcher<P, A, Rest, S>
  *                             : Match<P, AsType<Rest, MatchCases<P>>>
- *                 : First extends ((a: infer A, b: infer B) => infer S)
+ *                 : First extends ((a: infer A, e: infer B) => infer S)
  *                     ? [B] extends [false]
  *                         ? [A] extends [false]
  *                             ? ErrorType<"Condition parameter 'when' is duplicated">
@@ -91,10 +88,8 @@
  *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
  *                                 : [A] extends [true]
  *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                     : [A] extends [Binding<P>] | [P]
- *                                         ? [A] extends [P]
- *                                             ? MatchFnMatcher<P, A, Rest, S>
- *                                             : S
+ *                                     : [P] extends [A]
+ *                                         ? MatchFnMatcher<P, A, Rest, S>
  *                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                             : [A] extends [false]
  *                                 ? [B] extends [false]
@@ -107,29 +102,27 @@
  *                                         ? ErrorType<"Condition parameter 'when' is duplicated">
  *                                         : [B] extends [true]
  *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                             : [B] extends [Binding<P>] | [P]
- *                                                 ? [B] extends [P]
- *                                                     ? MatchFnMatcher<P, B, Rest, S>
- *                                                     : S
+ *                                             : [P] extends [B]
+ *                                                 ? MatchFnMatcher<P, B, Rest, S>
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                     : [A] extends [P]
  *                                         ? [B] extends [P]
  *                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                             : [B] extends [Binding<P>]
+ *                                             : [B] extends [ExactMatch<Boolean>]
  *                                                 ? MatchFnMatcher<P, A, Rest, S>
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                                         : [A] extends [Binding<P>]
- *                                             ? [B] extends [Binding<P>]
+ *                                         : [A] extends [ExactMatch<Boolean>]
+ *                                             ? [B] extends [ExactMatch<Boolean>]
  *                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
  *                                                 : [B] extends [P]
  *                                                     ? MatchFnMatcher<P, B, Rest, S>
  *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
  *                                             : [B] extends [P]
- *                                                 ? [A] extends [Binding<P>]
+ *                                                 ? [A] extends [ExactMatch<Boolean>]
  *                                                     ? MatchFnMatcher<P, B, Rest, S>
  *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                     : First extends ((a: infer A, b: infer B, c: infer C) => infer S)
+ *                     : First extends ((a: infer A, e: infer B, c: infer C) => infer S)
  *                         ? [C] extends [false]
  *                             ? [A] extends [false]
  *                                 ? ErrorType<"Condition parameter 'when' is duplicated">
@@ -149,16 +142,16 @@
  *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
  *                                             : [B] extends [true]
  *                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                 : [B] extends [Binding<P>]
- *                                                     ? [A] extends [Binding<P>]
+ *                                                 : [B] extends [ExactMatch<Boolean>]
+ *                                                     ? [A] extends [ExactMatch<Boolean>]
  *                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
- *                                                         : [A] extends [P]
+ *                                                         : [P] extends [B]
  *                                                             ? MatchFnMatcher<P, A, Rest, S>
  *                                                             : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                     : [B] extends [P]
  *                                                         ? [A] extends [P]
  *                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                                             : [A] extends [Binding<P>]
+ *                                                             : [A] extends [ExactMatch<Boolean>]
  *                                                                 ? MatchFnMatcher<P, B, Rest, S>
  *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                         : Match<P, AsType<Rest, MatchCases<P>>>
@@ -181,16 +174,16 @@
  *                                                     ? ErrorType<"Condition parameter 'when' is duplicated">
  *                                                     : [A] extends [true]
  *                                                         ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                         : [A] extends [Binding<P>]
- *                                                             ? [C] extends [Binding<P>]
+ *                                                         : [A] extends [ExactMatch<Boolean>]
+ *                                                             ? [C] extends [ExactMatch<Boolean>]
  *                                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
- *                                                                 : [C] extends [P]
+ *                                                                 : [P] extends [C]
  *                                                                     ? MatchFnMatcher<P, C, Rest, S>
  *                                                                     : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                             : [A] extends [P]
  *                                                                 ? [C] extends [P]
  *                                                                     ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                                                     : [C] extends [Binding<P>]
+ *                                                                     : [C] extends [ExactMatch<Boolean>]
  *                                                                         ? MatchFnMatcher<P, A, Rest, S>
  *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
@@ -213,16 +206,16 @@
  *                                                             ? ErrorType<"Condition parameter 'when' is duplicated">
  *                                                             : [C] extends [true]
  *                                                                 ? ErrorType<"Condition parameter 'when' is duplicated">
- *                                                                 : [C] extends [Binding<P>]
- *                                                                     ? [A] extends [Binding<P>]
+ *                                                                 : [C] extends [ExactMatch<Boolean>]
+ *                                                                     ? [A] extends [ExactMatch<Boolean>]
  *                                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
- *                                                                         : [A] extends [P]
+ *                                                                         : [P] extends [A]
  *                                                                             ? MatchFnMatcher<P, A, Rest, S>
  *                                                                             : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                     : [C] extends [P]
  *                                                                         ? [B] extends [P]
  *                                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
- *                                                                             : [B] extends [Binding<P>]
+ *                                                                             : [B] extends [ExactMatch<Boolean>]
  *                                                                                 ? MatchFnMatcher<P, C, Rest, S>
  *                                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
@@ -253,19 +246,22 @@
  */
 
 /**
- * @template {CodeBlock<any>|Label<any>} Exec
+ * @template {CodeBlock<any>|Label<any>|Goto<any>} Exec
+ * @template {Boolean} Condition
+ * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} ExecAll
  * @typedef {Match<Exec, [
- *     (p: Label<any>, b: Binding<Exec>) => AsType<b["binding"], Label<any>>["label"],
- *     (p: CodeBlock<any>, b: Binding<Exec>) => AsType<b["binding"], CodeBlock<any>>["code"],
- *     (b: Binding<Exec>) => b["binding"],
+ *     (p: Label<any>) => Exec,
+ *     (p: Goto<any>) => Loop<Condition, ExecAll>,
+ *     (p: CodeBlock<any>) => Exec
  * ]>} LoopMatcher<Exec>
  */
 
 /**
  * @template {Boolean} Condition
- * @template {ReadonlyArray<CodeBlock<any>|Label<any>>} Exec
+ * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} Exec
+ * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} [LoopBody=[Label<"continue">, ...Exec, Goto<"continue">]]
  * @typedef {If<Condition, {
- *         [K in keyof Exec]: LoopMatcher<Exec[K]>
+ *         [K in keyof LoopBody]: LoopMatcher<LoopBody[K], Condition, Exec>
  *     }, never>
  * } Loop<Condition, Exec>
  */

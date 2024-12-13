@@ -1,8 +1,7 @@
 /**
  * @template {Boolean} T
  * @typedef {Loop<T, [
- *     Label<"String">,
- *         CodeBlock<"asdf">,
+ *     CodeBlock<"asdf">,
  * ]>} TestLoop<T>
  */
 
