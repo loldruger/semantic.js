@@ -55,9 +55,9 @@
  *                     : S
  *                 : Match<P, AsType<Rest, MatchCases<P>>>
  *             : Match<P, AsType<Rest, MatchCases<P>>>
- *         : never
+ *         : S
  *     : S
- * } MatchFnMatcher<P, A, Rest, S>
+ * } MatchMatcher<P, A, Rest, S>
  */
 
 /**
@@ -74,7 +74,7 @@
  *                     : [A] extends [true]
  *                         ? S
  *                         : [P] extends [A]
- *                             ? MatchFnMatcher<P, A, Rest, S>
+ *                             ? MatchMatcher<P, A, Rest, S>
  *                             : Match<P, AsType<Rest, MatchCases<P>>>
  *                 : First extends ((a: infer A, e: infer B) => infer S)
  *                     ? [B] extends [false]
@@ -89,7 +89,7 @@
  *                                 : [A] extends [true]
  *                                     ? ErrorType<"Condition parameter 'when' is duplicated">
  *                                     : [P] extends [A]
- *                                         ? MatchFnMatcher<P, A, Rest, S>
+ *                                         ? MatchMatcher<P, A, Rest, S>
  *                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                             : [A] extends [false]
  *                                 ? [B] extends [false]
@@ -103,23 +103,23 @@
  *                                         : [B] extends [true]
  *                                             ? ErrorType<"Condition parameter 'when' is duplicated">
  *                                             : [P] extends [B]
- *                                                 ? MatchFnMatcher<P, B, Rest, S>
+ *                                                 ? MatchMatcher<P, B, Rest, S>
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                     : [A] extends [P]
  *                                         ? [B] extends [P]
  *                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
  *                                             : [B] extends [ExactMatch<Boolean>]
- *                                                 ? MatchFnMatcher<P, A, Rest, S>
+ *                                                 ? MatchMatcher<P, A, Rest, S>
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                         : [A] extends [ExactMatch<Boolean>]
  *                                             ? [B] extends [ExactMatch<Boolean>]
  *                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
  *                                                 : [B] extends [P]
- *                                                     ? MatchFnMatcher<P, B, Rest, S>
+ *                                                     ? MatchMatcher<P, B, Rest, S>
  *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
  *                                             : [B] extends [P]
  *                                                 ? [A] extends [ExactMatch<Boolean>]
- *                                                     ? MatchFnMatcher<P, B, Rest, S>
+ *                                                     ? MatchMatcher<P, B, Rest, S>
  *                                                     : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                     : First extends ((a: infer A, e: infer B, c: infer C) => infer S)
@@ -146,13 +146,13 @@
  *                                                     ? [A] extends [ExactMatch<Boolean>]
  *                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
  *                                                         : [P] extends [B]
- *                                                             ? MatchFnMatcher<P, A, Rest, S>
+ *                                                             ? MatchMatcher<P, A, Rest, S>
  *                                                             : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                     : [B] extends [P]
  *                                                         ? [A] extends [P]
  *                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
  *                                                             : [A] extends [ExactMatch<Boolean>]
- *                                                                 ? MatchFnMatcher<P, B, Rest, S>
+ *                                                                 ? MatchMatcher<P, B, Rest, S>
  *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                                 : [B] extends [false]
@@ -178,13 +178,13 @@
  *                                                             ? [C] extends [ExactMatch<Boolean>]
  *                                                                 ? ErrorType<"Binding parameter 'b' is duplicated">
  *                                                                 : [P] extends [C]
- *                                                                     ? MatchFnMatcher<P, C, Rest, S>
+ *                                                                     ? MatchMatcher<P, C, Rest, S>
  *                                                                     : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                             : [A] extends [P]
  *                                                                 ? [C] extends [P]
  *                                                                     ? ErrorType<"Pattern parameter 'p' is duplicated">
  *                                                                     : [C] extends [ExactMatch<Boolean>]
- *                                                                         ? MatchFnMatcher<P, A, Rest, S>
+ *                                                                         ? MatchMatcher<P, A, Rest, S>
  *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                         : [A] extends [false]
@@ -210,13 +210,13 @@
  *                                                                     ? [A] extends [ExactMatch<Boolean>]
  *                                                                         ? ErrorType<"Binding parameter 'b' is duplicated">
  *                                                                         : [P] extends [A]
- *                                                                             ? MatchFnMatcher<P, A, Rest, S>
+ *                                                                             ? MatchMatcher<P, A, Rest, S>
  *                                                                             : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                     : [C] extends [P]
  *                                                                         ? [B] extends [P]
  *                                                                             ? ErrorType<"Pattern parameter 'p' is duplicated">
  *                                                                             : [B] extends [ExactMatch<Boolean>]
- *                                                                                 ? MatchFnMatcher<P, C, Rest, S>
+ *                                                                                 ? MatchMatcher<P, C, Rest, S>
  *                                                                                 : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                                         : Match<P, AsType<Rest, MatchCases<P>>>
  *                                                 : never
