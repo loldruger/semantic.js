@@ -1,31 +1,29 @@
 //@ts-check
 
 /**
- * @template {Boolean} B
- * @typedef {{ flag: B }} ExactMatch<B>
+ * @typedef {
+ *     | ((p: any, o: {e: true, when: true}) => unknown)
+ *     | ((p: any, o: {e: true, when: false}) => unknown)
+ *     | ((p: any, o: {e: false, when: true}) => unknown)
+ *     | ((p: any, o: {e: false, when: false}) => unknown)
+ *     | ((o: {when: false}) => unknown)
+ * } MatchCaseUnion
  */
 
 /**
- * @template {unknown} P
- * @typedef {ReadonlyArray<
- *     | ((p: any, o?: {e?: true, when?: true}) => unknown)
- *     | ((p: any, o?: {e?: true, when?: false}) => unknown)
- *     | ((p: any, o?: {e?: false, when?: true}) => unknown)
- *     | ((p: any, o?: {e?: false, when?: false}) => unknown)
- * >} MatchCases
- */
-
-/**
- * @template P, A, Rest, S
+ * @template {MatchCaseUnion} Pattern
+ * @template {MatchCaseUnion} CaseArm
+ * @template {ReadonlyArray<MatchCaseUnion>} Cases
+ * @template Result
  * @template {Boolean} When
  * @template {Boolean} IsExactMatch
- * @typedef {If<When, 
- *     P extends (...args: any) => infer RetA
- *         ? A extends (...args: any) => infer RetB
- *             ? IsExactMatch extends true
+ * @typedef {If<When,
+ *     If<IsExactMatch,
+ *         Pattern extends (...args: any) => infer RetA
+ *             ? CaseArm extends (...args: any) => infer RetB
  *                 ? And<
- *                     IsEqual<Parameters<P>, Parameters<A>>,
- *                     IsEqual<ReturnType<P>, ReturnType<A>>
+ *                     IsEqual<Parameters<Pattern>, Parameters<CaseArm>>,
+ *                     IsEqual<ReturnType<Pattern>, ReturnType<CaseArm>>
  *                 > extends true
  *                     ? RetA extends (...args: any) => any
  *                         ? RetB extends (...args: any) => any
@@ -33,49 +31,63 @@
  *                                 IsEqual<Parameters<RetA>, Parameters<RetB>>,
  *                                 IsEqual<ReturnType<RetA>, ReturnType<RetB>>
  *                             > extends true
- *                                 ? S
- *                                 : Match<P, AsType<Rest, MatchCases<P>>>
- *                             : never
- *                         : S
- *                     : Match<P, AsType<Rest, MatchCases<P>>>
- *                 : P extends A
- *                     ? S
- *                     : Match<P, AsType<Rest, MatchCases<P>>>
- *             : S
- *         : P extends A
- *             ? S
- *             : Match<P, AsType<Rest, MatchCases<P>>>,
- *     Match<P, AsType<Rest, MatchCases<P>>>
- * >} MatchEvaluator<P, A, Rest, S, When, IsExactMatch>
+ *                                 ? Result
+ *                                 : Match<Pattern, Cases>
+ *                             : Match<Pattern, Cases>
+ *                         : Result
+ *                     : Match<Pattern, Cases>
+ *                 : Match<Pattern, Cases>
+ *             : IsEqual<Pattern, CaseArm> extends true
+ *                 ? Result
+ *                 : Or4<
+ *                     IsSubType<{e: true, when: true}, CaseArm>,
+ *                     IsSubType<{e: true, when: false}, CaseArm>,
+ *                     IsSubType<{e: false, when: true}, CaseArm>,
+ *                     IsSubType<{e: false, when: false}, CaseArm>
+ *                 > extends true
+ *                     ? Result
+ *                     : Match<Pattern, Cases>,
+ *     Pattern extends CaseArm
+ *         ? Result
+ *         : Or4<
+ *             IsSubType<{e: true, when: true}, CaseArm>,
+ *             IsSubType<{e: true, when: false}, CaseArm>,
+ *             IsSubType<{e: false, when: true}, CaseArm>,
+ *             IsSubType<{e: false, when: false}, CaseArm>
+ *         > extends true
+ *             ? Result
+ *             : Match<Pattern, Cases>>,
+ *     Match<Pattern, Cases>
+ * >} MatchEvaluator<Pattern, CaseArm, Cases, Result, When, IsExactMatch>
  */
 
 /**
- * @template {unknown} P
- * @template {MatchCases<P>} MatchArm
- * @typedef {MatchArm extends []
+ * @template {unknown} Pattern
+ * @template {ReadonlyArray<MatchCaseUnion>} CaseArms
+ * @typedef {CaseArms extends []
  *     ? ErrorType<"No match case found">
- *     : MatchArm extends [infer First, ...infer Rest]
+ *     : CaseArms extends [infer First, ...infer Rest]
  *         ? First extends (() => infer S)
  *             ? S
- *             : First extends ((po: infer PO) => infer S)
+ *             : First extends ((po: infer PtnOrOpt) => infer Result)
  *                 ? MatchEvaluator<
- *                     P,
- *                     MatchCases<P>,
+ *                     Pattern,
+ *                     PtnOrOpt,
  *                     Rest,
- *                     S,
- *                     true,
- *                     PO extends {e?: true} ? true : false
+ *                     Result,
+ *                     PtnOrOpt extends {when: false} ? false : true,
+ *                     false
  *                 >
- *                 : First extends ((p: infer P, o?: infer O) => infer S)
+ *                 : First extends ((p: infer Ptn, o: infer Opt) => infer Result)
  *                     ? MatchEvaluator<
- *                         P,
- *                         MatchCases<P>,
+ *                         Pattern,
+ *                         Ptn,
  *                         Rest,
- *                         S,
- *                         O extends {when?: true} ? true : false,
- *                         O extends {e?: true} ? true : false
+ *                         Result,
+ *                         Opt extends {when: false} ? false : true,
+ *                         Opt extends {e: false} ? false : Opt extends {e: true} ? true : false
  *                     >
- *                     : Match<P, AsType<Rest, MatchCases<P>>>
+ *                     : Match<Pattern, Rest>
  *         : never
  * } Match<P, MatchArm>
  */
