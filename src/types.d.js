@@ -32,11 +32,11 @@
  *                                 IsEqual<ReturnType<RetA>, ReturnType<RetB>>
  *                             > extends true
  *                                 ? Result
- *                                 : Match<Pattern, Cases>
- *                             : Match<Pattern, Cases>
+ *                                 : Match<Pattern, Cases, true>
+ *                             : Match<Pattern, Cases, true>
  *                         : Result
- *                     : Match<Pattern, Cases>
- *                 : Match<Pattern, Cases>
+ *                     : Match<Pattern, Cases, true>
+ *                 : Match<Pattern, Cases, true>
  *             : IsEqual<Pattern, CaseArm> extends true
  *                 ? Result
  *                 : Or4<
@@ -46,24 +46,25 @@
  *                     IsSubType<{e: false, when: false}, CaseArm>
  *                 > extends true
  *                     ? Result
- *                     : Match<Pattern, Cases>,
- *     Pattern extends CaseArm
- *         ? Result
- *         : Or4<
- *             IsSubType<{e: true, when: true}, CaseArm>,
- *             IsSubType<{e: true, when: false}, CaseArm>,
- *             IsSubType<{e: false, when: true}, CaseArm>,
- *             IsSubType<{e: false, when: false}, CaseArm>
- *         > extends true
+ *                     : Match<Pattern, Cases, true>,
+ *         Pattern extends CaseArm
  *             ? Result
- *             : Match<Pattern, Cases>>,
- *     Match<Pattern, Cases>
+ *             : Or4<
+ *                 IsSubType<{e: true, when: true}, CaseArm>,
+ *                 IsSubType<{e: true, when: false}, CaseArm>,
+ *                 IsSubType<{e: false, when: true}, CaseArm>,
+ *                 IsSubType<{e: false, when: false}, CaseArm>
+ *             > extends true
+ *                 ? Result
+ *                 : Match<Pattern, Cases, false>>,
+ *     Match<Pattern, Cases, IsExactMatch>
  * >} MatchEvaluator<Pattern, CaseArm, Cases, Result, When, IsExactMatch>
  */
 
 /**
  * @template {unknown} Pattern
  * @template {ReadonlyArray<MatchCaseUnion>} CaseArms
+ * @template {Boolean} [IsExactMatch=false]
  * @typedef {CaseArms extends []
  *     ? ErrorType<"No match case found">
  *     : CaseArms extends [infer First, ...infer Rest]
@@ -76,7 +77,7 @@
  *                     Rest,
  *                     Result,
  *                     PtnOrOpt extends {when: false} ? false : true,
- *                     false
+ *                     IsExactMatch
  *                 >
  *                 : First extends ((p: infer Ptn, o: infer Opt) => infer Result)
  *                     ? MatchEvaluator<
@@ -85,7 +86,7 @@
  *                         Rest,
  *                         Result,
  *                         Opt extends {when: false} ? false : true,
- *                         Opt extends {e: false} ? false : Opt extends {e: true} ? true : false
+ *                         Opt extends {e: false} ? false : Opt extends {e: true} ? true : IsExactMatch
  *                     >
  *                     : Match<Pattern, Rest>
  *         : never
