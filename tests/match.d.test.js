@@ -34,7 +34,7 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (when: true) => 'Boolean with true',
+ *     (o: {when: true}) => 'Boolean with true',
  *     (p: Number) => 'Number',
  *     (p: String) => 'String',
  *     () => void,
@@ -44,8 +44,8 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: Boolean, o?: {when?: false}) => 'Should never happen',
- *     (p: Boolean, o?: {when?: true}) => 'Boolean when true',
+ *     (p: Boolean, o: {when: false}) => 'Should never happen',
+ *     (p: Boolean, o: {when: true}) => 'Boolean when true',
  *     () => void,
  * ]>} TestMatch4<P>
  */
@@ -53,7 +53,7 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: Number, o?: {when?: true, e?: true}) => 'Number',
+ *     (p: Number, o: {when: true, e: true}) => 'Number',
  * ]>} TestMatch7<P>
  */
 
@@ -61,8 +61,8 @@
  * @template P
  * @typedef {Match<P, [
  *     (p: Number) => 'Number',
- *     (p: (a: Number) => Boolean) => 'Num to Bool',
- *     (p: () => Boolean) => 'Void to Boolean',
+ *     (p: (a: Number) => Boolean, o: {e: true}) => 'Num to Bool',
+ *     (p: () => Boolean, o: {e: true}) => 'Void to Boolean',
  *     () => void,
  * ]>} TestMatch8<P>
  */
@@ -71,8 +71,8 @@
  * @template P
  * @typedef {Match<P, [
  *     (p: Number) => 'Number',
- *     (p: (a: (a: Number) => Boolean) => Boolean) => 'Num to Bool to Bool',
- *     (p: () => Boolean) => 'Void to Boolean',
+ *     (p: (a: (a: Number) => Boolean) => Boolean, o: {e: true}) => 'Num to Bool to Bool',
+ *     (p: () => Boolean, o: {e: true}) => 'Void to Boolean',
  *     () => void,
  * ]>} TestMatch9<P>
  */
@@ -81,11 +81,11 @@
  * @template P
  * @typedef {Match<P, [
  *     (p: Number) => 'Number',
- *     (p: (a: (a: Number) => Boolean) => (a: Boolean) => Number) => 'Num to Bool to Fn of (Bool to Num)',
- *     (p: (a: (a: Number) => Boolean) => Boolean) => 'Num to Bool to Bool',
- *     (p: (a: (a: Boolean) => Boolean) => Boolean) => 'Intercepted',
- *     (p: (a: (a: Number, b: Boolean) => void) => Boolean) => '(Number, Boolean) to void',
- *     (p: (a: (a: Boolean, b: Number) => void) => Boolean) => '(Boolean, Number) to void',
+ *     (p: (a: (a: Number) => Boolean) => (a: Boolean) => Number, o: {e: true}) => 'Num to Bool to Fn of (Bool to Num)',
+ *     (p: (a: (a: Number) => Boolean) => Boolean, o: {e: true}) => 'Num to Bool to Bool',
+ *     (p: (a: (a: Boolean) => Boolean) => Boolean, o: {e: true}) => 'Intercepted',
+ *     (p: (a: (a: Number, b: Boolean) => void) => Boolean, o: {e: true}) => '(Number, Boolean) to void',
+ *     (p: (a: (a: Boolean, b: Number) => void) => Boolean, o: {e: true}) => '(Boolean, Number) to void',
  *     (p: () => Boolean) => 'Void to Boolean',
  *     () => void,
  * ]>} TestMatch10<P>
@@ -94,9 +94,9 @@
 /**
  * @template P
  * @typedef {Match<P, [
- *     (p: (a: (a: (a: Boolean) => void) => Boolean) => Boolean) => 'Intercepted',
- *     (p: (a: (a: (a: String, b: Boolean) => void, b: Number) => void) => Boolean) => '((String, Boolean)=>void, Number) to void',
- *     (p: (a: (a: (a: Boolean, b: String) => void, b: Number) => void) => Boolean) => '((Boolean, String)=>void, Number) to void',
+ *     (p: (a: (a: (a: Boolean) => void) => Boolean) => Boolean, o: {e: true}) => 'Intercepted',
+ *     (p: (a: (a: (a: String, b: Boolean) => void, b: Number) => void) => Boolean, o: {e: true}) => '((String, Boolean)=>void, Number) to void',
+ *     (p: (a: (a: (a: Boolean, b: String) => void, b: Number) => void) => Boolean, o: {e: true}) => '((Boolean, String)=>void, Number) to void',
  *     () => void,
  * ]>} TestMatch11<P>
  */
@@ -110,7 +110,7 @@
  *     (p: () => () => () => void) => 'void to void to void to void',
  *     (p: () => () => (a: () => Boolean) => void) => 'void to void to Boolean to void',
  *     () => void,
- * ]>} TestMatch12<P>
+ * ], true>} TestMatch12<P>
  */
 
 /**
@@ -121,7 +121,7 @@
  * @typedef {TestMatch2<Boolean>} MatchTestCase4_ShouldBe_Void
  * @typedef {TestMatch3<Boolean>} MatchTestCase5_ShouldBe_Boolean_With_True
  * @typedef {TestMatch4<Boolean>} MatchTestCase6_ShouldBe_Boolean_With_True
- * @typedef {TestMatch7<Boolean>} MatchTestCase9_ShouldBe_Feels_Good
+ * @typedef {TestMatch7<Number>} MatchTestCase9_ShouldBe_Feels_Good
  * @typedef {TestMatch8<(a: Number) => Boolean>} MatchTestCase10_ShouldBe_Num_To_Bool
  * @typedef {TestMatch8<(a: String) => Boolean>} MatchTestCase11_ShouldBe_Void
  * @typedef {TestMatch9<(a: (a: Number) => Boolean) => Boolean>} MatchTestCase12_ShouldBe_Num_To_Bool_To_Bool
@@ -138,5 +138,5 @@
  */
 
 /**
- * @typedef {{a: true, when: true} extends {a: true, when: true} ? 'yes' : 'no'} Egfgfd
+ * @typedef {{e: false, when: false}  extends {when: true} ? 'yes' : 'no'} Egfgfd
  */

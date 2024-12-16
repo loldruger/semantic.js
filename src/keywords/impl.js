@@ -1,33 +1,48 @@
 //@ts-check
 
 /**
- * @template {CallableType} T
- * @typedef {Record<String, T>} FnMap
+ * @template {String} Name
+ * @template {CallableType} Fn
+ * @typedef {Readonly<Record<Name, Fn>>} FnMap
  */
 
 /**
- * @template {Object} T
+ * @template {String} [Name=String]
+ * @template [Value=any]
+ * @typedef {Readonly<Record<Name, Value>>} ConstMap
+ */
+
+/**
+ * @template {Object} Target
+ * @template {ConstMap} Consts
+ * @template {FnMap<String, CallableType>} Fns
+ * @template {FnMap<String, CallableType>} StaticFns
  */
 export class Impl {
     /**
-     * @type {T}
+     * @type {Target}
      */
     #target;
 
     /**
-     * @type {FnMap<CallableType>}
+     * @type {Consts}
      */
-    #fns = {};
+    #consts = /** @type {Consts} */ ({});
 
     /**
-     * @type {FnMap<CallableType>}
+     * @type {Fns}
      */
-    #fnsStatic = {};
+    #fns = /** @type {Fns} */ ({});
+
+    /**
+     * @type {StaticFns}
+     */
+    #staticFns = /** @type {StaticFns} */ ({});
 
     /**
      * @template {Object} T
      * @param {IsExtensible<T> extends true ? T : never} target
-     * @returns {Impl<T>}
+     * @returns {Impl<T, {}, {}, {}>}
      */
     static for(target) {
         return new Impl(target);
@@ -35,40 +50,66 @@ export class Impl {
 
     /**
      * @private
-     * @param {T} target 
+     * @param {Target} target 
      */
     constructor(target) {
         this.#target = target;
     }
 
     /**
-     * @param {String} name
-     * @param {CallableType} func
-     * @return {this}
+     * @template {String} Name
+     * @template {(props: {self: Self, [key: string]: any}) => any} Fn
+     * @template {Target & Consts & Fns & FnMap<Name, Fn>} [Self=Target & Consts & Fns]
+     * @param {Name} name
+     * @param {Fn} func
+     * @return {Impl<Target, Consts, Fns & FnMap<Name, Fn>, StaticFns>}
      */
     fn(name, func) {
-        this.#fns.push({ ...this.#fns, name: func });
+        this.#fns = { ...this.#fns, [name]: func };
 
-        return this;
+        return /** @type {Impl<Target, Consts, Fns & FnMap<Name, Fn>, StaticFns>} */ (/** @type {unknown} */ (this));
     }
 
     /**
-     * @param {String} name
-     * @param {CallableType} func
-     * @return {this}
+     * @template {String} Name
+     * @template {(Self: Target & Consts & FnMap<Name, Fn> & StaticFns, ...args: any) => any} Fn
+     * @param {Name} name
+     * @param {Fn} func
+     * @return {Impl<Target, Consts, Fns, StaticFns & FnMap<Name, Fn>>}
      */
-    fnStatic(name, func) {
-        this.#fnsStatic.push(func);
+    staticFn(name, func) {
+        this.#staticFns = { ...this.#staticFns, [name]: func };
 
-        return this;
+        return /** @type {Impl<Target, Consts, Fns, StaticFns & FnMap<Name, Fn>>} */ (/** @type {unknown} */ (this));
     }
 
     /**
-     * @returns {T}
+     * @template {String} Name
+     * @template Value
+     * @param {Name} name
+     * @param {Value extends IsLiteralType<Value> ? Value : never} value
+     * @return {Impl<Target, Consts & Record<Name, Value>, Fns, StaticFns>}
      */
-    build() {
-        Object.setPrototypeOf(this.#target, { ...this.#fns })
-        return this.#target;
+    const(name, value) {
+        this.#consts = { ...this.#consts, [name]: value };
+
+        return /** @type {Impl<Target, Consts & Record<Name, Value>, Fns, StaticFns>} */ (/** @type {unknown} */ (this));
+    }
+
+    /**
+     * @param {Boolean} freeze
+     * @returns {Target & Consts & Fns & StaticFns}
+     */
+    build(freeze) {
+        Object.setPrototypeOf(this.#target, this.#staticFns);
+        Object.assign(this.#target, this.#fns);
+        Object.assign(this.#target, this.#consts);
+
+        if (freeze) {
+            return Object.freeze(/** @type {Target & Consts & Fns & StaticFns} */(this.#target));
+        }
+
+        return /** @type {Target & Consts & Fns & StaticFns} */ (this.#target);
     }
 }
 

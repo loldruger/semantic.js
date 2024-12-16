@@ -19,7 +19,7 @@ export class Option {
     typeInfo;
 
     /**
-     * @type {ToRecursivelyInstanceType<T>?=}
+     * @type {ToInstanceType<T>?=}
      */
     #value;
 
@@ -47,7 +47,7 @@ export class Option {
     }
 
     /**
-     * @template {ToRecursivelyInstanceType<ConstructableTypeUnion>} T
+     * @template {ToInstanceType<ConstructableTypeUnion>} T
      * @param {T} value
      * @returns {Option<ToConcreteType<T>>}
      */
@@ -60,7 +60,7 @@ export class Option {
         return new Option(() => { });
     }
     /**
-     * @param {ToRecursivelyInstanceType<T>} value
+     * @param {ToInstanceType<T>} value
      * @returns {Option<ToConcreteType<T>>}
      */
     some(value) {

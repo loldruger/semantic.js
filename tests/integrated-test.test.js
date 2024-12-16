@@ -3,6 +3,7 @@
 import { Impl, TaggedUnion, TupleType } from "../src/lib.js";
 import { Option } from "../src/types/option.js";
 
+//@ts-ignore
 const test1 = (() => {
     const Option = TaggedUnion.new()
         .variant("Some", Number)
@@ -23,6 +24,7 @@ const test1 = (() => {
     console.log(some);
 })();
 
+//@ts-ignore
 const test2 = (() => {
     const Option = TaggedUnion.new()
         .variant("Some", TupleType(String, Number, String, TupleType(Boolean, Number, TupleType(Number))))
@@ -38,6 +40,7 @@ const test2 = (() => {
     console.log(none);
 })();
 
+//@ts-ignore
 const test3 = (() => {
     const SomeUnion = TaggedUnion.new()
         .variant("callable", () => String)
@@ -46,6 +49,7 @@ const test3 = (() => {
     console.log(SomeUnion.callable(() => "Hello, World!"));
 })();
 
+//@ts-ignore
 const test4 = (() => {
     /** @type {(a: String, b: Boolean) => StringConstructor} */
     const a = (a, b) => String;
@@ -57,6 +61,7 @@ const test4 = (() => {
     console.log(SomeUnion.callable([1, (a, b) => "Hello, World!"]));
 })();
 
+//@ts-ignore
 const test5 = (() => {
     /** @type {(a: String) => [BooleanConstructor]} */
     const a = (_a) => TupleType(Boolean);
@@ -65,9 +70,10 @@ const test5 = (() => {
         .variant("callable", TupleType(Number, a))
         .build();
 
-    console.log(SomeUnion.callable([1, (q) =>[true]]));
+    console.log(SomeUnion.callable([1, (q) => [true]]));
 })();
 
+//@ts-ignore
 const test6 = (() => {
     /** @type {(a: String) => [StringConstructor, BooleanConstructor, [NumberConstructor]]} */
     const a = (_a) => TupleType(String, Boolean, TupleType(Number));
@@ -79,6 +85,7 @@ const test6 = (() => {
     console.log(SomeUnion.callable([1, (q) => ["Hello, World!", true, [1]]]));
 })();
 
+//@ts-ignore
 const test7 = (() => {
     /** @type {(a: [String, Number]) => StringConstructor} */
     const a = ([_a, _b]) => String;
@@ -90,6 +97,7 @@ const test7 = (() => {
     console.log(SomeUnion.callable([1, (q) => "Hello, World!"]));
 })();
 
+//@ts-ignore
 const test8 = (() => {
     /** @type {(a: [String, Number]) => [StringConstructor, BooleanConstructor, [NumberConstructor]]} */
     const a = ([_a, _b]) => TupleType(String, Boolean, TupleType(Number));
@@ -101,6 +109,7 @@ const test8 = (() => {
     console.log(SomeUnion.callable([1, (q) => "Hello, World!"]));
 })();
 
+//@ts-ignore
 const test9 = (() => {
     // const option = Option.Of(String);
     // const option1 = Option.Of(TupleType(Number, String));
@@ -111,20 +120,25 @@ const test9 = (() => {
 
 })();
 
+//@ts-ignore
 const test10 = (() => {
     const Option = TaggedUnion.new()
         .variant("Some", Number)
         .variant("None")
         .build();
 
-    Impl.for(Option)
-        .fn("nameOfFn", (self) => {
+    const Opt = Impl.for(Option)
+        .const("typeInfo", 1)
+        .fn("qwe", ({ self, a }) => {
+            self.aaa(); // cannot find function aaa
+        })
+        .fn("aaa", (self) => {
+            console.log("yaho");
+        })
+        .staticFn("unwrap", (Self) => {
 
         })
-        .fnStatic("asdf", (Self) => {
+        .build(true);
 
-        })
-        .build();
-        
-    console.log(Option);
+    console.log("Option: ", Opt.aaa({ a: 1 }));
 })();

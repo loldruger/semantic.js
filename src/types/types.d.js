@@ -101,33 +101,6 @@
  */
 
 /**
- * @template {ConstructableTypeUnion} T
- * @typedef {IsTupleType<T> extends true
- *     ? {[K in keyof T]: (T[K] extends ConstructableTypes
- *         ? ToRecursivelyInstanceType<T[K]>
- *         : T[K] extends AbstConcreteType
- *             ? InstanceType<T[K]>
- *             : T[K] extends CallableType
- *                 ? T[K] extends (x: infer P) => infer R
- *                     ? true extends true
- *                         ? IsTupleType<R> extends true ? 'P R' : 'P'
- *                         : IsTupleType<R> extends true ? 'R' : (x: P) => InstanceType<R extends AbstConcreteType ? R : never>
- *                     : T[K] extends (...x: infer B) => infer A
- *                         ? true extends true
- *                             ? IsTupleType<R> extends true ? 'P R' : 'B'
- *                             : IsTupleType<R> extends true ? 'R' : (x: Params) => InstanceType<R extends AbstConcreteType ? R : never>
- *                         : never
- *                 : never
- *     )}
- *     : T extends AbstConcreteType
- *         ? InstanceType<T>
- *         : T extends CallableType
- *             ? T
- *             : never
- * } ToRecursivelyInstanceType<T>
- */
-
-/**
  * @template {ConstructableTypeUnion} Arg_T
  * @typedef {If<IsTupleType<Arg_T>, {
  *     [K in keyof Arg_T]: (
@@ -136,8 +109,12 @@
  *             (p: AbstConcreteType) => InstanceType<AsType<Arg_T[K], AbstConcreteType>>,
  *             (p: ConcreteType) => InstanceType<AsType<Arg_T[K], ConcreteType>>,
  *             (p: CallableType) => Match<Arg_T[K], [
- *                 <P, R>(p: (a: P) => R) => InstanceType<AsType<Arg_T[K], AbstConcreteType>>,
- *                 (p: ((...i: any) => any)) => InstanceType<AsType<Arg_T[K], AbstConcreteType>>,
+ *                 (p: (a: any) => any) =>
+ *                     (a: ToInstanceType<AsType<Parameters<AsType<Arg_T[K], CallableType>>, ConstructableTypes>>) =>
+ *                         ToInstanceType<AsType<ReturnType<AsType<Arg_T[K], CallableType>>, any>>,
+ *                 (p: ((...a: any) => any)) =>
+ *                     (a: ToInstanceType<AsType<Parameters<AsType<Arg_T[K], CallableType>>, ConstructableTypes>>) =>
+ *                         ToInstanceType<AsType<ReturnType<AsType<Arg_T[K], CallableType>>, any>>,
  *                 () => void
  *             ]>,
  *             () => void
@@ -146,9 +123,13 @@
  *         (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
  *         (p: ConcreteType) => InstanceType<AsType<Arg_T, ConcreteType>>,
  *         (p: CallableType) => Match<Arg_T, [
- *                 (p: (a: any) => any) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *                 (p: ((...a: any) => any)) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *                 () => "void"
+ *                 (p: (a: any) => any) =>
+ *                     (a: ToInstanceType<AsType<Parameters<AsType<Arg_T, CallableType>>, ConstructableTypes>>) =>
+ *                         ToInstanceType<AsType<ReturnType<AsType<Arg_T, CallableType>>, any>>,
+ *                 (p: ((...a: any) => any)) =>
+ *                     (a: ToInstanceType<AsType<Parameters<AsType<Arg_T, CallableType>>, ConstructableTypes>>) =>
+ *                         ToInstanceType<AsType<ReturnType<AsType<Arg_T, CallableType>>, any>>,
+ *                 () => void
  *             ]>,
  *         () => void
  *     ]>>
@@ -163,10 +144,11 @@
  * @typedef {ToInstanceType<(a: BooleanConstructor) => StringConstructor>} Test5
  * @typedef {ToInstanceType<(a: [any]) => any>} Test6
  * @typedef {ToInstanceType<(a: [any, any]) => any>} Test7
- * @typedef {ToInstanceType<(a: [any, [any]]) => any>} Test8
+ * @typedef {ToInstanceType<(a: [BooleanConstructor, [NumberConstructor]]) => any>} Test8
+ * @typedef {ToInstanceType<(a: NumberConstructor, b: StringConstructor) => [any]>} Test22
  * @typedef {ToInstanceType<(a: any) => [any]>} Test9
  * @typedef {ToInstanceType<(a: any) => [any, any]>} Test10
- * @typedef {ToInstanceType<(a: any) => [any, [any]]>} Test11
+ * @typedef {ToInstanceType<(a: any) => [StringConstructor, [BooleanConstructor]]>} Test11
  * @typedef {ToInstanceType<(a: [any]) => [any]>} Test12
  * @typedef {ToInstanceType<(a: [any]) => [any, any]>} Test13
  * @typedef {ToInstanceType<[(a: [any]) => [any, any]]>} Test14
@@ -191,20 +173,43 @@
  * @typedef {T extends CallableType ? true : false} IsFunctionType<T>
  */
 
+/**
+ * @template T
+ * @typedef {T extends string | number | boolean | symbol | bigint
+ *     ? (string extends T
+ *         ? never
+ *         : number extends T
+ *             ? never
+ *             : boolean extends T
+ *                 ? never
+ *                 : symbol extends T
+ *                     ? never
+ *                     : bigint extends T
+ *                         ? never
+ *                         : T
+ *     )
+ *     : never
+ * } IsLiteralType<T>
+ */
+
 ////////////////////
 // Type Utilities //
 ////////////////////
 
 /**
  * @template T
- * @typedef { T extends infer U 
- *     ? U extends object 
- *         ? { [key: string]: any } extends U 
- *             ? true
- *             : false 
- *         : false 
- *     : false
- * } IsExtensible<T>
+ * @typedef {T extends object
+ * ? (
+ *     string extends keyof T
+ *     ? true
+ *     : number extends keyof T
+ *         ? true
+ *         : symbol extends keyof T
+ *           ? true
+ *           : (keyof T extends never ? true:
+ *               { [K in keyof T]-?: T[K] } extends T ? true : false)
+ *   )
+ * : false} IsExtensible<T>
  */
 
 /**

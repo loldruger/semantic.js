@@ -38,7 +38,7 @@ export class TaggedUnion {
             [tag]: fn
         };
 
-        return  /** @type {any} */ (this);
+        return /** @type {any} */ (this);
     }
 
     /**

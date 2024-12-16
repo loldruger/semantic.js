@@ -32,11 +32,11 @@
  *                                 IsEqual<ReturnType<RetA>, ReturnType<RetB>>
  *                             > extends true
  *                                 ? Result
- *                                 : Match<Pattern, Cases, true>
- *                             : Match<Pattern, Cases, true>
+ *                                 : Match<Pattern, Cases>
+ *                             : Match<Pattern, Cases>
  *                         : Result
- *                     : Match<Pattern, Cases, true>
- *                 : Match<Pattern, Cases, true>
+ *                     : Match<Pattern, Cases>
+ *                 : Match<Pattern, Cases>
  *             : IsEqual<Pattern, CaseArm> extends true
  *                 ? Result
  *                 : Or4<
@@ -46,18 +46,18 @@
  *                     IsSubType<{e: false, when: false}, CaseArm>
  *                 > extends true
  *                     ? Result
- *                     : Match<Pattern, Cases, true>,
- *         Pattern extends CaseArm
+ *                     : Match<Pattern, Cases>,
+ *     Pattern extends CaseArm
+ *         ? Result
+ *         : Or4<
+ *             IsSubType<{e: true, when: true}, CaseArm>,
+ *             IsSubType<{e: true, when: false}, CaseArm>,
+ *             IsSubType<{e: false, when: true}, CaseArm>,
+ *             IsSubType<{e: false, when: false}, CaseArm>
+ *         > extends true
  *             ? Result
- *             : Or4<
- *                 IsSubType<{e: true, when: true}, CaseArm>,
- *                 IsSubType<{e: true, when: false}, CaseArm>,
- *                 IsSubType<{e: false, when: true}, CaseArm>,
- *                 IsSubType<{e: false, when: false}, CaseArm>
- *             > extends true
- *                 ? Result
- *                 : Match<Pattern, Cases, false>>,
- *     Match<Pattern, Cases, IsExactMatch>
+ *             : Match<Pattern, Cases>>,
+ *     Match<Pattern, Cases>
  * >} MatchEvaluator<Pattern, CaseArm, Cases, Result, When, IsExactMatch>
  */
 
