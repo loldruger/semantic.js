@@ -58,14 +58,16 @@ export class Impl {
 
     /**
      * @template {String} Name
-     * @template {(props: {self: Self, [key: string]: any}) => any} Fn
-     * @template {Target & Consts & Fns & FnMap<Name, Fn>} [Self=Target & Consts & Fns]
+     * @template {(props: { self?: Target & Consts & Fns & FnMap<Name, Fn>, [key: string]: any }) => any} Fn
      * @param {Name} name
      * @param {Fn} func
      * @return {Impl<Target, Consts, Fns & FnMap<Name, Fn>, StaticFns>}
      */
     fn(name, func) {
-        this.#fns = { ...this.#fns, [name]: func };
+        this.#fns = {
+            ...this.#fns,
+            [name]: (props) => func({ self: this.#target, ...props })
+        };
 
         return /** @type {Impl<Target, Consts, Fns & FnMap<Name, Fn>, StaticFns>} */ (/** @type {unknown} */ (this));
     }

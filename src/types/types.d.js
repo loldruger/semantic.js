@@ -101,7 +101,7 @@
  */
 
 /**
- * @template {ConstructableTypeUnion} Arg_T
+ * @template {ConstructableTypeUnion|Mut<ConstructableTypeUnion>} Arg_T
  * @typedef {If<IsTupleType<Arg_T>, {
  *     [K in keyof Arg_T]: (
  *         Match<Arg_T[K], [

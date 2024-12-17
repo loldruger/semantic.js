@@ -1,21 +1,21 @@
 //@ts-check
 
 /**
- * @template {String} Tag
- * @template {ConstructableTypes} T
- * @typedef {IsTupleType<T> extends true
- *     ? Readonly<Record<Tag, (..._: [ToInstanceType<T>]) => ToInstanceType<T>>>
- *     : IsConcreteType<T> extends true
+ * @template {String} Field
+ * @template {ConstructableTypes|ConstructableTypeUnion|Mut<ConstructableTypeUnion>} T
+ * @typedef {If<IsTupleType<T>,
+ *     Readonly<Record<Field, (..._: [ToInstanceType<T>]) => ToInstanceType<T>>>,
+ *     IsConcreteType<T> extends true
  *         ? T extends AbstConcreteType
- *             ? Readonly<Record<Tag, (x: InstanceType<T>) => InstanceType<T>>>
+ *             ? Readonly<Record<Field, (x: InstanceType<T>) => InstanceType<T>>>
  *             : never
  *         : IsFunctionType<T> extends true 
  *             ? T extends (...args: infer P) => infer R
- *                 ? Readonly<Record<Tag, (x: ((...args: P) => (R extends AbstConcreteType ? InstanceType<R> : R))) => (...args: P) => (R extends AbstConcreteType
+ *                 ? Readonly<Record<Field, (x: ((...args: P) => (R extends AbstConcreteType ? InstanceType<R> : R))) => (...args: P) => (R extends AbstConcreteType
  *                     ? InstanceType<R>
  *                     : R
  *                 )>>
  *                 : never
- *             : Readonly<Record<Tag, null>>
- * } TaggedUnionType<Tag, [T]>
+ *             : Readonly<Record<Field, null>>
+ * >} StructType<Tag, [T]>
  */

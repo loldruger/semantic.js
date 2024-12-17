@@ -1,12 +1,13 @@
 // @ts-check
 
-import { TupleType } from "./tuple";
-
+/**
+ * @template {StructType<String, ConstructableTypes>} Fields
+ */
 export class Struct {
     /**
-     * @type {Record<String, String>}
+     * @type {Fields}
      */
-    #fields = {};
+    #fields = /** @type {Fields} */ ({});
 
     /**
      * @private
@@ -14,52 +15,36 @@ export class Struct {
     constructor() { }
 
     /**
-     * @returns {Struct}
+     * @returns {Struct<{}>}
      */
     static new() {
         return new Struct();
     }
 
     /**
-     * Defines a variant of the tagged union.
-     * @param {String} tag - The name of the variant.
-     * @param {Type} [type] - The field names associated with the variant.
-     * @returns {Struct} - Returns the TaggedUnion instance for chaining.
+     * @template {String} Name
+     * @template {ConstructableTypeUnion} TypeInfo
+     * @param {Name} name
+     * @param {TypeInfo} typeInfo
+     * @returns {Struct<Fields & StructType<Name, TypeInfo>>}
      */
-    field(tag, type) {
-        if (type === undefined || type === null) {
-            return this;
-        }
+    field(name, typeInfo) {
+        this.#fields = {
+            ...this.#fields,
+            get [name]() { return typeInfo },
+            set [name](/** @type {TypeInfo} */value) { console.log(value); }
+        };
 
-        this.#fields[tag] = type;
-
-        return this;
+        return /** @type {Struct<Fields & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));
     }
 
     /**
-     * Builds the tagged union type with constructors for each variant.
-     * @returns {Readonly<Struct>} - An object containing constructors for each variant.
+     * @returns {{[K in keyof Fields]: Fields[K]}}
      */
     build() {
-        const fields = { ...this.#fields };
-
-        const union = Object
-            .keys(fields)
-            .reduce((acc, tag) => {
-                acc[tag] = (...args) => {
-                    const data = fields[tag];
-                    const obj = Object.create(null);
-
-                    for (const key in data) {
-                        obj[key] = args.shift();
-                    }
-
-                    return obj;
-                };
-                return acc;
-
-            }, Object.create(null));
-
-        return Object.freeze(union);
+        return this.#fields;
     }
 }
+
+Object.setPrototypeOf(Struct, null);
+Object.setPrototypeOf(Struct.prototype, null);
