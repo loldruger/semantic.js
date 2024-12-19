@@ -13,7 +13,7 @@
 /**
  * @template {MatchCaseUnion} Pattern
  * @template {MatchCaseUnion} CaseArm
- * @template {ReadonlyArray<MatchCaseUnion>} Cases
+ * @template {ReadonlyArray<MatchCaseUnion>} RestCases
  * @template Result
  * @template {Boolean} When
  * @template {Boolean} IsExactMatch
@@ -32,11 +32,11 @@
  *                                 IsEqual<ReturnType<RetA>, ReturnType<RetB>>
  *                             > extends true
  *                                 ? Result
- *                                 : Match<Pattern, Cases>
- *                             : Match<Pattern, Cases>
+ *                                 : Match<Pattern, RestCases>
+ *                             : Match<Pattern, RestCases>
  *                         : Result
- *                     : Match<Pattern, Cases>
- *                 : Match<Pattern, Cases>
+ *                     : Match<Pattern, RestCases>
+ *                 : Match<Pattern, RestCases>
  *             : IsEqual<Pattern, CaseArm> extends true
  *                 ? Result
  *                 : Or4<
@@ -46,7 +46,7 @@
  *                     IsSubType<{e: false, when: false}, CaseArm>
  *                 > extends true
  *                     ? Result
- *                     : Match<Pattern, Cases>,
+ *                     : Match<Pattern, RestCases>,
  *     Pattern extends CaseArm
  *         ? Result
  *         : Or4<
@@ -56,8 +56,8 @@
  *             IsSubType<{e: false, when: false}, CaseArm>
  *         > extends true
  *             ? Result
- *             : Match<Pattern, Cases>>,
- *     Match<Pattern, Cases>
+ *             : Match<Pattern, RestCases>>,
+ *     Match<Pattern, RestCases>
  * >} MatchEvaluator<Pattern, CaseArm, Cases, Result, When, IsExactMatch>
  */
 
@@ -142,8 +142,8 @@
 
 /**
  * @template {Boolean} Condition
- * @template {ReadonlyArray<CodeBlock<Then>> | unknown} Then
- * @template {ReadonlyArray<CodeBlock<Else>> | unknown} Else
+ * @template {unknown} Then
+ * @template {unknown} Else
  * @typedef {Condition extends true ? Then : Else} If<Condition, Then, Else>
  */
 

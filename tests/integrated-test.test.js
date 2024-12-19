@@ -4,10 +4,10 @@ import { Impl, TupleType, Struct } from "../src/lib.js";
 
 //@ts-ignore
 const test1 = (() => {
-    const struct = Struct.new()
-        .field("Some", TupleType(TupleType(String), Number, String, TupleType(Boolean, Number, TupleType(Number))))
-        .field("None", String)
-        .build();
+    // const struct = Struct.new()
+    //     .field("Some", TupleType(TupleType(String), Number, String, TupleType(Boolean, Number, TupleType(Number))))
+    //     .field("None", String)
+    //     .build();
 
     // const some = struct.Some([["1"], 1, "1", [true, 1, [1]]]);
 
@@ -93,7 +93,6 @@ const test8 = (() => {
 
 //@ts-ignore
 const test9 = (() => {
-
 
 })();
 

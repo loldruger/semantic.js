@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {StructType<String, ConstructableTypes>} Fields
+ * @template {StructType<String, ConstructableTypeUnion|Mut<ConstructableTypeUnion>>} Fields
  */
 export class Struct {
     /**
@@ -23,16 +23,23 @@ export class Struct {
 
     /**
      * @template {String} Name
-     * @template {ConstructableTypeUnion} TypeInfo
+     * @template {ConstructableTypeUnion|Mut<ConstructableTypeUnion>} TypeInfo
      * @param {Name} name
      * @param {TypeInfo} typeInfo
      * @returns {Struct<Fields & StructType<Name, TypeInfo>>}
      */
     field(name, typeInfo) {
+        /** @type {Record<String, PropertyDescriptor>} */
+        const info = {};
+        info[name] = {
+            [`_${name}`]: undefined,
+            get [name]() { return info[`_${name}`] },
+            set [name](/** @type {TypeInfo} */ value) { info[`_${name}`] = value }
+        }
+
         this.#fields = {
             ...this.#fields,
-            get [name]() { return typeInfo },
-            set [name](/** @type {TypeInfo} */value) { console.log(value); }
+            ...info[name]
         };
 
         return /** @type {Struct<Fields & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));

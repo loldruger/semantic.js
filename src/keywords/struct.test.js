@@ -1,27 +1,17 @@
 //@ts-check
 
-import { Impl, Struct } from '../lib.js';
+import { TupleType } from '../lib.js';
+import { Impl } from './impl.js';
+import { mut, imut } from './mut.js';
+import { Struct } from './struct.js';
 
 //@ts-ignore
-const test10 = (() => {
+const test0 = (() => {
     const struct = Struct.new()
-        .field("tag", Number)
-        .field("string", String)
+        .field("string", Boolean)
+        .field("tag", mut(Number))
         .build();
 
-    const Opt = Impl.for(struct)
-        .fn("some", ({ self, x }) => {
-            self?.tag = 1;
-        })
-        .fn("isSome", ({ self }) => {
-            // self?.string = "Hello, World!";
-
-            return self?.string;
-        })
-        .fn("isNone", ({ self }) => {
-
-        })
-        .build(true);
-
-    console.log("Struct: ", Opt.some({ x: 1 }));
+    struct.tag = 11;
+    console.log("Struct: ", struct);
 })();
