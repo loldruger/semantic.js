@@ -1,6 +1,6 @@
 # #What is Semantic.js
 
-`Semantic.js` introduces just a pure `Javascript, ES2023` but Rustified, which means it contains utilizable types like `Option<T>`, `Result<T, E>`, or mimiced keyword like  `struct` or `Tagged Union` etc like `The Rust Programming language` with fully documented by `Jsdoc`. so that this project is entirely virtually type-safe (no runtime fee required).
+`Semantic.js` introduces just a pure `Javascript, ES2023` but *Rustified*, which means it contains utilizable types like `Option<T>`, `Result<T, E>`, or mimiced keyword like  `struct` or `tagged union` etc. like `The Rust Programming language` with fully documented by `Jsdoc`. so that this project is entirely virtually type-safe (no runtime fee required).
 
 Currently this project is in `WIP` (Working In Process).
 
@@ -10,20 +10,17 @@ Currently, My development environment is that, I'm working on `vscode`, with som
 
 If you prefer to use other browsers like `chrome` or `msedge`, you can edit the `launch.json` in `.vscode` directory.
 
-## #Debug This Project
+## Debugging
 
-Set your browser Press F5.
+To start debugging in VS Code, select your browser (currently `firefox` setting only) and press F5.
 
-## #How to Compile?
+## Building and Preparing for Deployment
 
 This project is intended to working on modern web browser environment like `firefox`. so there is no package managers like `npm`.
 
-### #Minify The Entire Project.
+1.  **Initialization:** Run the `init.sh` script in the project root to initialize the project.
+2.  **Build:** Press `Ctrl + Shift + B` in VS Code to execute the build task. This performs the following steps:
+    *   Removal of JSDoc comments.
+    *   Code obfuscation and minification using `uglify-js`.
+3. **Output:** The build artifacts are generated in the `dist` folder.
 
-Before doing this process, you should execute a shell script named `init.sh` in the root of the proect.
-
-After `init.sh`, this project is now distribution ready, We are going to use standalone uglify the entire project with `uglify-js`:
-
-> Ctrl + Shift + B
-
-on vscode. This command yields js files which applies uglified, mangled and jsdoc-removed.
