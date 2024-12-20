@@ -8,9 +8,9 @@ Currently this project is in `WIP` (Working In Process).
 
 ## #Development Environment
 
-Currently, My development environment is that, I'm working on `vscode`, with some `vscode` extensions like `Debugger for Firefox` by Firefox DevTools, `Live Preview` by Microsoft installed and am writing js codes with `@ts-check` option with `jsdoc` documentation. And I'm using `firefox` browser as a javascript runtime.
+With `@ts-check` option enabled and `jsdoc` documented, I'm working on `vscode`, with some extensions like `Debugger for Firefox` by Firefox DevTools, `Live Preview` by Microsoft installed. And I'm using `firefox` browser as a javascript runtime.
 
-If you prefer to use other browsers like `chrome` or `msedge`, you can edit the `launch.json` in `.vscode` directory.
+If you prefer other browsers such as `chrome` or `msedge`, you can edit the `launch.json` in `.vscode` directory.
 
 ## Debugging
 
