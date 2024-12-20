@@ -2,7 +2,7 @@
 
 `Semantic.js` introduces *Rustified* `javascript`, which means it provides utilizable types like `Option<T>`, `Result<T, E>`, or mimiced keyword like `struct` or `tagged union` etc. just like `The Rust Programming language` supports these functions.
 
-This project has been fully documented by `Jsdoc`. So that this project is entirely virtually type-safe (no runtime fee required).
+This project has been fully documented by `Jsdoc`. So that this project is entirely and virtually type-safe with no runtime fee required.
 
 Currently this project is in `WIP` (Working In Process).
 
