@@ -12,11 +12,11 @@ With `@ts-check` option enabled and `jsdoc` documented, I'm working on `vscode`,
 
 If you prefer other browsers such as `chrome` or `msedge`, you can edit the `launch.json` in `.vscode` directory.
 
-## Debugging
+## #Debugging
 
 To start debugging in VS Code, select your browser (currently `firefox` setting only) and press F5.
 
-## Building and Preparing for Deployment
+## #Building and Preparing for Deployment
 
 This project is intended to working on modern web browser environment like `firefox`. So there is no package managers `npm` likes.
 
