@@ -1,31 +1,29 @@
 # #What is Semantic.js
 
-`Semantic.js` introduces just a pure `Javascript, ES2023` but Rustified. Which means it contains utilizable types like `Option<T>`, `Result<T, E>`, `Tagged Union` or also mocked `struct` etc, like `The Rust Programming language`. With fully documented by `Jsdoc`, this project is entirely type-safe!
+`Semantic.js` introduces just a pure `Javascript, ES2023` but Rustified, which means it contains utilizable types like `Option<T>`, `Result<T, E>`, or mimiced keyword like  `struct` or `Tagged Union` etc like `The Rust Programming language` with fully documented by `Jsdoc`. so that this project is entirely virtually type-safe (no runtime fee required).
 
-Currently this project is in `WIP` (Work in process).
+Currently this project is in `WIP` (Working In Process).
 
 ## #Develop Environment
 
-I'm using `vscode` as an editor with `@ts-check` option enabled and `jsdoc` documentation, `firefox` browser as a javascript runtime, `WSL2 ubuntu distro` as an Operating System(?).
+Currently, My development environment is that, I'm working on `vscode`, with some `vscode` extensions like `Debugger for Firefox` by Firefox DevTools, `Live Preview` by Microsoft installed and am writing js codes with `@ts-check` option with `jsdoc` documentation. And I'm using `firefox` browser as a javascript runtime.
 
-Also some vscode extensions like `Debugger for Firefox` by Firefox DevTools, `Live Preview` by Microsoft.
+If you prefer to use other browsers like `chrome` or `msedge`, you can edit the `launch.json` in `.vscode` directory.
 
-If you want to use another browser like `chrome` or `msedge`, you can edit the `launch.json` in `.vscode` directory.
+## #Debug This Project
 
-## #Debug the project
-
-Press F5 to debug project.
+Set your browser Press F5.
 
 ## #How to Compile?
 
-This project has been worked only on modern web browser environment like `firefox`. so package managers like `npm` is not needed.
+This project is intended to working on modern web browser environment like `firefox`. so there is no package managers like `npm`.
 
-### #to Distribution Ready
+### #Minify The Entire Project.
 
-Before doing this process, you should execute a shell script named `init.sh` in the root of proect.
+Before doing this process, you should execute a shell script named `init.sh` in the root of the proect.
 
-After `init.sh`, to make this project distribution ready, Uglify the entire project with uglify-js:
+After `init.sh`, this project is now distribution ready, We are going to use standalone uglify the entire project with `uglify-js`:
 
 > Ctrl + Shift + B
 
-on vscode. This command yields js files which applys uglified, mangled and jsdoc-removed.
+on vscode. This command yields js files which applies uglified, mangled and jsdoc-removed.
