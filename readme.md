@@ -6,7 +6,7 @@ This project has been fully documented by `Jsdoc`. So that this project is entir
 
 Currently this project is in `WIP` (Working In Process).
 
-## #Develop Environment
+## #Development Environment
 
 Currently, My development environment is that, I'm working on `vscode`, with some `vscode` extensions like `Debugger for Firefox` by Firefox DevTools, `Live Preview` by Microsoft installed and am writing js codes with `@ts-check` option with `jsdoc` documentation. And I'm using `firefox` browser as a javascript runtime.
 
