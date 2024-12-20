@@ -5,7 +5,7 @@
  * @param  {T} _ 
  * @returns {T}
  */
-export const TupleType = (..._) => _;
+export const tuple = (..._) => _;
 
 
 /**

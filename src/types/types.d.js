@@ -60,11 +60,16 @@
  */
 
 /**
- * @typedef {Array<ConstructableTypeUnion>} ConstructableTypes
+ * @typedef {Array<ConstructableTypeUnion|Mut<ConstructableTypeUnion>>} ConstructableTypes
  */
 
 /**
- * @typedef {CallableType|ConcreteType|AbstConcreteType|ConstructableTypes} ConstructableTypeUnion
+ * @typedef {|
+ *       CallableType | Mut<CallableType>
+ *     | ConcreteType | Mut<ConcreteType>
+ *     | AbstConcreteType | Mut<AbstConcreteType>
+ *     | ConstructableTypes | Mut<ConstructableTypes>
+ * } ConstructableTypeUnion
  */
 
 /////////////////////////////////
@@ -78,7 +83,8 @@
 
 /**
  * @template T
- * @typedef {T extends number ? NumberConstructor :
+ * @typedef {|
+ *     T extends number ? NumberConstructor :
  *     T extends string ? StringConstructor :
  *     T extends boolean ? BooleanConstructor :
  *     T extends Function ? FunctionConstructor :
@@ -101,29 +107,38 @@
  */
 
 /**
- * @template {ConstructableTypeUnion|Mut<ConstructableTypeUnion>} Arg_T
+ * @template {ConstructableTypeUnion} Arg_T
  * @typedef {IsTupleType<Arg_T> extends true ? {
  *     [K in keyof Arg_T]: (
  *         Match<Arg_T[K], [
- *             (p: ConstructableTypes) => ToInstanceTypeMatcher<AsType<Arg_T[K], ConstructableTypes>>,
- *             (p: AbstConcreteType) => InstanceType<AsType<Arg_T[K], AbstConcreteType>>,
+ *             (p: ConstructableTypes) => Readonly<ToInstanceTypeMatcher<AsType<Arg_T[K], ConstructableTypes>>>,
+ *             (p: AbstConcreteType) => Readonly<InstanceType<AsType<Arg_T[K], AbstConcreteType>>>,
  *             (p: CallableType) =>
- *                 (a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T[K], CallableType>>, ConstructableTypes>>) =>
- *                     ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T[K], CallableType>>, any>>,
+ *                 Readonly<(a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T[K], CallableType>>, ConstructableTypes>>) =>
+ *                     ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T[K], CallableType>>, any>>>,
+ *             (p: Mut<ConstructableTypes>) => ToInstanceTypeMatcher<AsType<Arg_T[K], Mut<ConstructableTypes>>['mut']>,
+ *             (p: Mut<AbstConcreteType>) => InstanceType<AsType<Arg_T[K], Mut<AbstConcreteType>>['mut']>,
+ *             (p: Mut<CallableType>) =>
+ *                 (a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T[K], Mut<CallableType>>['mut']>, ConstructableTypes>>) =>
+ *                     ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T[K], Mut<CallableType>>['mut']>, any>>,
  *     ]>)} :
  *     Match<Arg_T, [
  *         (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
  *         (p: CallableType) =>
  *             (a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T, CallableType>>, ConstructableTypes>>) =>
  *                 ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T, CallableType>>, any>>,
+ *         (p: Mut<AbstConcreteType>) => InstanceType<AsType<Arg_T, Mut<AbstConcreteType>>['mut']>,
+ *         (p: Mut<CallableType>) =>
+ *             (a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T, Mut<CallableType>>['mut']>, ConstructableTypes>>) =>
+ *                 ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T, Mut<CallableType>>['mut']>, any>>,
  *     ]>
  * } ToInstanceTypeMatcher<Arg_T>
  */
 
 /**
- * @template {ConstructableTypeUnion|Mut<ConstructableTypeUnion>} Arg_T
+ * @template {ConstructableTypeUnion} Arg_T
  * @typedef {IsMut<Arg_T> extends true
- *     ? Arg_T extends Mut<infer T> ? (T extends ConstructableTypeUnion ? ToInstanceTypeMatcher<Mut<T>['mut']> : "C") : "B"
+ *     ? ToInstanceTypeMatcher<AsType<Arg_T, Mut<ConstructableTypeUnion>>['mut']>
  *     : ToInstanceTypeMatcher<AsType<Arg_T, ConstructableTypeUnion>>
  * } ToInstanceType<Arg_T>
  */

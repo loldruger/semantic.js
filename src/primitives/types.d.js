@@ -2,7 +2,7 @@
 
 /**
  * @template {String} Field
- * @template {ConstructableTypeUnion|Mut<ConstructableTypeUnion>} T
+ * @template {ConstructableTypeUnion} T
  * @typedef {T extends Mut<any> 
  *   ? Record<Field, ToInstanceType<T>>
  *   : Readonly<Record<Field, ToInstanceType<T>>>

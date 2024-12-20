@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {StructType<String, ConstructableTypeUnion|Mut<ConstructableTypeUnion>>} Fields
+ * @template {StructType<String, ConstructableTypeUnion>} Fields
  */
 export class Struct {
     /**
@@ -23,7 +23,7 @@ export class Struct {
 
     /**
      * @template {String} Name
-     * @template {ConstructableTypeUnion|Mut<ConstructableTypeUnion>} TypeInfo
+     * @template {ConstructableTypeUnion} TypeInfo
      * @param {Name} name
      * @param {TypeInfo} typeInfo
      * @returns {Struct<Fields & StructType<Name, TypeInfo>>}

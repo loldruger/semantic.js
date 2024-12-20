@@ -1,11 +1,11 @@
 //@ts-check
 
-import { Impl, TupleType, Struct } from "../src/lib.js";
+import { Impl, tuple, Struct } from "../src/lib.js";
 
 //@ts-ignore
 const test1 = (() => {
     // const struct = Struct.new()
-    //     .field("Some", TupleType(TupleType(String), Number, String, TupleType(Boolean, Number, TupleType(Number))))
+    //     .field("Some", tuple(tuple(String), Number, String, tuple(Boolean, Number, tuple(Number))))
     //     .field("None", String)
     //     .build();
 
@@ -37,7 +37,7 @@ const test4 = (() => {
     const a = (_a, _b) => String;
 
     const struct = Struct.new()
-        .field("callable", TupleType(Number, a))
+        .field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_a) => "Hello, World!"]));
@@ -46,10 +46,10 @@ const test4 = (() => {
 //@ts-ignore
 const test5 = (() => {
     /** @type {(a: String) => [BooleanConstructor]} */
-    const a = (_a) => TupleType(Boolean);
+    const a = (_a) => tuple(Boolean);
 
     const struct = Struct.new()
-        .field("callable", TupleType(Number, a))
+        .field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => [true]]));
@@ -58,10 +58,10 @@ const test5 = (() => {
 //@ts-ignore
 const test6 = (() => {
     /** @type {(a: String) => [StringConstructor, BooleanConstructor, [NumberConstructor]]} */
-    const a = (_a) => TupleType(String, Boolean, TupleType(Number));
+    const a = (_a) => tuple(String, Boolean, tuple(Number));
 
     const struct = Struct.new()
-        .field("callable", TupleType(Number, a))
+        .field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => ["Hello, World!", true, [1]]]));
@@ -73,7 +73,7 @@ const test7 = (() => {
     const a = ([_a, _b]) => String;
 
     const struct = Struct.new()
-        .field("callable", TupleType(Number, a))
+        .field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => "Hello, World!"]));
@@ -82,10 +82,10 @@ const test7 = (() => {
 //@ts-ignore
 const test8 = (() => {
     /** @type {(a: [String, Number]) => [StringConstructor, BooleanConstructor, [NumberConstructor]]} */
-    const a = ([_a, _b]) => TupleType(String, Boolean, TupleType(Number));
+    const a = ([_a, _b]) => tuple(String, Boolean, tuple(Number));
 
     const struct = Struct.new()
-        .field("callable", TupleType(Number, a))
+        .field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => ["Hello, World!", true, [1]]]));
