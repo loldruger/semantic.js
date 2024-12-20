@@ -1,6 +1,8 @@
 # #What is Semantic.js
 
-`Semantic.js` introduces just a pure `Javascript, ES2023` but *Rustified*, which means it contains utilizable types like `Option<T>`, `Result<T, E>`, or mimiced keyword like  `struct` or `tagged union` etc. like `The Rust Programming language` with fully documented by `Jsdoc`. so that this project is entirely virtually type-safe (no runtime fee required).
+`Semantic.js` introduces *Rustified* `javascript`, which means it provides utilizable types like `Option<T>`, `Result<T, E>`, or mimiced keyword like `struct` or `tagged union` etc. just like `The Rust Programming language` supports these functions.
+
+This project has been fully documented by `Jsdoc`. So that this project is entirely virtually type-safe (no runtime fee required).
 
 Currently this project is in `WIP` (Working In Process).
 
@@ -16,7 +18,9 @@ To start debugging in VS Code, select your browser (currently `firefox` setting 
 
 ## Building and Preparing for Deployment
 
-This project is intended to working on modern web browser environment like `firefox`. so there is no package managers like `npm`.
+This project is intended to working on modern web browser environment like `firefox`. So there is no package managers such like `npm`.
+
+Let it be distribution ready step by step:
 
 1.  **Initialization:** Run the `init.sh` script in the project root to initialize the project.
 2.  **Build:** Press `Ctrl + Shift + B` in VS Code to execute the build task. This performs the following steps:
