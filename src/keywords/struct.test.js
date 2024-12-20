@@ -1,9 +1,6 @@
 //@ts-check
 
-import { tuple } from '../lib.js';
-import { Impl } from './impl.js';
-import { mut, imut } from './mut.js';
-import { Struct } from './struct.js';
+import { Struct, tuple, mut } from '../lib.js';
 
 //@ts-ignore
 const test0 = (() => {
@@ -12,6 +9,7 @@ const test0 = (() => {
         .field("tag", mut(Number))
         .build();
 
+    // should error
     struct.tag = 11;
     console.log("Struct: ", struct);
 })();
@@ -19,10 +17,14 @@ const test0 = (() => {
 //@ts-ignore
 const test1 = (() => {
     const struct = Struct.new()
-        .field("string", tuple(mut(Boolean), Number))
-        .field("tag", mut(Number))
+        .field("string", tuple(Number, mut(Boolean)))
+        .field("tag", Number)
         .build();
 
-    struct.tag = 1;
+    struct.init({
+        string: [1, true],
+        tag: 11123
+    });
+
     console.log("Struct: ", struct);
 })();

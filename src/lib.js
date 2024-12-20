@@ -2,6 +2,7 @@
 
 export { Impl } from './keywords/impl.js';
 export { Struct } from "./keywords/struct.js";
+export { mut, imut } from "./keywords/mut.js";
 
 export { Cloneable } from "./interfaces/cloneable.js";
 export { Matchable } from "./interfaces/matchable.js";

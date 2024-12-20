@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {StructType<String, ConstructableTypeUnion>} Fields
+ * @template {StructType<String, StructTypeUnion>} Fields
  */
 export class Struct {
     /**
@@ -23,33 +23,35 @@ export class Struct {
 
     /**
      * @template {String} Name
-     * @template {ConstructableTypeUnion} TypeInfo
+     * @template {StructTypeUnion} TypeInfo
      * @param {Name} name
-     * @param {TypeInfo} typeInfo
+     * @param {TypeInfo} _typeInfo
      * @returns {Struct<Fields & StructType<Name, TypeInfo>>}
      */
-    field(name, typeInfo) {
-        /** @type {Record<String, PropertyDescriptor>} */
-        const info = {};
-        info[name] = {
-            [`_${name}`]: undefined,
-            get [name]() { return info[`_${name}`] },
-            set [name](/** @type {TypeInfo} */ value) { info[`_${name}`] = value }
-        }
-
+    field(name, _typeInfo) {
         this.#fields = {
             ...this.#fields,
-            ...info[name]
+            //@ts-ignore
+            [name]: undefined
         };
 
         return /** @type {Struct<Fields & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));
     }
 
     /**
-     * @returns {{[K in keyof Fields]: Fields[K]}}
+     * @returns {Readonly<{[K in keyof Fields]: Fields[K]} & {init: (args: {[K in keyof Fields]: Fields[K]}) => void}>}
      */
     build() {
-        return this.#fields;
+        Object.assign(this.#fields, {
+            /**
+             * @param {{[K in keyof Fields]: Fields[K]}} args
+             */
+            init: (args) => {
+                Object.assign(this.#fields, args);
+            }
+        })
+
+        return /** @type {Readonly<{[K in keyof Fields]: Fields[K]} & {init: (args: {[K in keyof Fields]: Fields[K]}) => void}>}*/ (this.#fields);
     }
 }
 

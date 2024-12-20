@@ -32,3 +32,17 @@
  * @typedef {IsMut<Mut<Object>>} MutTest5  // true
  * @typedef {IsMut<Object>} MutTest6       // false
  */
+
+/**
+ * @typedef {ConstructableTypeUnion|Object} StructTypeUnion
+ */
+
+/**
+ * @template {String} Field
+ * @template {StructTypeUnion} T
+ * @typedef {T extends Mut<any> 
+ *   ? Record<Field, ToInstanceType<T>>
+ *   : Readonly<Record<Field, ToInstanceType<T>>>
+ * } StructType<Field, T>
+ */
+
