@@ -119,39 +119,48 @@ class DBResponse {
 /**
  * @template {String} ColumnName
  * @template {"primary"|"unique"} [Type="primary" | "unique"]
- * @template {Type extends "primary"
+ * @typedef {{type: Type, format: ConstraintFormat<ColumnName, Type>}} Constraint<ColumnName>
+ */
+
+/**
+ * @template {String} ColumnName
+ * @template {String} Type
+ * @typedef {Type extends "primary"
  *     ? {name: ColumnName, autoIncrement: Boolean}
  *     : Type extends "unique"
  *         ? Array<String>
  *         : never
- * } [T=Type extends "primary" ? {name: ColumnName, autoIncrement: Boolean} : Type extends "unique" ? Array<String> : never]
- * @typedef {{type: Type, format: T}} Constraint<ColumnName>
+ * } ConstraintFormat<ColumnName, Type>
  */
 
 /**
  * @template {String} TableName
- * @template {Array<Column<String, ConstructableTypeUnion>>} [ColumnStack=Array<Column<String, ConstructableTypeUnion>>]
- * @template {Array<Constraint<String>>} [ConstraintStack=Array<Constraint<String>>]
- * @template {Array<Table<String>>} [Rest=[]]
+ * @template {Record<String, Column<String, ConstructableTypeUnion>>} [Columns={}]
+ * @template {Array<Constraint<String>>} [Constraints=[]]
+ * @template {Record<
+ *     String,
+ *     Table<
+ *         String,
+ *         Record<String, Column<String, ConstructableTypeUnion>>,
+ *         Array<Constraint<String>>
+ *     >
+ * >} [TableStack={}]
  */
 class Table {
-    /**
-     * @type {Database<Array<Table<String>>>}
-     */
+    /** @type {Database<TableStack>} */
     #db;
 
     /** @type {TableName} */
     #name;
 
-    /** @type {ColumnStack} */
-    #columns = /** @type {ColumnStack} */(/** @type {unknown} */ ([]));
+    /** @type {Columns=} */
+    #columns;
 
-    /** @type {ConstraintStack} */
-    #constraints = /** @type {ConstraintStack} */(/** @type {unknown} */ ([]));
+    /** @type {Constraints} */
+    #constraints = [];
 
     /**
-     * @private
-     * @param {Database<Rest>} db
+     * @param {Database<TableStack>} db
      * @param {TableName} name
      */
     constructor(db, name) {
@@ -160,103 +169,107 @@ class Table {
     }
 
     /**
-     * @template {Array<Table<String>>} Rest
      * @template {String} Name
-     * @param {Database<Rest>} db
-     * @param {Name} name
-     * @return {Table<Name, [], [], Rest>}
-     */
-    static new(db, name) {
-        return new Table(db, name);
-    }
-
-    get name() {
-        return this.#name;
-    }
-
-    get columns() {
-        return this.#columns;
-    }
-
-    get constraints() {
-        return this.#constraints;
-    }
-
-    /**
-     * @template {String} Name
+     * @template {ConstructableTypeUnion} TypeInfo
      * @template {Boolean} Nullable
      * @template {Boolean} Indexed
      * @param {Name} name
-     * @param {ConstructableTypeUnion} typeInfo
-     * @param {Object} param
+     * @param {TypeInfo} typeInfo
+     * @param {Object} [param]
      * @param {Nullable} [param.nullable=false]
      * @param {Indexed} [param.indexed=false]
      * @return {Table<
-     *     this['name'],
-     *     [...this['columns'], Column<Name, ConstructableTypeUnion, Nullable, Indexed>],
-     *     this['constraints'],
-     *     Rest
+     *     TableName,
+     *     Columns & Record<String, Column<String, ConstructableTypeUnion>>,
+     *     Array<Constraint<String>>,
+     *     TableStack
      * >}
      */
     column(name, typeInfo, { nullable, indexed } = {}) {
-        this.#columns.push({ name, typeInfo, constraint: { nullable, indexed } });
+        /** @type {Column<Name, TypeInfo, Nullable, Indexed>} */
+        const column = {
+            name,
+            typeInfo,
+            constraint: { nullable, indexed },
+        };
 
-        return (/** @type {Table<this['name'], [...this['columns'], Column<Name, ConstructableTypeUnion, Nullable, Indexed>], this['constraints'], Rest>}*/ (/** @type {unknown} */ (this)));
+        this.#columns = {
+            ...this.#columns,
+            [name]: column
+        };
+        return this;
     }
 
     /**
-     * @template {"primary"|"unique"} ConstraintName
      * @template {String} ColumnName
-     * @param {ConstraintName} constraintName
-     * @param {ConstraintName extends "primary"
-     *     ? {name: ColumnName, autoIncrement: Boolean}
-     *     : ConstraintName extends "unique"
-     *         ? Array<String>
-     *         : never} format
+     * @template {"primary" | "unique"} Type
+     * @param {Type} type
+     * @param {ConstraintFormat<ColumnName, Type>} format
      * @return {Table<
-     *     this['name'],
-     *     this['columns'],
-     *     [...this['constraints'], Constraint<ColumnName>],
-     *     Rest
+     *     TableName,
+     *     Columns,
+     *     Constraints & Array<Constraint<String>>,
+     *     TableStack
      * >}
      */
-    constraint(constraintName, format) {
-        this.#constraints.push({ type: constraintName, format });
+    constraint(type, format) {
+        /** @type {Constraint<String, Type>} */
+        const constraint = {
+            type,
+            format,
+        };
 
-        return (/** @type {Table<this['name'], this['columns'], [...this['constraints'], Constraint<ColumnName>], Rest>}*/ (/** @type {unknown} */ (this)));
+        this.#constraints = [...this.#constraints, constraint];
+
+        return this;
     }
 
     /**
-     * @return {Database<[...Rest, this]>}
+     * @return {Database<TableStack>}
      */
     build() {
+        // const table = {
+        //     name: this.#name,
+        //     columns: /** @type {Columns} */ (this.#columns),
+        //     constraints: /** @type {Constraints} */ (this.#constraints),
+        // };
+
+        // Object.defineProperty(this.#db, "tables", table);
+
         return this.#db;
     }
 }
 
 /**
- * @template {Array<Table<String>>} TableStack
+ * @template {Record<
+ *     String, 
+ *     Table<
+ *         String,
+ *         Record<String, Column<String, ConstructableTypeUnion>>,
+ *         Array<Constraint<String>>
+ *     >
+ * >} TableStack
  */
 export class Database {
     /** @type {IDBDatabase?} */
     #db = null;
 
     /** @type {String} */
-    #dbName;
+    #name;
 
     /** @type {Number} */
     #version;
 
-    /** @type {TableStack} */
-    #tables = /** @type {TableStack} */ (/** @type {unknown} */ ([]));
+    /**  @type {TableStack} */
+    #tables = {};
 
     /**
      * @private
-     * @param {String} dbName
+     * @param {String} name
      * @param {Number} version
      */
-    constructor(dbName, version) {
-        this.#dbName = dbName;
+    constructor(name, version) {
+        this.#name = name;
         this.#version = version;
     }
 
@@ -264,7 +277,7 @@ export class Database {
      * @param {Object} param
      * @param {String} param.dbName
      * @param {Number} param.version
-     * @return {Database<[]>}
+     * @return {Database<{}>}
      */
     static new({ dbName, version }) {
         if (version <= 0) {
@@ -279,7 +292,7 @@ export class Database {
      */
     async build() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.#dbName, this.#version);
+            const request = indexedDB.open(this.#name, this.#version);
 
             /**
              * @param {Event} event 
@@ -319,7 +332,7 @@ export class Database {
                     }));
                 };
 
-                for (const table of this.#tables) {
+                for (const table in this.#tables) {
                     const primary = /** @type {Constraint<String, "primary">} */(
                         table.constraints.find(i => i.type === "primary")
                     );
@@ -352,22 +365,26 @@ export class Database {
     /**
      * @template {String} Name
      * @param {Name} tableName
-     * @return {Table<Name, [], [], TableStack>}
+     * @return {Table<
+     *     Name,
+     *     {},
+     *     [],
+     *     TableStack
+     * >}
      */
     table(tableName) {
-        const self = this;
-        return Table.new(self, tableName);
+        const table = new Table(this, tableName);
+        this.#tables = {
+            ...this.#tables,
+            [tableName]: table
+        };
+
+        return table;
     }
 
     /**
      * @template {String} TableName
-     * @typedef {TableStack extends Array<infer U>
-     *     ? U extends Table<TableName, infer Columns, any, any>
-     *         ? Columns extends readonly Column<infer Names, any>[]
-     *             ? Record<Names, any>
-     *             : never
-     *         : never
-     *     : never
+     * @typedef {{[K in keyof TableStack]: K}
      * } TableColumns<TableName>
      */
 
@@ -415,14 +432,6 @@ export class Database {
      * @return {Promise<DBResponse<Array<any>?, Error?>>}
      */
     async select({ tableName, where, limit }) {
-        const table = this.#tables.find((table) => table.name === tableName);
-
-        if (!table) {
-            return DBResponse.err({
-                err: new Error("Table not found")
-            });
-        }
-
         return new Promise((resolve, reject) => {
             const transaction = /** @type {IDBDatabase} */ (this.#db).transaction([tableName], "readonly");
             const objectStore = transaction.objectStore(tableName);

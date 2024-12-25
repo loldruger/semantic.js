@@ -8,17 +8,9 @@ const test0 = await (async () => {
         .table("TableName")
         .column("id", Number, { indexed: true })
         .column("name", String)
-        .column("createdAt", Date)
+        .column("createdAt2", Date)
         .constraint("primary", { name: "id", autoIncrement: true })
         .constraint("unique", ["name"])
-        .build()
-
-        .table("TableName2")
-        .column("id", Number, { indexed: true })
-        .column("name2", String)
-        .column("nice", String)
-        .constraint("primary", { name: "id", autoIncrement: true })
-        .constraint("unique", ["name2"])
         .build()
 
     console.log("Database: ", db);
