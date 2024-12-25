@@ -74,7 +74,8 @@ export class Impl {
 
     /**
      * @template {String} Name
-     * @template {(Self: Target & Consts & FnMap<Name, Fn> & StaticFns, ...args: any) => any} Fn
+     * @template {Record<string, any>} Args
+     * @template {<A extends Args>(props: {Self: Target & Consts & FnMap<Name, Fn> & StaticFns & Args}) => any} Fn
      * @param {Name} name
      * @param {Fn} func
      * @return {Impl<Target, Consts, Fns, StaticFns & FnMap<Name, Fn>>}

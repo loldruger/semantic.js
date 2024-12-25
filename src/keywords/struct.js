@@ -1,13 +1,19 @@
 // @ts-check
 
 /**
- * @template {StructType<String, StructTypeUnion>} Fields
+ * @template {StructType<String, StructTypeUnion>} Pubs
+ * @template {StructType<String, StructTypeUnion>} Prvs
  */
 export class Struct {
     /**
-     * @type {Fields}
+     * @type {Pubs}
      */
-    #fields = /** @type {Fields} */ ({});
+    #pubs = /** @type {Pubs} */ ({});
+
+    /**
+     * @type {Prvs}
+     */
+    #prvs = /** @type {Prvs} */ ({});
 
     /**
      * @private
@@ -15,7 +21,7 @@ export class Struct {
     constructor() { }
 
     /**
-     * @returns {Struct<{}>}
+     * @returns {Struct<{}, {}>}
      */
     static new() {
         return new Struct();
@@ -26,32 +32,60 @@ export class Struct {
      * @template {StructTypeUnion} TypeInfo
      * @param {Name} name
      * @param {TypeInfo} _typeInfo
-     * @returns {Struct<Fields & StructType<Name, TypeInfo>>}
+     * @returns {Struct<Pubs, Prvs & StructType<Name, TypeInfo>>}
      */
-    field(name, _typeInfo) {
-        this.#fields = {
-            ...this.#fields,
+    prv(name, _typeInfo) {
+        this.#prvs = {
+            ...this.#prvs,
             //@ts-ignore
             [name]: undefined
         };
 
-        return /** @type {Struct<Fields & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));
+        return /** @type {Struct<Pubs, Prvs & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));
     }
 
     /**
-     * @returns {Readonly<{[K in keyof Fields]: Fields[K]} & {init: (args: {[K in keyof Fields]: Fields[K]}) => void}>}
+     * @template {String} Name
+     * @template {StructTypeUnion} TypeInfo
+     * @param {Name} name
+     * @param {TypeInfo} _typeInfo
+     * @returns {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>}
+     */
+    pub(name, _typeInfo) {
+        this.#pubs = {
+            ...this.#pubs,
+            //@ts-ignore
+            [name]: undefined
+        };
+
+        return /** @type {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>} */ (/** @type {unknown} */ (this));
+    }
+
+    /**
+     * @typedef {{[K in keyof Pubs]: Pubs[K]}} P
+     * @typedef {{[K in keyof Prvs]: Prvs[K]}} R
+     */
+
+    /**
+     * @returns {{[K in keyof (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})]: (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})[K]}}
      */
     build() {
-        Object.assign(this.#fields, {
+        const returnedObject = Object.assign(this.#pubs, {
             /**
-             * @param {{[K in keyof Fields]: Fields[K]}} args
+             * @param {P & R} args
              */
-            init: (args) => {
-                Object.assign(this.#fields, args);
+            new: (args) => {
+                Object.assign(this.#pubs, args);
+                Object.assign(this.#prvs, args);
+
+                return args;
             }
         })
 
-        return /** @type {Readonly<{[K in keyof Fields]: Fields[K]} & {init: (args: {[K in keyof Fields]: Fields[K]}) => void}>}*/ (this.#fields);
+        /**
+         * @returns {{[K in keyof (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})]: (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})[K]}}
+         */
+        return (returnedObject);
     }
 }
 
