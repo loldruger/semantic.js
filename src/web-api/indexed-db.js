@@ -135,37 +135,41 @@ class DBResponse {
 
 /**
  * @template {String} TableName
- * @template {Record<String, Column<String, ConstructableTypeUnion>>} [Columns={}]
- * @template {Array<Constraint<String>>} [Constraints=[]]
- * @template {Record<
- *     String,
- *     Table<
- *         String,
- *         Record<String, Column<String, ConstructableTypeUnion>>,
- *         Array<Constraint<String>>
- *     >
- * >} [TableStack={}]
+ * @template {Array<Column<String, ConstructableTypeUnion>>} [ColumnStack=[]]
+ * @template {Array<Constraint<String>>} [ConstraintStack=[]]
  */
 class Table {
-    /** @type {Database<TableStack>} */
+    /** @type {Database} */
     #db;
 
     /** @type {TableName} */
     #name;
 
-    /** @type {Columns=} */
-    #columns;
+    /** @type {Array<Column<String, ConstructableTypeUnion>>} */
+    #columns = [];
 
-    /** @type {Constraints} */
+    /** @type {Array<Constraint<String>>} */
     #constraints = [];
 
     /**
-     * @param {Database<TableStack>} db
+     * @param {Database} db
      * @param {TableName} name
      */
     constructor(db, name) {
         this.#db = db;
         this.#name = name;
+    }
+
+    get name() {
+        return this.#name;
+    }
+
+    get columns() {
+        return this.#columns;
+    }
+
+    get constraints() {
+        return this.#constraints;
     }
 
     /**
@@ -180,9 +184,8 @@ class Table {
      * @param {Indexed} [param.indexed=false]
      * @return {Table<
      *     TableName,
-     *     Columns & Record<String, Column<String, ConstructableTypeUnion>>,
-     *     Array<Constraint<String>>,
-     *     TableStack
+     *     [...ColumnStack, Column<Name, TypeInfo>],
+     *     ConstraintStack
      * >}
      */
     column(name, typeInfo, { nullable, indexed } = {}) {
@@ -207,9 +210,8 @@ class Table {
      * @param {ConstraintFormat<ColumnName, Type>} format
      * @return {Table<
      *     TableName,
-     *     Columns,
-     *     Constraints & Array<Constraint<String>>,
-     *     TableStack
+     *     ColumnStack,
+     *     [...ConstraintStack, Array<Constraint<ColumnName>>],
      * >}
      */
     constraint(type, format) {
@@ -225,30 +227,21 @@ class Table {
     }
 
     /**
-     * @return {Database<TableStack>}
+     * @return {Database<this>}
      */
     build() {
-        // const table = {
-        //     name: this.#name,
-        //     columns: /** @type {Columns} */ (this.#columns),
-        //     constraints: /** @type {Constraints} */ (this.#constraints),
-        // };
-
-        // Object.defineProperty(this.#db, "tables", table);
-
         return this.#db;
     }
 }
 
 /**
- * @template {Record<
- *     String, 
+ * @template {Array<
  *     Table<
  *         String,
- *         Record<String, Column<String, ConstructableTypeUnion>>,
+ *         Array<Column<String, ConstructableTypeUnion>>,
  *         Array<Constraint<String>>
  *     >
- * >} TableStack
+ * >} [TableStack=[]]
  */
 export class Database {
     /** @type {IDBDatabase?} */
@@ -261,7 +254,7 @@ export class Database {
     #version;
 
     /**  @type {TableStack} */
-    #tables = {};
+    #tables = /** @type {TableStack} */ (/** @type {unknown} */ ([]));
 
     /**
      * @private
@@ -277,7 +270,7 @@ export class Database {
      * @param {Object} param
      * @param {String} param.dbName
      * @param {Number} param.version
-     * @return {Database<{}>}
+     * @return {Database}
      */
     static new({ dbName, version }) {
         if (version <= 0) {
@@ -332,7 +325,7 @@ export class Database {
                     }));
                 };
 
-                for (const table in this.#tables) {
+                for (const table of this.#tables) {
                     const primary = /** @type {Constraint<String, "primary">} */(
                         table.constraints.find(i => i.type === "primary")
                     );
@@ -365,12 +358,7 @@ export class Database {
     /**
      * @template {String} Name
      * @param {Name} tableName
-     * @return {Table<
-     *     Name,
-     *     {},
-     *     [],
-     *     TableStack
-     * >}
+     * @return {Table<Name, [], []>}
      */
     table(tableName) {
         const table = new Table(this, tableName);
@@ -381,10 +369,18 @@ export class Database {
 
         return table;
     }
-
+    /**
+     * @template T
+     * @typedef {T extends Array<Column<infer Name, infer TypeInfo, any, any>>
+    *   ? { [K in T[number] as K['name']]: InstanceType<AsType<K['typeInfo'], AbstConcreteType>> }
+    *   : never
+    * } ColumnsToObject
+    */
     /**
      * @template {String} TableName
-     * @typedef {{[K in keyof TableStack]: K}
+     * @typedef {TableStack extends Table<TableName, infer Columns, infer Constraints>
+     *    ? ColumnsToObject<Columns>
+     *    : never
      * } TableColumns<TableName>
      */
 
