@@ -213,3 +213,8 @@
  *                 : false
  * } Or4<A, B, C, D>
  */
+
+/**
+ * @template {Boolean} A
+ * @typedef {A extends true ? false : true} Not<A>
+ */

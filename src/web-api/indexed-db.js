@@ -184,7 +184,7 @@ class Table {
      * @param {Indexed} [param.indexed=false]
      * @return {Table<
      *     TableName,
-     *     [...ColumnStack, Column<Name, TypeInfo>],
+     *     [...ColumnStack, Column<Name, TypeInfo, Nullable, Indexed>],
      *     ConstraintStack
      * >}
      */
@@ -196,10 +196,7 @@ class Table {
             constraint: { nullable, indexed },
         };
 
-        this.#columns = {
-            ...this.#columns,
-            [name]: column
-        };
+        this.#columns = [...this.#columns, column];
         return this;
     }
 
@@ -211,7 +208,7 @@ class Table {
      * @return {Table<
      *     TableName,
      *     ColumnStack,
-     *     [...ConstraintStack, Array<Constraint<ColumnName>>],
+     *     [...ConstraintStack, Constraint<ColumnName, Type>],
      * >}
      */
     constraint(type, format) {
@@ -369,18 +366,38 @@ export class Database {
 
         return table;
     }
+
     /**
-     * @template T
-     * @typedef {T extends Array<Column<infer Name, infer TypeInfo, any, any>>
-    *   ? { [K in T[number] as K['name']]: InstanceType<AsType<K['typeInfo'], AbstConcreteType>> }
-    *   : never
-    * } ColumnsToObject
-    */
+     * @template {String} ColName
+     * @template {Array<Constraint<String>>} ConsStack
+     * @typedef {ConsStack extends [infer F, ...infer R]
+     *   ? (F extends Constraint<infer N, infer T>
+     *       ? (N extends ColName
+     *           ? (T extends "primary" ? true : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
+     *           : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
+     *       : never)
+     *   : false
+     * } IsPrimary
+     */
+
     /**
      * @template {String} TableName
-     * @typedef {TableStack extends Table<TableName, infer Columns, infer Constraints>
-     *    ? ColumnsToObject<Columns>
-     *    : never
+     * @typedef {TableStack extends Table<infer TName, infer TCols, infer TCons>
+     *   ? {
+     *       [C in TCols[number] as (
+     *         C extends Column<infer N, infer TI, infer Nullable, infer _Idx>
+     *           ? (Nullable extends true
+     *               ? never
+     *               : Nullable extends false
+     *                   ? (IsPrimary<N, TCons> extends true ? never : N)
+     *                   : never)
+     *           : never
+     *       )]:
+     *         C extends Column<any, infer TI, any, any>
+     *           ? InstanceType<AsType<TI, AbstConcreteType>>
+     *           : never;
+     *     }
+     *   : never
      * } TableColumns<TableName>
      */
 
