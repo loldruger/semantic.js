@@ -371,33 +371,61 @@ export class Database {
      * @template {String} ColName
      * @template {Array<Constraint<String>>} ConsStack
      * @typedef {ConsStack extends [infer F, ...infer R]
-     *   ? (F extends Constraint<infer N, infer T>
-     *       ? (N extends ColName
-     *           ? (T extends "primary" ? true : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
-     *           : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
-     *       : never)
-     *   : false
+     *     ? (F extends Constraint<infer N, infer T>
+     *         ? (N extends ColName
+     *             ? (T extends "primary" ? true : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
+     *             : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
+     *         : never)
+     *     : false
      * } IsPrimary
      */
 
     /**
      * @template {String} TableName
-     * @typedef {TableStack extends Table<infer TName, infer TCols, infer TCons>
-     *   ? {
-     *       [C in TCols[number] as (
-     *         C extends Column<infer N, infer TI, infer Nullable, infer _Idx>
-     *           ? (Nullable extends true
-     *               ? never
-     *               : Nullable extends false
-     *                   ? (IsPrimary<N, TCons> extends true ? never : N)
-     *                   : never)
-     *           : never
-     *       )]:
-     *         C extends Column<any, infer TI, any, any>
-     *           ? InstanceType<AsType<TI, AbstConcreteType>>
-     *           : never;
+     * @typedef {TableStack extends Table<TableName, infer TCols, infer TCons>
+     *     ? {
+     *         [C in TCols[number] as (
+     *             C extends Column<infer N, infer TI, infer Nullable, any>
+     *                 ? (
+     *                     Nullable extends true
+     *                         ? never
+     *                         : IsPrimary<N, TCons> extends true ? never : N
+     *                 )
+     *                 : never
+     *         )]:
+     *             C extends Column<any, infer TI, any, any>
+     *                 ? InstanceType<AsType<TI, AbstConcreteType>>
+     *                 : never;
      *     }
-     *   : never
+     *     : never
+     * } RequiredColumns<T>
+     */
+
+    /**
+     * @template {String} TableName
+     * @typedef {TableStack extends Table<TableName, infer TCols, infer TCons>
+     *     ? {
+     *         [C in TCols[number] as (
+     *             C extends Column<infer N, infer TI, true, any>
+     *                 ? (IsPrimary<N, TCons> extends true ? never : N)
+     *                 : never
+     *       )]?:
+     *           C extends Column<any, infer TI, any, any>
+     *               ? InstanceType<AsType<TI, AbstConcreteType>>
+     *               : never;
+     *     }
+     *     : never
+     * } OptionalColumns<T>
+     */
+
+    /**
+     * @template {String} TableName
+     * @typedef {TableStack extends infer T
+     *     ? T extends Table<TableName, infer TCols, infer TCons>
+     *         ? {[K in keyof (RequiredColumns<TableName> & OptionalColumns<TableName>)]:
+     *             (RequiredColumns<TableName> & OptionalColumns<TableName>)[K]}
+     *         : never
+     *     : never
      * } TableColumns<TableName>
      */
 
