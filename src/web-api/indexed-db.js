@@ -137,9 +137,10 @@ class DBResponse {
  * @template {String} TableName
  * @template {Array<Column<String, ConstructableTypeUnion>>} [ColumnStack=[]]
  * @template {Array<Constraint<String>>} [ConstraintStack=[]]
+ * @template {Array<Table<TableName, ColumnStack, ConstraintStack>>} [TableStack=[]]
  */
 class Table {
-    /** @type {Database} */
+    /** @type {Database<Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>>} */
     #db;
 
     /** @type {TableName} */
@@ -152,7 +153,7 @@ class Table {
     #constraints = [];
 
     /**
-     * @param {Database} db
+     * @param {Database<Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>>} db
      * @param {TableName} name
      */
     constructor(db, name) {
@@ -185,7 +186,8 @@ class Table {
      * @return {Table<
      *     TableName,
      *     [...ColumnStack, Column<Name, TypeInfo, Nullable, Indexed>],
-     *     ConstraintStack
+     *     ConstraintStack,
+     *     TableStack
      * >}
      */
     column(name, typeInfo, { nullable, indexed } = {}) {
@@ -209,6 +211,7 @@ class Table {
      *     TableName,
      *     ColumnStack,
      *     [...ConstraintStack, Constraint<ColumnName, Type>],
+     *     TableStack
      * >}
      */
     constraint(type, format) {
@@ -224,7 +227,15 @@ class Table {
     }
 
     /**
-     * @return {Database<this>}
+     * @template {Array<any>} A
+     * @typedef {A extends [infer First, ...infer Rest]
+     *   ? First extends any[] ? [...Flatten<First>, ...Flatten<Rest>] : [First, ...Flatten<Rest>]
+     *   : []
+     * } Flatten
+     */
+
+    /**
+     * @return {Database<[...Flatten<TableStack>, Table<TableName, ColumnStack, ConstraintStack>]>}
      */
     build() {
         return this.#db;
@@ -236,9 +247,17 @@ class Table {
  *     Table<
  *         String,
  *         Array<Column<String, ConstructableTypeUnion>>,
- *         Array<Constraint<String>>
+ *         Array<Constraint<String>>,
+ *         Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>
  *     >
- * >} [TableStack=[]]
+ * >} [TableStack=Array<
+ *     Table<
+ *         String,
+ *         Array<Column<String, ConstructableTypeUnion>>,
+ *         Array<Constraint<String>>,
+ *         Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>
+ *     >
+ * >]
  */
 export class Database {
     /** @type {IDBDatabase?} */
@@ -250,8 +269,10 @@ export class Database {
     /** @type {Number} */
     #version;
 
-    /**  @type {TableStack} */
-    #tables = /** @type {TableStack} */ (/** @type {unknown} */ ([]));
+    /**
+     * @type {Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>}
+     * */
+    #tables = [];
 
     /**
      * @private
@@ -267,7 +288,7 @@ export class Database {
      * @param {Object} param
      * @param {String} param.dbName
      * @param {Number} param.version
-     * @return {Database}
+     * @return {Database<[]>}
      */
     static new({ dbName, version }) {
         if (version <= 0) {
@@ -355,14 +376,14 @@ export class Database {
     /**
      * @template {String} Name
      * @param {Name} tableName
-     * @return {Table<Name, [], []>}
+     * @return {Table<Name, [], [], TableStack>} 
      */
     table(tableName) {
         const table = new Table(this, tableName);
-        this.#tables = {
+        this.#tables = [
             ...this.#tables,
-            [tableName]: table
-        };
+            table
+        ];
 
         return table;
     }
@@ -382,46 +403,50 @@ export class Database {
 
     /**
      * @template {String} TableName
-     * @typedef {TableStack extends Table<TableName, infer TCols, infer TCons>
-     *     ? {
-     *         [C in TCols[number] as (
-     *             C extends Column<infer N, infer TI, infer Nullable, any>
-     *                 ? (
-     *                     Nullable extends true
-     *                         ? never
-     *                         : IsPrimary<N, TCons> extends true ? never : N
-     *                 )
-     *                 : never
-     *         )]:
-     *             C extends Column<any, infer TI, any, any>
-     *                 ? InstanceType<AsType<TI, AbstConcreteType>>
-     *                 : never;
-     *     }
+     * @typedef {TableStack extends Array<infer T>
+     *     ? T extends Table<TableName, infer TCols, infer TCons>
+     *         ? {
+     *             [C in TCols[number] as (
+     *                 C extends Column<infer N, any, infer Nullable, any>
+     *                     ? (
+     *                         Nullable extends true
+     *                             ? never
+     *                             : IsPrimary<N, TCons> extends true ? never : N
+     *                     )
+     *                     : never
+     *             )]:
+     *                 C extends Column<any, infer TI, any, any>
+     *                     ? InstanceType<AsType<TI, AbstConcreteType>>
+     *                     : never;
+     *         }
+     *         : never
      *     : never
      * } RequiredColumns<T>
      */
 
     /**
      * @template {String} TableName
-     * @typedef {TableStack extends Table<TableName, infer TCols, infer TCons>
-     *     ? {
-     *         [C in TCols[number] as (
-     *             C extends Column<infer N, infer TI, true, any>
-     *                 ? (IsPrimary<N, TCons> extends true ? never : N)
-     *                 : never
-     *       )]?:
-     *           C extends Column<any, infer TI, any, any>
-     *               ? InstanceType<AsType<TI, AbstConcreteType>>
-     *               : never;
-     *     }
+     * @typedef {TableStack extends Array<infer T>
+     *     ? T extends Table<TableName, infer TCols, infer TCons>
+     *         ? {
+     *             [C in TCols[number] as (
+     *                 C extends Column<infer N, any, true, any>
+     *                     ? (IsPrimary<N, TCons> extends true ? never : N)
+     *                     : never
+     *           )]?:
+     *               C extends Column<any, infer TI, any, any>
+     *                   ? InstanceType<AsType<TI, AbstConcreteType>>
+     *                   : never;
+     *         }
+     *         : never
      *     : never
      * } OptionalColumns<T>
      */
 
     /**
      * @template {String} TableName
-     * @typedef {TableStack extends infer T
-     *     ? T extends Table<TableName, infer TCols, infer TCons>
+     * @typedef {TableStack extends Array<infer T>
+     *     ? T extends Table<TableName, any, any, any>
      *         ? {[K in keyof (RequiredColumns<TableName> & OptionalColumns<TableName>)]:
      *             (RequiredColumns<TableName> & OptionalColumns<TableName>)[K]}
      *         : never
@@ -681,3 +706,10 @@ export class Database {
         });
     }
 }
+
+Object.setPrototypeOf(DBResponse, null);
+Object.setPrototypeOf(DBResponse.prototype, null);
+Object.setPrototypeOf(Table, null);
+Object.setPrototypeOf(Table.prototype, null);
+Object.setPrototypeOf(Database, null);
+Object.setPrototypeOf(Database.prototype, null);

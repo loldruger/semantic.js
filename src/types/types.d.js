@@ -246,12 +246,3 @@
  * } Unwrap<T>
  */
 
-/**
- * @template {ReadonlyArray<any>} T
- * @typedef {T extends [infer First, ...infer Rest]
-*     ? First extends Rest[number]
-*         ? true
-*         : HasArrayDuplication<Rest> 
-*     : false
-* } HasArrayDuplication<T>
-*/

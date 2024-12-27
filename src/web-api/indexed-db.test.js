@@ -12,12 +12,26 @@ const test0 = await (async () => {
         .constraint("primary", { name: "id", autoIncrement: true })
         .constraint("unique", ["name"])
         .build()
+        .table("TableName2")
+        .column("id", Number, { indexed: true })
+        .column("name", String, { nullable: true })
+        .column("createdAt", Date)
+        .constraint("primary", { name: "id", autoIncrement: true })
+        .constraint("unique", ["name"])
+        .build()
+        .table("TableName3")
+        .column("id", Number, { indexed: true })
+        .column("name", String, { nullable: true })
+        .column("createdAt", Date)
+        .constraint("primary", { name: "id", autoIncrement: true })
+        .constraint("unique", ["name"])
+        .build()
         .build())
         .ok();
 
 
     await db.insert({
-        tableName: "TableName",
+        tableName: "TableName3",
         data: { name: "table", createdAt2: new Date() }
     })
 
