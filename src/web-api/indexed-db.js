@@ -128,7 +128,7 @@ class DBResponse {
  * @typedef {Type extends "primary"
  *     ? {name: ColumnName, autoIncrement: Boolean}
  *     : Type extends "unique"
- *         ? Array<String>
+ *         ? Array<ColumnName>
  *         : never
  * } ConstraintFormat<ColumnName, Type>
  */
@@ -203,10 +203,21 @@ class Table {
     }
 
     /**
+     * @template {Array<Column<String, any, boolean, boolean>>} Cols
+     * @typedef {Cols extends Array<infer U> 
+     *   ? U extends Column<infer CName, any, any, any> 
+     *     ? CName 
+     *     : never 
+     *   : never
+     * } ColumnNameUnion
+     */
+
+    /**
+     * @template {ColumnNameUnion<ColumnStack>} ColName
      * @template {String} ColumnName
      * @template {"primary" | "unique"} Type
      * @param {Type} type
-     * @param {ConstraintFormat<ColumnName, Type>} format
+     * @param {ConstraintFormat<ColName, Type>} format
      * @return {Table<
      *     TableName,
      *     ColumnStack,
