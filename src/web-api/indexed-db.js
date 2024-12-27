@@ -364,9 +364,10 @@ export class Database {
                         objectStore.createIndex(`${name}Index`, name, { unique: true });
                     }
 
-                    for (const key in table.columns) {
-                        const column = table.columns[key];
-                        objectStore.createIndex(key, key, { unique: column.constraint.indexed ?? false });
+                    for (const column of table.columns) {
+                        if (column.constraint.indexed) {
+                            objectStore.createIndex(`${column.name}Index`, column.name, { unique: column.constraint.indexed ?? false });
+                        }
                     }
                 }
             };
@@ -711,5 +712,3 @@ Object.setPrototypeOf(DBResponse, null);
 Object.setPrototypeOf(DBResponse.prototype, null);
 Object.setPrototypeOf(Table, null);
 Object.setPrototypeOf(Table.prototype, null);
-Object.setPrototypeOf(Database, null);
-Object.setPrototypeOf(Database.prototype, null);

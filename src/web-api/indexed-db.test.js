@@ -29,10 +29,9 @@ const test0 = await (async () => {
         .build())
         .ok();
 
-
     await db.insert({
         tableName: "TableName3",
-        data: { name: "table", createdAt2: new Date() }
+        data: { name: "table", createdAt: new Date() }
     })
 
     // await db.insert({
