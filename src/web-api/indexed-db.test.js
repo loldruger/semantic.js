@@ -29,6 +29,9 @@ const test0 = await (async () => {
         data: { name: "table1", createdAt: new Date() }
     })
 
+    await db.delete({
+        tableName: "Table1"
+    })
 })();
 
 

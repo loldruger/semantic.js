@@ -25,3 +25,11 @@
  *     : false
  * } Array.Contains
  */
+
+/**
+ * @template {Array<any>} A
+ * @typedef {A extends [infer First, ...infer Rest]
+*   ? First extends Array<any> ? [...Array.Flatten<First>, ...Array.Flatten<Rest>] : [First, ...Array.Flatten<Rest>]
+*   : []
+* } Array.Flatten
+*/

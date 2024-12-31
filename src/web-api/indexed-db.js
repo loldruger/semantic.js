@@ -285,15 +285,7 @@ class Table {
     }
 
     /**
-     * @template {Array<any>} A
-     * @typedef {A extends [infer First, ...infer Rest]
-     *   ? First extends Array<any> ? [...Flatten<First>, ...Flatten<Rest>] : [First, ...Flatten<Rest>]
-     *   : []
-     * } Flatten
-     */
-
-    /**
-     * @return {Database<[...Flatten<TableStack>, Table<TableName, ColumnStack, ConstraintStack>]>}
+     * @return {Database<[...Array.Flatten<TableStack>, Table<TableName, ColumnStack, ConstraintStack>]>}
      */
     build() {
         return this.#db;
@@ -719,19 +711,18 @@ export class Database {
     /**
      * @param {Object} param
      * @param {TableNameUnion} param.tableName 
-     * @param {WhereClause<String>} param.where 
+     * @param {WhereClause<String>=} param.where
      * @return {Promise<DBResponse<null, Error?>>}
      */
     async delete({ tableName, where }) {
         return new Promise((resolve, reject) => {
             const transaction = /** @type {IDBDatabase} */ (this.#db).transaction([tableName], "readwrite");
             const objectStore = transaction.objectStore(tableName);
-            const key = where.key;
+            const condition = where?.key;
 
-            if (key?.is) {
-                if ("eq" in key.is) {
-                    const request = objectStore.delete(key.is.eq);
-
+            if (condition) {
+                if ("eq" in condition.is) {
+                    const request = objectStore.delete(condition.is.eq);
                     request.onsuccess = () => {
                         resolve(DBResponse.ok({
                             data: null
@@ -744,21 +735,13 @@ export class Database {
                         }));
                     };
 
-                } else if ("between" in key.is) {
-                    const request = objectStore.openCursor(IDBKeyRange.bound(key.is.between.from, key.is.between.to));
+                } else if ("between" in condition.is) {
+                    const request = objectStore.delete(IDBKeyRange.bound(condition.is.between.from, condition.is.between.to));
 
-                    request.onsuccess = (event) => {
-                        const target = /** @type {IDBRequest<IDBCursorWithValue>} */ (event.target);
-                        const cursor = target.result;
-
-                        if (cursor) {
-                            cursor.delete();
-                            cursor.continue();
-                        } else {
-                            resolve(DBResponse.ok({
-                                data: null
-                            }));
-                        }
+                    request.onsuccess = () => {
+                        resolve(DBResponse.ok({
+                            data: null
+                        }));
                     };
 
                     request.onerror = () => {
@@ -769,6 +752,20 @@ export class Database {
                 } else {
                     reject(DBResponse.err({
                         err: new Error("Invalid where clause")
+                    }));
+                }
+            } else {
+                const request = objectStore.clear();
+
+                request.onsuccess = () => {
+                    resolve(DBResponse.ok({
+                        data: null
+                    }));
+                };
+
+                request.onerror = () => {
+                    reject(DBResponse.err({
+                        err: request.error
                     }));
                 }
             }
