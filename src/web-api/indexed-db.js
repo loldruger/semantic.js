@@ -119,7 +119,7 @@ class DBResponse {
 /**
  * @template {Array<Column<String, ConstructableTypeUnion>>} ColumnStack
  * @template {String} ColumnName
- * @template {"primary"|"unique"} [Type="primary" | "unique"]
+ * @template {"primary"|"unique"|"foreign"} [Type="primary" | "unique"|"foreign"]
  * @typedef {{
  *     type: Type,
  *     format:
@@ -138,12 +138,24 @@ class DBResponse {
  * @template {Array<String>} ColumnNames
  * @template {String} ColumnName
  * @template {String} Type
+ * @template {String} [RefTable=String]
+ * @template {String} [RefColumn=String]
  * @typedef {Array.Contains<ColumnNames, ColumnName> extends true
  *     ? Type extends "primary"
- *         ? {name: ColumnName, autoIncrement: Boolean}
+ *         ? {column: ColumnName, autoIncrement: Boolean}
  *         : Type extends "unique"
  *             ? Array<ColumnName>
- *             : ErrorType<"Invalid constraint type">
+ *             : Type extends "foreign"
+ *                 ? {
+ *                     column: ColumnName,
+ *                     ref: {
+ *                         table: RefTable,
+ *                         column: RefColumn
+ *                     },
+ *                     onDelete?: "CASCADE" | "RESTRICT" | "SET NULL" | "NO ACTION",
+ *                     onUpdate?: "CASCADE" | "RESTRICT" | "SET NULL" | "NO ACTION"
+ *                 }
+ *                 : ErrorType<"Invalid constraint type">
  *     : ErrorType<"Column not found">
  * } ConstraintFormat<Array<String>, ColumnName, Type>
  */
@@ -189,24 +201,43 @@ class Table {
     }
 
     /**
+     * @typedef {ColumnStack extends Array<infer T>
+     *     ? T extends Column<infer N, any, any, any>
+     *         ? N
+     *         : never
+     *     : never
+     * } ColumnNameUnion
+     */
+
+    /**
+     * @template {String} Name
+     * @typedef {ColumnNameUnion extends never
+     *     ? Name
+     *     : Union.Contains<ColumnNameUnion, Name> extends true
+     *         ? ErrorType<"Column already exists">
+     *         : Name
+     * } ColumnName<Name>
+     */
+
+    /**
      * @template {String} Name
      * @template {ConstructableTypeUnion} TypeInfo
      * @template {Boolean} Nullable
      * @template {Boolean} Indexed
-     * @param {Name} name
+     * @param {ColumnName<Name>} name
      * @param {TypeInfo} typeInfo
      * @param {Object} [param]
      * @param {Nullable} [param.nullable=false]
      * @param {Indexed} [param.indexed=false]
      * @return {Table<
      *     TableName,
-     *     [...ColumnStack, Column<Name, TypeInfo, Nullable, Indexed>],
+     *     [...ColumnStack, Column<ColumnName<Name>, TypeInfo, Nullable, Indexed>],
      *     ConstraintStack,
      *     TableStack
      * >}
      */
     column(name, typeInfo, { nullable, indexed } = {}) {
-        /** @type {Column<Name, TypeInfo, Nullable, Indexed>} */
+        /** @type {Column<ColumnName<Name>, TypeInfo, Nullable, Indexed>} */
         const column = {
             name,
             typeInfo,
@@ -220,9 +251,17 @@ class Table {
     /**
      * @template {AsType<Union.ToTuple<keyof {[K in ColumnStack[number] as K['name']]: any}>, Array<String>>} ColumnNames
      * @template {String} ColumnName
-     * @template {"primary" | "unique"} Type
+     * @template {"primary" | "unique" | "foreign"} Type
+     * @template {String} RefTable
+     * @template {String} RefColumn
      * @param {Type} type
-     * @param {ConstraintFormat<ColumnNames, ColumnName, Type>} format
+     * @param {ConstraintFormat<
+     *     ColumnNames,
+     *     ColumnName,
+     *     Type,
+     *     RefTable,
+     *     RefColumn
+     * >} format
      * @return {Table<
      *     TableName,
      *     ColumnStack,
@@ -375,7 +414,7 @@ export class Database {
                         .map(i => i.name);
 
                     const objectStore = target.result.createObjectStore(table.name, {
-                        keyPath: primary.format.name,
+                        keyPath: primary.format.column,
                         autoIncrement: primary.format.autoIncrement
                     });
 
@@ -406,7 +445,7 @@ export class Database {
      * @template {String} Name
      * @typedef {TableNameUnion extends never
      *     ? Name
-     *     : Union.Contains<Name, TableNameUnion> extends true
+     *     : Union.Contains<TableNameUnion, Name> extends true
      *         ? ErrorType<"Table already exists">
      *         : Name
      * } TableName<Name>
@@ -540,7 +579,7 @@ export class Database {
      * @param {Object} param
      * @param {TableNameUnion} param.tableName
      * @param {WhereClause<String>} param.where
-     * @param {Number} param.limit
+     * @param {Number?} param.limit
      * @return {Promise<DBResponse<Array<any>?, Error?>>}
      */
     async select({ tableName, where, limit }) {
@@ -568,20 +607,28 @@ export class Database {
 
                 } else if ("between" in key.is) {
                     const request = objectStore.openCursor(IDBKeyRange.bound(key.is.between.from, key.is.between.to));
+                    let count = 0;
 
                     request.onsuccess = (event) => {
                         const target = /** @type {IDBRequest<IDBCursorWithValue>} */ (event.target);
-                        const cursor = target.result;
                         const result = /** @type {Array<any>}*/ ([]);
+                        const cursor = target.result;
 
-                        if (cursor) {
-                            result.push(cursor.value);
-                            cursor.continue();
-                        } else {
-                            resolve(DBResponse.ok({
-                                data: result
-                            }));
+                        if (!cursor) {
+                            resolve(DBResponse.ok({ data: result }));
+                            return;
                         }
+
+                        if (limit && count >= limit) {
+                            resolve(DBResponse.ok({ data: result }));
+                            return;
+                        }
+
+                        result.push(cursor.value);
+                        count++;
+
+                        // Skip to next record - more efficient than continue()
+                        cursor.advance(1);
                     };
 
                     request.onerror = () => {
