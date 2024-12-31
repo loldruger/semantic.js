@@ -117,30 +117,45 @@ class DBResponse {
  */
 
 /**
+ * @template {Array<Column<String, ConstructableTypeUnion>>} ColumnStack
  * @template {String} ColumnName
  * @template {"primary"|"unique"} [Type="primary" | "unique"]
- * @typedef {{type: Type, format: ConstraintFormat<ColumnName, Type>}} Constraint<ColumnName>
+ * @typedef {{
+ *     type: Type,
+ *     format:
+ *         ConstraintFormat<
+ *             AsType<
+ *                 Union.ToTuple<keyof {[K in ColumnStack[number] as K['name']]: any}>,
+ *                 Array<String>
+ *              >,
+ *             ColumnName,
+ *             Type
+ *         >
+ * }} Constraint<ColumnStack, ColumnName>
  */
 
 /**
+ * @template {Array<String>} ColumnNames
  * @template {String} ColumnName
  * @template {String} Type
- * @typedef {Type extends "primary"
- *     ? {name: ColumnName, autoIncrement: Boolean}
- *     : Type extends "unique"
- *         ? Array<ColumnName>
- *         : never
- * } ConstraintFormat<ColumnName, Type>
+ * @typedef {Array.Contains<ColumnNames, ColumnName> extends true
+ *     ? Type extends "primary"
+ *         ? {name: ColumnName, autoIncrement: Boolean}
+ *         : Type extends "unique"
+ *             ? Array<ColumnName>
+ *             : ErrorType<"Invalid constraint type">
+ *     : ErrorType<"Column not found">
+ * } ConstraintFormat<Array<String>, ColumnName, Type>
  */
 
 /**
  * @template {String} TableName
  * @template {Array<Column<String, ConstructableTypeUnion>>} [ColumnStack=[]]
- * @template {Array<Constraint<String>>} [ConstraintStack=[]]
+ * @template {Array<Constraint<ColumnStack, String>>} [ConstraintStack=[]]
  * @template {Array<Table<TableName, ColumnStack, ConstraintStack>>} [TableStack=[]]
  */
 class Table {
-    /** @type {Database<Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>>} */
+    /** @type {Database<Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<ColumnStack, String>>>>>} */
     #db;
 
     /** @type {TableName} */
@@ -149,11 +164,11 @@ class Table {
     /** @type {Array<Column<String, ConstructableTypeUnion>>} */
     #columns = [];
 
-    /** @type {Array<Constraint<String>>} */
+    /** @type {Array<Constraint<ColumnStack, String>>} */
     #constraints = [];
 
     /**
-     * @param {Database<Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>>} db
+     * @param {Database<Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<ColumnStack, String>>>>>} db
      * @param {TableName} name
      */
     constructor(db, name) {
@@ -203,36 +218,29 @@ class Table {
     }
 
     /**
-     * @template {Array<Column<String, any, boolean, boolean>>} Cols
-     * @typedef {Cols extends Array<infer U> 
-     *   ? U extends Column<infer CName, any, any, any> 
-     *     ? CName 
-     *     : never 
-     *   : never
-     * } ColumnNameUnion
-     */
-
-    /**
-     * @template {ColumnNameUnion<ColumnStack>} ColName
+     * @template {AsType<Union.ToTuple<keyof {[K in ColumnStack[number] as K['name']]: any}>, Array<String>>} ColumnNames
      * @template {String} ColumnName
      * @template {"primary" | "unique"} Type
      * @param {Type} type
-     * @param {ConstraintFormat<ColName, Type>} format
+     * @param {ConstraintFormat<ColumnNames, ColumnName, Type>} format
      * @return {Table<
      *     TableName,
      *     ColumnStack,
-     *     [...ConstraintStack, Constraint<ColumnName, Type>],
+     *     [...ConstraintStack, Constraint<ColumnStack, ColumnName, Type>],
      *     TableStack
      * >}
      */
     constraint(type, format) {
-        /** @type {Constraint<String, Type>} */
+        /** @type {Constraint<ColumnStack, ColumnName, Type>} */
         const constraint = {
             type,
             format,
         };
 
-        this.#constraints = [...this.#constraints, constraint];
+        this.#constraints = [
+            ...this.#constraints,
+            constraint
+        ];
 
         return this;
     }
@@ -240,7 +248,7 @@ class Table {
     /**
      * @template {Array<any>} A
      * @typedef {A extends [infer First, ...infer Rest]
-     *   ? First extends any[] ? [...Flatten<First>, ...Flatten<Rest>] : [First, ...Flatten<Rest>]
+     *   ? First extends Array<any> ? [...Flatten<First>, ...Flatten<Rest>] : [First, ...Flatten<Rest>]
      *   : []
      * } Flatten
      */
@@ -258,15 +266,15 @@ class Table {
  *     Table<
  *         String,
  *         Array<Column<String, ConstructableTypeUnion>>,
- *         Array<Constraint<String>>,
- *         Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>
+ *         Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>,
+ *         Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>>>
  *     >
  * >} [TableStack=Array<
  *     Table<
  *         String,
  *         Array<Column<String, ConstructableTypeUnion>>,
- *         Array<Constraint<String>>,
- *         Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>
+ *         Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>,
+ *         Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>>>
  *     >
  * >]
  */
@@ -281,7 +289,7 @@ export class Database {
     #version;
 
     /**
-     * @type {Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<String>>>>}
+     * @type {Array<Table<String, Array<Column<String, ConstructableTypeUnion>>, Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>>>}
      * */
     #tables = [];
 
@@ -355,10 +363,10 @@ export class Database {
                 };
 
                 for (const table of this.#tables) {
-                    const primary = /** @type {Constraint<String, "primary">} */(
+                    const primary = /** @type {Constraint<Array<Column<String, ConstructableTypeUnion>>, String, "primary">} */(
                         table.constraints.find(i => i.type === "primary")
                     );
-                    const uniquesList = /** @type {Array<Constraint<String, "unique">>} */ (
+                    const uniquesList = /** @type {Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String, "unique">>} */ (
                         table.constraints.filter(i => i.type === "unique")
                     );
 
@@ -386,9 +394,28 @@ export class Database {
     }
 
     /**
+     * @typedef {TableStack extends Array<infer T>
+     *     ? T extends Table<infer N, any, any, any>
+     *         ? N
+     *         : never
+     *     : never
+     * } TableNameUnion
+     */
+
+    /**
      * @template {String} Name
-     * @param {Name} tableName
-     * @return {Table<Name, [], [], TableStack>} 
+     * @typedef {TableNameUnion extends never
+     *     ? Name
+     *     : Union.Contains<Name, TableNameUnion> extends true
+     *         ? ErrorType<"Table already exists">
+     *         : Name
+     * } TableName<Name>
+     */
+
+    /**
+     * @template {String} Name
+     * @param {TableName<Name>} tableName
+     * @return {Table<TableName<Name>, [], [], TableStack>} 
      */
     table(tableName) {
         const table = new Table(this, tableName);
@@ -402,19 +429,22 @@ export class Database {
 
     /**
      * @template {String} ColName
-     * @template {Array<Constraint<String>>} ConsStack
+     * @template {Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>} ConsStack
      * @typedef {ConsStack extends [infer F, ...infer R]
-     *     ? (F extends Constraint<infer N, infer T>
+     *     ? (F extends Constraint<any, infer N, infer T>
      *         ? (N extends ColName
-     *             ? (T extends "primary" ? true : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
-     *             : IsPrimary<ColName, AsType<R, Array<Constraint<String>>>>)
-     *         : never)
+     *             ? (T extends "primary"
+     *                 ? true
+     *                 : IsPrimary<ColName, AsType<R, Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>>>
+     *             )
+     *             : IsPrimary<ColName, AsType<R, Array<Constraint<Array<Column<String, ConstructableTypeUnion>>, String>>>>)
+     *         : false)
      *     : false
-     * } IsPrimary
+     * } IsPrimary<ColName, ConsStack>
      */
 
     /**
-     * @template {String} TableName
+     * @template {TableNameUnion} TableName
      * @typedef {TableStack extends Array<infer T>
      *     ? T extends Table<TableName, infer TCols, infer TCons>
      *         ? {
@@ -437,7 +467,7 @@ export class Database {
      */
 
     /**
-     * @template {String} TableName
+     * @template {TableNameUnion} TableName
      * @typedef {TableStack extends Array<infer T>
      *     ? T extends Table<TableName, infer TCols, infer TCons>
      *         ? {
@@ -456,19 +486,23 @@ export class Database {
      */
 
     /**
-     * @template {String} TableName
+     * @template {TableNameUnion} TableName
+     * @typedef {RequiredColumns<TableName> & OptionalColumns<TableName>} TableIntersection<TableName>
+     */
+
+    /**
+     * @template {TableNameUnion} TableName
      * @typedef {TableStack extends Array<infer T>
      *     ? T extends Table<TableName, any, any, any>
-     *         ? {[K in keyof (RequiredColumns<TableName> & OptionalColumns<TableName>)]:
-     *             (RequiredColumns<TableName> & OptionalColumns<TableName>)[K]}
+     *         ? {[K in keyof TableIntersection<TableName>]: TableIntersection<TableName>[K]}
      *         : never
      *     : never
      * } TableColumns<TableName>
      */
 
     /**
-     * @template {String} Name
-     * @template {TableColumns<Name>} Data
+     * @template {TableNameUnion} Name
+     * @template {Exact<TableColumns<Name>, Data>} Data
      * @param {Object} param
      * @param {Name} param.tableName
      * @param {Data} param.data
@@ -504,7 +538,7 @@ export class Database {
 
     /**
      * @param {Object} param
-     * @param {String} param.tableName
+     * @param {TableNameUnion} param.tableName
      * @param {WhereClause<String>} param.where
      * @param {Number} param.limit
      * @return {Promise<DBResponse<Array<any>?, Error?>>}
@@ -566,7 +600,7 @@ export class Database {
 
     /**
      * @param {Object} param
-     * @param {String} param.tableName
+     * @param {TableNameUnion} param.tableName
      * @param {Object} param.data
      * @param {WhereClause<String>} param.where
      * @param {Boolean} param.isReturning
@@ -637,7 +671,7 @@ export class Database {
 
     /**
      * @param {Object} param
-     * @param {String} param.tableName 
+     * @param {TableNameUnion} param.tableName 
      * @param {WhereClause<String>} param.where 
      * @return {Promise<DBResponse<null, Error?>>}
      */
@@ -721,5 +755,7 @@ export class Database {
 
 Object.setPrototypeOf(DBResponse, null);
 Object.setPrototypeOf(DBResponse.prototype, null);
+Object.setPrototypeOf(Database, null);
+Object.setPrototypeOf(Database.prototype, null);
 Object.setPrototypeOf(Table, null);
 Object.setPrototypeOf(Table.prototype, null);

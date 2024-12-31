@@ -12,14 +12,7 @@ const test0 = await (async () => {
         .constraint("primary", { name: "id", autoIncrement: true })
         .constraint("unique", ["name"])
         .build()
-        .table("TableName2")
-        .column("id", Number, { indexed: true })
-        .column("name", String, { nullable: true })
-        .column("createdAt", Date)
-        .constraint("primary", { name: "id", autoIncrement: true })
-        .constraint("unique", ["name"])
-        .build()
-        .table("TableName3")
+        .table("TableName1")
         .column("id", Number, { indexed: true })
         .column("name", String, { nullable: true })
         .column("createdAt", Date)
@@ -29,15 +22,11 @@ const test0 = await (async () => {
         .build())
         .ok();
 
-    // await db.insert({
-    //     tableName: "TableName3",
-    //     data: { name: "table1", createdAt: new Date() }
-    // })
+    await db.insert({
+        tableName: "TableName",
+        data: { name: "table1", createdAt: new Date() }
+    })
 
-    // await db.insert({
-    //     tableName: "TableName2",
-    //     data: { id: 0, name: "test2", nice: "asdf" }
-    // })
 })();
 
 

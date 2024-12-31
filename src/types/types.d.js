@@ -23,7 +23,7 @@
 /**
  * @template {String} Message
  * @template {String} [E='ERROR: ']
- * @typedef {never extends never ? `${E}${Message}` : never} ErrorType<Message>
+ * @typedef {`${E}${Message}` & { __brandErrorType?: never }} ErrorType<Message>
  */
 
 /**
@@ -246,3 +246,20 @@
  * } Unwrap<T>
  */
 
+/**
+ * @template T
+ * @typedef {{[K in keyof T]: T[K]
+ * } & {
+ *     [P in Exclude<string, keyof T>]?: never
+ * }
+ * } Strict<T>
+ */
+
+
+/**
+ * @template T
+ * @template X
+ * @typedef {T & {
+ *   [K in keyof X]: K extends keyof T ? X[K] : never
+ * }} Exact<T, X>
+ */

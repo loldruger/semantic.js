@@ -3,14 +3,25 @@
  * @typedef {T extends [infer First, ...infer Rest]
 *     ? First extends Rest[number]
 *         ? true
-*         : HasArrayDuplication<Rest> 
+*         : Array.HasDuplication<Rest> 
 *     : false
-* } HasArrayDuplication<T>
+* } Array.HasDuplication<T>
 */
 
 /**
  * @template {Array<ItemType>} Target
  * @template {ItemType} Item
  * @template [ItemType=unknown]
- * @typedef {[...Target, Item]} PushIntoArray<Target, Item>
+ * @typedef {[...Target, Item]} Array.Push<Target, Item>
+ */
+
+/**
+ * @template {Array<any>} Container
+ * @template Item
+ * @typedef {Container extends [infer First, ...infer Rest]
+ *     ? First extends Item 
+ *         ? true 
+ *         : Array.Contains<Rest, Item>
+ *     : false
+ * } Array.Contains
  */
