@@ -4,7 +4,7 @@
         {
             "label": "Minify and Copy Files to dist",
             "type": "shell",
-            "command": "mkdir -p dist && for file in $(find src -name '*.js' -not -name '*.test.js'); do mkdir -p \"dist/$(dirname \"$file\")\" && ./dependencies/uglify-js/bin/uglifyjs \"$file\" -o \"dist/$file\" --compress --mangle; done && cat $(find src -name '*.js' -not -name '*.test.js') > dist/semantic.js && ./dependencies/uglify-js/bin/uglifyjs dist/semantic.js -o dist/semantic.min.js --compress --mangle && rm dist/semantic.js",
+            "command": "chmod +x build.sh && ./build.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true
