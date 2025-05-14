@@ -36,7 +36,7 @@ export class Struct {
      */
     prv(name, _typeInfo) {
         // @ts-ignore
-        this.#prvs[name] = undefined; // Directly assign to the existing object
+        this.#prvs[name] = undefined;
 
         return /** @type {Struct<Pubs, Prvs & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));
     }
@@ -50,7 +50,7 @@ export class Struct {
      */
     pub(name, _typeInfo) {
         // @ts-ignore
-        this.#pubs[name] = undefined; // Directly assign to the existing object
+        this.#pubs[name] = undefined;
 
         return /** @type {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>} */ (/** @type {unknown} */ (this));
     }

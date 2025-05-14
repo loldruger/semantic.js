@@ -27,17 +27,17 @@ export class Impl {
     /**
      * @type {Consts}
      */
-    #consts = /** @type {Consts} */ ({});
+    #consts = /** @type {Consts} */ (Object.create(null));
 
     /**
      * @type {Fns}
      */
-    #fns = /** @type {Fns} */ ({});
+    #fns = /** @type {Fns} */ (Object.create(null));
 
     /**
      * @type {StaticFns}
      */
-    #staticFns = /** @type {StaticFns} */ ({});
+    #staticFns = /** @type {StaticFns} */ (Object.create(null));
 
     /**
      * @template {Object} T

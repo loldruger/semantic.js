@@ -7,7 +7,7 @@ export class TaggedUnion {
     /**
      * @type {Variants}
      */
-    #variants = /** @type {Variants} */ ({});
+    #variants = /** @type {Variants} */ (Object.create(null));
 
     /**
      * @private
