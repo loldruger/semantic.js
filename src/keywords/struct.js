@@ -8,12 +8,12 @@ export class Struct {
     /**
      * @type {Pubs}
      */
-    #pubs = /** @type {Pubs} */ ({});
+    #pubs = /** @type {Pubs} */ (Object.create(null));
 
     /**
      * @type {Prvs}
      */
-    #prvs = /** @type {Prvs} */ ({});
+    #prvs = /** @type {Prvs} */ (Object.create(null));
 
     /**
      * @private
@@ -35,11 +35,8 @@ export class Struct {
      * @returns {Struct<Pubs, Prvs & StructType<Name, TypeInfo>>}
      */
     prv(name, _typeInfo) {
-        this.#prvs = {
-            ...this.#prvs,
-            //@ts-ignore
-            [name]: undefined
-        };
+        // @ts-ignore
+        this.#prvs[name] = undefined; // Directly assign to the existing object
 
         return /** @type {Struct<Pubs, Prvs & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));
     }
@@ -52,11 +49,8 @@ export class Struct {
      * @returns {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>}
      */
     pub(name, _typeInfo) {
-        this.#pubs = {
-            ...this.#pubs,
-            //@ts-ignore
-            [name]: undefined
-        };
+        // @ts-ignore
+        this.#pubs[name] = undefined; // Directly assign to the existing object
 
         return /** @type {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>} */ (/** @type {unknown} */ (this));
     }

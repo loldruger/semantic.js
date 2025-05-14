@@ -14,5 +14,3 @@ export { EnumConcreteType } from "./types/enums.js";
 export { Option } from "./types/option.js";
 export { ResultBaked } from "./types/result-baked.js";
 export { OptionBaked } from "./types/option-baked.js";
-
-export { Database } from "./web-api/indexed-db.js";
