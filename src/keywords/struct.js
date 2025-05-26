@@ -61,7 +61,7 @@ export class Struct {
      */
 
     /**
-     * @returns {{[K in keyof (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})]: (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})[K]}}
+     * @returns {{[K in keyof (P & R)]: (P & R)[K]}}
      */
     build() {
         const returnedObject = Object.assign(this.#pubs, {
@@ -77,7 +77,7 @@ export class Struct {
         })
 
         /**
-         * @returns {{[K in keyof (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})]: (P & {new: (args: {[K in keyof (P & R)]: (P & R)[K]}) => typeof args})[K]}}
+         * @returns {{[K in keyof (P & R)]: (P & R)[K]}}
          */
         return (returnedObject);
     }

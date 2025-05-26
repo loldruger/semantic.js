@@ -14,41 +14,30 @@ const test0 = (() => {
 
 //@ts-ignore
 const test1 = (() => {
-    const struct = Struct.new()
+    let struct = Struct.new()
         .pub("string", mut(tuple(Number, Boolean)))
         .pub("tag", Number)
         .build();
 
-    struct.new({
+    struct = {
         string: [1, true],
-        tag: 11123
-    });
+        tag: 11123,
+    };
 
     console.log("Struct2: ", struct);
 })();
 
 //@ts-ignore
 const test2 = (() => {
-    //     const struct = Struct.new()
-    //         .prv("string", mut(Boolean))
-    //         .pub("tag", Number)
-    //         .build();
+    const struct = Struct.new()
+        .prv("string", mut(Boolean))
+        .pub("tag", Number)
+        .build();
 
-    //     const impl = Impl.for(struct)
-    //         .staticFn("new2", ({ Self, Args: { a: mut(Boolean), b: Number } }) => {
-    //     return Self.new({
-    //         string: a,
-    //         tag: b
-    //     });
-    // })
-    //         .staticFn("staticFunc2", ({ Self, a: Number }) => {
-    //     return Self.tag;
-    // })
-    //     .fn("getTag", ({ self }) => {
-    //         return self.tag;
-    //     })
-    //     .build(true);
+    Impl.for(struct)
+        .pub.const("CONST", 123)
+        .pub.fn("fn", (self, { a: Number, b: Number }) => { });
 
-    // impl.new2({ a: [1, true], b: 123 });
-    // console.log("Struct3: ", struct);
+
+
 })();
