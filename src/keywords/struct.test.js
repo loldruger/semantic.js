@@ -36,7 +36,9 @@ const test2 = (() => {
 
     Impl.for(struct)
         .pub.const("CONST", 123)
-        .pub.fn("fn", (self, { a: Number, b: Number }) => { });
+        .pub.fn("fnName", (self, { a = Number, b = Number }) => {
+            console.log("fnName called with: ", a, b);
+        });
 
 
 

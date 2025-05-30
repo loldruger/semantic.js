@@ -55,6 +55,15 @@ export class Impl {
 
 /**
  * @template {Object} Target
+ * @template {Function} Fn
+ * @typedef {Fn extends (self: Target, params: infer P) => infer R 
+ *   ? (self: Target, params: P) => R 
+ *   : never
+ * } NormalizedFn<Target, Fn>
+ */
+
+/**
+ * @template {Object} Target
  * @template {ConstMap} Consts
  * @template {FnMap<String, CallableType>} Fns
  * @template {FnMap<String, CallableType>} StaticFns
@@ -86,7 +95,7 @@ class Accessor {
     /**
      * @template {String} Name
      * @template Value
-     * @param {Name} name
+     * @param {Name extends Uppercase<Name> ? Name : never} name
      * @param {Value extends IsLiteralType<Value> ? Value : never} value
      * @return {Accessor<Target, Consts, Fns, StaticFns>}
      */
@@ -98,10 +107,10 @@ class Accessor {
 
     /**
      * @template {String} Name
-     * @template {CallableType} Fn
+     * @template {(self: Target, params: any) => any} Fn
      * @param {Name} name
      * @param {Fn} func
-     * @return {Accessor<Target, Consts, Fns, StaticFns>}
+     * @return {Accessor<Target, Consts, Fns & Record<Name, NormalizedFn<Target, Fn>>, StaticFns>}
      */
     fn(name, func) {
         this.#fns = {
@@ -109,7 +118,7 @@ class Accessor {
             [name]: (props) => func(this.#target, { ...props })
         };
 
-        return /** @type {Accessor<Target, Consts, Fns, StaticFns>} */ (this);
+        return /** @type {Accessor<Target, Consts, Fns & Record<Name, NormalizedFn<Target, Fn>>, StaticFns>} */ (this);
     }
 }
 
