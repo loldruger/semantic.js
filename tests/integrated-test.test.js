@@ -1,13 +1,13 @@
 //@ts-check
 
-import { Impl, tuple, Struct } from "../src/lib.js";
+import { Impl, tuple, Struct, TaggedUnion } from "../src/lib.js";
 
 //@ts-ignore
 const test1 = (() => {
-    // const struct = Struct.new()
-    //     .field("Some", tuple(tuple(String), Number, String, tuple(Boolean, Number, tuple(Number))))
-    //     .field("None", String)
-    //     .build();
+    const taggedUnion = TaggedUnion.new()
+        .variant("Some", tuple(tuple(String), Number, String, tuple(Boolean, Number, tuple(Number))))
+        .variant("None", String)
+        .build();
 
     // const some = struct.Some([["1"], 1, "1", [true, 1, [1]]]);
 
@@ -19,7 +19,10 @@ const test1 = (() => {
 
 //@ts-ignore
 const test2 = (() => {
-
+    const taggedUnion = TaggedUnion.new()
+        .variant("Some")
+        // .variant("None")
+        .build();
 })();
 
 //@ts-ignore

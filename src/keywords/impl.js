@@ -56,8 +56,9 @@ export class Impl {
 /**
  * @template {Object} Target
  * @template {Function} Fn
- * @typedef {Fn extends (self: Target, params: infer P) => infer R 
- *   ? (self: Target, params: P) => R 
+ * @template {ToConcreteType<unknown>} T
+ * @typedef {Fn extends (self: Target, params: T) => infer R 
+ *   ? (self: Target, params: ToInstanceType<T>) => R 
  *   : never
  * } NormalizedFn<Target, Fn>
  */
@@ -70,9 +71,9 @@ export class Impl {
  */
 class Accessor {
     /** @type {Accessor<Target, Consts, Fns, StaticFns>} */
-    pub;
+    pub = this;
     /** @type {Accessor<Target, Consts, Fns, StaticFns>} */
-    prv;
+    prv = this;
 
     #target = /** @type {Target} */ (Object.create(null));
     #consts = /** @type {Consts} */ (Object.create(null));
@@ -107,18 +108,19 @@ class Accessor {
 
     /**
      * @template {String} Name
-     * @template {(self: Target, params: any) => any} Fn
+     * @template {ToConcreteType<unknown>} T
+     * @template {((self: Target, args: T) => ReturnType<Fn>)} Fn
      * @param {Name} name
      * @param {Fn} func
-     * @return {Accessor<Target, Consts, Fns & Record<Name, NormalizedFn<Target, Fn>>, StaticFns>}
+     * @return {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>}
      */
     fn(name, func) {
         this.#fns = {
             ...this.#fns,
-            [name]: (props) => func(this.#target, { ...props })
+            [name]: (props) => func(this.#target, props)
         };
 
-        return /** @type {Accessor<Target, Consts, Fns & Record<Name, NormalizedFn<Target, Fn>>, StaticFns>} */ (this);
+        return /** @type {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>} */ (this);
     }
 }
 

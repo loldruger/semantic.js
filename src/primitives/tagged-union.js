@@ -4,14 +4,10 @@
  * @template {StructType<String, ConstructableTypes>} Variants
  */
 export class TaggedUnion {
-    /**
-     * @type {Variants}
-     */
-    #variants = /** @type {Variants} */ (Object.create(null));
+    /** @type {Variants} */
+    #variants = Object.create(null);
 
-    /**
-     * @private
-     */
+    /** @private */
     constructor() { }
 
     /**
@@ -39,7 +35,7 @@ export class TaggedUnion {
             [tag]: fn
         };
 
-        return /** @type {TaggedUnion<Variants & StructType<Tag, TypeInfo>>} */ (/** @type {unknown} */ (this));
+        return /** @type {TaggedUnion<Variants & StructType<Tag, TypeInfo>>} */(this);
     }
 
     /**
