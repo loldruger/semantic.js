@@ -16,21 +16,21 @@
  */
 /**
  * @template T
- * @typedef {AsType<T, Mut<T>>} AsMut<T>
+ * @typedef {As<T, Mut<T>>} AsMut<T>
  */
 
 /**
  * @template T
- * @typedef {AsType<T, Imut<T>>} AsImut<T>
+ * @typedef {As<T, Imut<T>>} AsImut<T>
  */
 
 /**
- * @typedef {IsMut<Imut<String>>} MutTest1 // false
- * @typedef {IsMut<Mut<String>>} MutTest2 // true
- * @typedef {IsMut<String>} MutTest3       // false
- * @typedef {IsMut<Imut<Object>>} MutTest4 // false
- * @typedef {IsMut<Mut<Object>>} MutTest5  // true
- * @typedef {IsMut<Object>} MutTest6       // false
+ * @typedef {IsMut<Imut<String>>} Test.MutTest1 // false
+ * @typedef {IsMut<Mut<String>>} Test.MutTest2 // true
+ * @typedef {IsMut<String>} Test.MutTest3       // false
+ * @typedef {IsMut<Imut<Object>>} Test.MutTest4 // false
+ * @typedef {IsMut<Mut<Object>>} Test.MutTest5  // true
+ * @typedef {IsMut<Object>} Test.MutTest6       // false
  */
 
 /**
@@ -41,8 +41,8 @@
  * @template {String} Field
  * @template {ConstructableTypeUnion} T
  * @typedef {T extends Mut<any> 
- *   ? Record<Field, ToInstanceType<T>>
- *   : Readonly<Record<Field, ToInstanceType<T>>>
+ *   ? Record<Field, Type.ToInstanceType<T>>
+ *   : Readonly<Record<Field, Type.ToInstanceType<T>>>
  * } StructType<Field, T>
  */
 

@@ -5,8 +5,8 @@
  * @template {Array<unknown>} [Arr=[]]
  * @typedef {Arr['length'] extends T
 *     ? [...Arr, unknown]['length']
-*     : IncrementOf<T, [...Arr, unknown]>
-* } IncrementOf<T>
+*     : Math.IncrementOf<T, [...Arr, unknown]>
+* } Math.IncrementOf<T>
 */
 
 /**
@@ -14,8 +14,8 @@
 * @template {Array<unknown>} [Arr=[]]
 * @typedef {Arr['length'] extends T
 *     ? (Arr extends [...infer F, unknown] ? F['length'] : undefined)
-*     : DecrementOf<T, [...Arr, unknown]>
-* } DecrementOf<T>
+*     : Math.DecrementOf<T, [...Arr, unknown]>
+* } Math.DecrementOf<T>
 */
 
 /**

@@ -3,9 +3,9 @@
  * @typedef {T extends [infer First, ...infer Rest]
 *     ? First extends Rest[number]
 *         ? true
-*         : Array.HasDuplication<Rest> 
+*         : Array.HasDuplicatedItem<Rest> 
 *     : false
-* } Array.HasDuplication<T>
+* } Array.HasDuplicatedItem<T>
 */
 
 /**
@@ -23,7 +23,7 @@
  *         ? true 
  *         : Array.Contains<Rest, Item>
  *     : false
- * } Array.Contains
+ * } Array.Contains<Container, Item>
  */
 
 /**
@@ -31,5 +31,5 @@
  * @typedef {A extends [infer First, ...infer Rest]
 *   ? First extends Array<any> ? [...Array.Flatten<First>, ...Array.Flatten<Rest>] : [First, ...Array.Flatten<Rest>]
 *   : []
-* } Array.Flatten
+* } Array.Flatten<A>
 */

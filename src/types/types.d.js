@@ -7,56 +7,55 @@
 /**
  * @template {number} A
  * @template {number} B
- * @typedef {Pair<A, B>} RangeType<A, B>
+ * @typedef {Type.Pair<A, B>} Type.Range<A, B>
  */
 
 /**
  * @template {number} A
- * @template {RangeType<number, number>} T
+ * @template {Type.Range<number, number>} T
  * @typedef {{[K in keyof T]: T[K]}} IsInRange<A, T>
  */
 
 /**
- * @typedef {IsInRange<5, RangeType<0, 10>>} TestRangeType
+ * @typedef {IsInRange<5, Type.Range<0, 10>>} TestRangeType
  */
 
 /**
  * @template {String} Message
- * @template {String} [E='ERROR: ']
- * @typedef {`${E}${Message}` & { __brandErrorType?: never }} ErrorType<Message>
+ * @typedef {`ERROR: ${Message}` & { __brandErrorType?: never }} Type.Error<Message>
  */
 
 /**
- * @typedef {ErrorType<'This is an error message'>} TestErrorType
+ * @typedef {Type.Error<'This is an error message'>} Test.ErrorType
  */
 
 /**
  * @typedef {'EvalFailed'} EvalFailed
- * @typedef {undefined} UndefinedType
+ * @typedef {undefined} Type.Undefined
  */
 
 /**
  * @template {PropertyKey} K
  * @template V
- * @typedef {Record<K, V>} Pair<T, V>
+ * @typedef {Record<K, V>} Type.Pair<T, V>
  */
 
 /**
  * @template [P=any]
  * @template [R=any|void]
- * @typedef {(...args: ReadonlyArray<P>) => R} CallableType<P, R>
+ * @typedef {(...args: ReadonlyArray<P>) => R} Type.CallableType<P, R>
  */
 
 /**
  * @template [P=any]
  * @template [R=any]
- * @typedef {new (...args: ReadonlyArray<P>) => R} ConcreteType<P, R>
+ * @typedef {new (...args: ReadonlyArray<P>) => R} Type.ConcreteType<P, R>
  */
 
 /**
  * @template [P=any]
  * @template [R=any]
- * @typedef {abstract new (...args: ReadonlyArray<P>) => R} AbstConcreteType<P, R>
+ * @typedef {abstract new (...args: ReadonlyArray<P>) => R} Type.AbstConcreteType<P, R>
  */
 
 /**
@@ -65,9 +64,9 @@
 
 /**
  * @typedef {|
- *       CallableType | Mut<CallableType>
- *     | ConcreteType | Mut<ConcreteType>
- *     | AbstConcreteType | Mut<AbstConcreteType>
+ *       Type.CallableType | Mut<Type.CallableType>
+ *     | Type.ConcreteType | Mut<Type.ConcreteType>
+ *     | Type.AbstConcreteType | Mut<Type.AbstConcreteType>
  *     | ConstructableTypes | Mut<ConstructableTypes>
  * } ConstructableTypeUnion
  */
@@ -78,7 +77,7 @@
 
 /**
  * @template T, U
- * @typedef {T extends U ? T : never} AsType<T, U>
+ * @typedef {T extends U ? T : never} As<T, U>
  */
 
 /**
@@ -88,10 +87,10 @@
  *     T extends string ? StringConstructor :
  *     T extends boolean ? BooleanConstructor :
  *     T extends Function ? FunctionConstructor :
- *     T extends Array<unknown> ? (IsTupleType<T> extends true ? ToTupleType<T> : ArrayConstructor) :
+ *     T extends Array<unknown> ? (Type.IsTupleType<T> extends true ? Type.ToTupleType<T> : ArrayConstructor) :
  *     T extends object ? { new (...args: Array<unknown>): T } :
  *     never
- * } ToConcreteType<T>
+ * } Type.ToConcreteType<T>
  */
 
 /**
@@ -99,38 +98,38 @@
  * @typedef {T extends []
  *     ? []
  *     : T extends [infer Head, ...infer Tail]
- *         ? [ToConcreteType<Head>, ...ToTupleType<Tail extends ReadonlyArray<unknown>
+ *         ? [Type.ToConcreteType<Head>, ...Type.ToTupleType<Tail extends ReadonlyArray<unknown>
  *             ? Tail
  *             : []>
  *         ] : []
- * } ToTupleType<T>
+ * } Type.ToTupleType<T>
  */
 
 /**
  * @template {ConstructableTypeUnion} Arg_T
- * @typedef {IsTupleType<Arg_T> extends true ? {
+ * @typedef {Type.IsTupleType<Arg_T> extends true ? {
  *     [K in keyof Arg_T]: (
  *         Match<Arg_T[K], [
- *             (p: ConstructableTypes) => Readonly<ToInstanceTypeMatcher<AsType<Arg_T[K], ConstructableTypes>>>,
- *             (p: AbstConcreteType) => Readonly<InstanceType<AsType<Arg_T[K], AbstConcreteType>>>,
- *             (p: CallableType) =>
- *                 Readonly<(a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T[K], CallableType>>, ConstructableTypes>>) =>
- *                     ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T[K], CallableType>>, any>>>,
- *             (p: Mut<ConstructableTypes>) => ToInstanceTypeMatcher<AsType<Arg_T[K], Mut<ConstructableTypes>>['mut']>,
- *             (p: Mut<AbstConcreteType>) => InstanceType<AsType<Arg_T[K], Mut<AbstConcreteType>>['mut']>,
- *             (p: Mut<CallableType>) =>
- *                 (a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T[K], Mut<CallableType>>['mut']>, ConstructableTypes>>) =>
- *                     ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T[K], Mut<CallableType>>['mut']>, any>>,
+ *             (p: ConstructableTypes) => Readonly<ToInstanceTypeMatcher<As<Arg_T[K], ConstructableTypes>>>,
+ *             (p: Type.AbstConcreteType) => Readonly<InstanceType<As<Arg_T[K], Type.AbstConcreteType>>>,
+ *             (p: Type.CallableType) =>
+ *                 Readonly<(a: ToInstanceTypeMatcher<As<Parameters<As<Arg_T[K], Type.CallableType>>, ConstructableTypes>>) =>
+ *                     ToInstanceTypeMatcher<As<ReturnType<As<Arg_T[K], Type.CallableType>>, any>>>,
+ *             (p: Mut<ConstructableTypes>) => ToInstanceTypeMatcher<As<Arg_T[K], Mut<ConstructableTypes>>['mut']>,
+ *             (p: Mut<Type.AbstConcreteType>) => InstanceType<As<Arg_T[K], Mut<Type.AbstConcreteType>>['mut']>,
+ *             (p: Mut<Type.CallableType>) =>
+ *                 (a: ToInstanceTypeMatcher<As<Parameters<As<Arg_T[K], Mut<Type.CallableType>>['mut']>, ConstructableTypes>>) =>
+ *                     ToInstanceTypeMatcher<As<ReturnType<As<Arg_T[K], Mut<Type.CallableType>>['mut']>, any>>,
  *     ]>)} :
  *     Match<Arg_T, [
- *         (p: AbstConcreteType) => InstanceType<AsType<Arg_T, AbstConcreteType>>,
- *         (p: CallableType) =>
- *             (a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T, CallableType>>, ConstructableTypes>>) =>
- *                 ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T, CallableType>>, any>>,
- *         (p: Mut<AbstConcreteType>) => InstanceType<AsType<Arg_T, Mut<AbstConcreteType>>['mut']>,
- *         (p: Mut<CallableType>) =>
- *             (a: ToInstanceTypeMatcher<AsType<Parameters<AsType<Arg_T, Mut<CallableType>>['mut']>, ConstructableTypes>>) =>
- *                 ToInstanceTypeMatcher<AsType<ReturnType<AsType<Arg_T, Mut<CallableType>>['mut']>, any>>,
+ *         (p: Type.AbstConcreteType) => InstanceType<As<Arg_T, Type.AbstConcreteType>>,
+ *         (p: Type.CallableType) =>
+ *             (a: ToInstanceTypeMatcher<As<Parameters<As<Arg_T, Type.CallableType>>, ConstructableTypes>>) =>
+ *                 ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, Type.CallableType>>, any>>,
+ *         (p: Mut<Type.AbstConcreteType>) => InstanceType<As<Arg_T, Mut<Type.AbstConcreteType>>['mut']>,
+ *         (p: Mut<Type.CallableType>) =>
+ *             (a: ToInstanceTypeMatcher<As<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>, ConstructableTypes>>) =>
+ *                 ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, Mut<Type.CallableType>>['mut']>, any>>,
  *     ]>
  * } ToInstanceTypeMatcher<Arg_T>
  */
@@ -138,9 +137,9 @@
 /**
  * @template {ConstructableTypeUnion} Arg_T
  * @typedef {IsMut<Arg_T> extends true
- *     ? ToInstanceTypeMatcher<AsType<Arg_T, Mut<ConstructableTypeUnion>>['mut']>
- *     : ToInstanceTypeMatcher<AsType<Arg_T, ConstructableTypeUnion>>
- * } ToInstanceType<Arg_T>
+ *     ? ToInstanceTypeMatcher<As<Arg_T, Mut<ConstructableTypeUnion>>['mut']>
+ *     : ToInstanceTypeMatcher<As<Arg_T, ConstructableTypeUnion>>
+ * } Type.ToInstanceType<Arg_T>
  */
 
 // /**
@@ -167,17 +166,17 @@
 
 /**
  * @template T
- * @typedef {T extends ReadonlyArray<unknown> ? number extends T['length'] ? false : true : false} IsTupleType<T>
+ * @typedef {T extends ReadonlyArray<unknown> ? number extends T['length'] ? false : true : false} Type.IsTupleType<T>
  */
 
 /**
  * @template T
- * @typedef {T extends AbstConcreteType ? true : false} IsConcreteType<T>
+ * @typedef {T extends Type.AbstConcreteType ? true : false} Type.IsConcreteType<T>
  */
 
 /**
  * @template T
- * @typedef {T extends CallableType ? true : false} IsFunctionType<T>
+ * @typedef {T extends Type.CallableType ? true : false} Type.IsFunctionType<T>
  */
 
 /**
@@ -196,7 +195,7 @@
  *                         : T
  *     )
  *     : never
- * } IsLiteralType<T>
+ * } Type.IsLiteralType<T>
  */
 
 ////////////////////
@@ -216,18 +215,19 @@
  *           : (keyof T extends never ? true:
  *               { [K in keyof T]-?: T[K] } extends T ? true : false)
  *   )
- * : false} IsExtensible<T>
+ * : false
+ * } Type.IsExtensible<T>
  */
 
 /**
  * @template T
  * @template U
- * @typedef {T extends U ? true : false} IsSubType<T, U>
+ * @typedef {T extends U ? true : false} Type.IsSubType<T, U>
  */
 
 /**
  * @template X, Y
- * @typedef { (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false } IsEqual<X, Y>
+ * @typedef { (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false } Type.IsEqual<X, Y>
  */
 
 /**

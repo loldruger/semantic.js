@@ -2,7 +2,7 @@
 
 /**
  * @template {String} Name
- * @template {CallableType} Fn
+ * @template {Type.CallableType} Fn
  * @typedef {Readonly<Record<Name, Fn>>} FnMap
  */
 
@@ -15,8 +15,8 @@
 /**
  * @template {Object} Target
  * @template {ConstMap} Consts
- * @template {FnMap<String, CallableType>} Fns
- * @template {FnMap<String, CallableType>} StaticFns
+ * @template {FnMap<String, Type.CallableType>} Fns
+ * @template {FnMap<String, Type.CallableType>} StaticFns
  */
 export class Impl {
     #target = /** @type {Target} */ (Object.create(null));
@@ -26,7 +26,7 @@ export class Impl {
 
     /**
      * @template {Object} T
-     * @param {IsExtensible<T> extends true ? T : never} target
+     * @param {Type.IsExtensible<T> extends true ? T : never} target
      * @returns {Accessor<T, {}, {}, {}>}
      */
     static for(target) {
@@ -56,9 +56,9 @@ export class Impl {
 /**
  * @template {Object} Target
  * @template {Function} Fn
- * @template {ToConcreteType<unknown>} T
+ * @template {Type.ToConcreteType<unknown>} T
  * @typedef {Fn extends (self: Target, params: T) => infer R 
- *   ? (self: Target, params: ToInstanceType<T>) => R 
+ *   ? (self: Target, params: Type.ToInstanceType<T>) => R 
  *   : never
  * } NormalizedFn<Target, Fn>
  */
@@ -66,14 +66,13 @@ export class Impl {
 /**
  * @template {Object} Target
  * @template {ConstMap} Consts
- * @template {FnMap<String, CallableType>} Fns
- * @template {FnMap<String, CallableType>} StaticFns
+ * @template {FnMap<String, Type.CallableType>} Fns
+ * @template {FnMap<String, Type.CallableType>} StaticFns
  */
 class Accessor {
-    /** @type {Accessor<Target, Consts, Fns, StaticFns>} */
     pub = this;
-    /** @type {Accessor<Target, Consts, Fns, StaticFns>} */
     prv = this;
+    async = this;
 
     #target = /** @type {Target} */ (Object.create(null));
     #consts = /** @type {Consts} */ (Object.create(null));
@@ -97,18 +96,18 @@ class Accessor {
      * @template {String} Name
      * @template Value
      * @param {Name extends Uppercase<Name> ? Name : never} name
-     * @param {Value extends IsLiteralType<Value> ? Value : never} value
+     * @param {Value extends Type.IsLiteralType<Value> ? Value : never} value
      * @return {Accessor<Target, Consts, Fns, StaticFns>}
      */
     const(name, value) {
         this.#consts = { ...this.#consts, [name]: value };
 
-        return /** @type {Accessor<Target, Consts, Fns, StaticFns>} */ (this);
+        return this;
     }
 
     /**
      * @template {String} Name
-     * @template {ToConcreteType<unknown>} T
+     * @template {Type.ToConcreteType<unknown>} T
      * @template {((self: Target, args: T) => ReturnType<Fn>)} Fn
      * @param {Name} name
      * @param {Fn} func
@@ -123,6 +122,10 @@ class Accessor {
         return /** @type {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>} */ (this);
     }
 }
+
+class Async { }
+
+class Public { }
 
 Object.setPrototypeOf(Impl, null);
 Object.setPrototypeOf(Impl.prototype, null);

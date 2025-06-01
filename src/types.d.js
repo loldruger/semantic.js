@@ -7,13 +7,13 @@
  *     | ((p: any, o: {e: false, when: true}) => unknown)
  *     | ((p: any, o: {e: false, when: false}) => unknown)
  *     | ((o: {when: false}) => unknown)
- * } MatchCaseUnion
+ * } Internal.MatchCaseUnion
  */
 
 /**
- * @template {MatchCaseUnion} Pattern
- * @template {MatchCaseUnion} CaseArm
- * @template {ReadonlyArray<MatchCaseUnion>} RestCases
+ * @template {Internal.MatchCaseUnion} Pattern
+ * @template {Internal.MatchCaseUnion} CaseArm
+ * @template {ReadonlyArray<Internal.MatchCaseUnion>} RestCases
  * @template Result
  * @template {Boolean} When
  * @template {Boolean} IsExactMatch
@@ -22,14 +22,14 @@
  *         Pattern extends (...args: any) => infer RetA
  *             ? CaseArm extends (...args: any) => infer RetB
  *                 ? And<
- *                     IsEqual<Parameters<Pattern>, Parameters<CaseArm>>,
- *                     IsEqual<ReturnType<Pattern>, ReturnType<CaseArm>>
+ *                     Type.IsEqual<Parameters<Pattern>, Parameters<CaseArm>>,
+ *                     Type.IsEqual<ReturnType<Pattern>, ReturnType<CaseArm>>
  *                 > extends true
  *                     ? RetA extends (...args: any) => any
  *                         ? RetB extends (...args: any) => any
  *                             ? And<
- *                                 IsEqual<Parameters<RetA>, Parameters<RetB>>,
- *                                 IsEqual<ReturnType<RetA>, ReturnType<RetB>>
+ *                                 Type.IsEqual<Parameters<RetA>, Parameters<RetB>>,
+ *                                 Type.IsEqual<ReturnType<RetA>, ReturnType<RetB>>
  *                             > extends true
  *                                 ? Result
  *                                 : Match<Pattern, RestCases>
@@ -37,41 +37,41 @@
  *                         : Result
  *                     : Match<Pattern, RestCases>
  *                 : Match<Pattern, RestCases>
- *             : IsEqual<Pattern, CaseArm> extends true
+ *             : Type.IsEqual<Pattern, CaseArm> extends true
  *                 ? Result
  *                 : Or4<
- *                     IsSubType<{e: true, when: true}, CaseArm>,
- *                     IsSubType<{e: true, when: false}, CaseArm>,
- *                     IsSubType<{e: false, when: true}, CaseArm>,
- *                     IsSubType<{e: false, when: false}, CaseArm>
+ *                     Type.IsSubType<{e: true, when: true}, CaseArm>,
+ *                     Type.IsSubType<{e: true, when: false}, CaseArm>,
+ *                     Type.IsSubType<{e: false, when: true}, CaseArm>,
+ *                     Type.IsSubType<{e: false, when: false}, CaseArm>
  *                 > extends true
  *                     ? Result
  *                     : Match<Pattern, RestCases>,
  *     Pattern extends CaseArm
  *         ? Result
  *         : Or4<
- *             IsSubType<{e: true, when: true}, CaseArm>,
- *             IsSubType<{e: true, when: false}, CaseArm>,
- *             IsSubType<{e: false, when: true}, CaseArm>,
- *             IsSubType<{e: false, when: false}, CaseArm>
+ *             Type.IsSubType<{e: true, when: true}, CaseArm>,
+ *             Type.IsSubType<{e: true, when: false}, CaseArm>,
+ *             Type.IsSubType<{e: false, when: true}, CaseArm>,
+ *             Type.IsSubType<{e: false, when: false}, CaseArm>
  *         > extends true
  *             ? Result
  *             : Match<Pattern, RestCases>>,
  *     Match<Pattern, RestCases>
- * >} MatchEvaluator<Pattern, CaseArm, Cases, Result, When, IsExactMatch>
+ * >} Internal.MatchEvaluator<Pattern, CaseArm, Cases, Result, When, IsExactMatch>
  */
 
 /**
  * @template {unknown} Pattern
- * @template {ReadonlyArray<MatchCaseUnion>} CaseArms
+ * @template {ReadonlyArray<Internal.MatchCaseUnion>} CaseArms
  * @template {Boolean} [IsExactMatch=false]
  * @typedef {CaseArms extends []
- *     ? ErrorType<"No match case found">
+ *     ? Type.Error<"No match case found">
  *     : CaseArms extends [infer First, ...infer Rest]
  *         ? First extends (() => infer S)
  *             ? S
  *             : First extends ((po: infer PtnOrOpt) => infer Result)
- *                 ? MatchEvaluator<
+ *                 ? Internal.MatchEvaluator<
  *                     Pattern,
  *                     PtnOrOpt,
  *                     Rest,
@@ -80,7 +80,7 @@
  *                     IsExactMatch
  *                 >
  *                 : First extends ((p: infer Ptn, o: infer Opt) => infer Result)
- *                     ? MatchEvaluator<
+ *                     ? Internal.MatchEvaluator<
  *                         Pattern,
  *                         Ptn,
  *                         Rest,

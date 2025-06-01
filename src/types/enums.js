@@ -13,7 +13,7 @@ export const EnumConcreteType = TaggedUnion.new()
     .variant("symbol", Symbol)
     .variant("undefined", void 0)
     .build();
-    
+
 /**
  * @readonly
  * @enum {ConstructableTypeUnion?}

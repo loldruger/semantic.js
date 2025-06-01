@@ -19,7 +19,7 @@ export class Option {
     typeInfo;
 
     /**
-     * @type {ToInstanceType<T>?=}
+     * @type {Type.ToInstanceType<T>?=}
      */
     #value;
 
@@ -47,12 +47,12 @@ export class Option {
     }
 
     /**
-     * @template {ToInstanceType<ConstructableTypeUnion>} T
+     * @template {Type.ToInstanceType<ConstructableTypeUnion>} T
      * @param {T} value
-     * @returns {Option<ToConcreteType<T>>}
+     * @returns {Option<Type.ToConcreteType<T>>}
      */
     static Some(value) {
-        const a = /** @type {ToConcreteType<T>} */(EnumConcreteType[typeof value]());
+        const a = /** @type {Type.ToConcreteType<T>} */(EnumConcreteType[typeof value]());
         return new Option(a);
     }
 
@@ -60,8 +60,8 @@ export class Option {
         return new Option(() => { });
     }
     /**
-     * @param {ToInstanceType<T>} value
-     * @returns {Option<ToConcreteType<T>>}
+     * @param {Type.ToInstanceType<T>} value
+     * @returns {Option<Type.ToConcreteType<T>>}
      */
     some(value) {
         if (this.isNone()) {
@@ -95,7 +95,7 @@ export class Option {
     }
 
     /**
-     * @template {AbstConcreteType} U
+     * @template {Type.AbstConcreteType} U
      * @param {(value: T) => Option<U>} op
      * @return {Option<U>?}
      */

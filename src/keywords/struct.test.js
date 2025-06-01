@@ -39,7 +39,11 @@ const test2 = (() => {
         .pub.fn("fnName", (self, a = Number, b = Boolean) => {
             console.log("fnName called with: ", a, b);
             return a;
-        });
+        })
+        .pub.async.fn("asyncFn", async (self, a = Number, b = Boolean) => {
+            console.log("asyncFn called with: ", a, b);
+            return a;
+        })
 
 
 
