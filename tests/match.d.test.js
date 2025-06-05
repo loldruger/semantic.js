@@ -114,6 +114,14 @@
  */
 
 /**
+ * @template P
+ * @typedef {Match<P, [
+ *     (p: String | Boolean) => 'String or Boolean',
+ *     () => void,
+ * ], true>} TestMatch13<P>
+ */
+
+/**
  * @typedef {TestMatch0<Boolean>} MatchTestCase0_ShouldBe_Error
  * @typedef {TestMatch1<Boolean>} MatchTestCase1_ShouldBe_Boolean
  * @typedef {TestMatch1<String>} MatchTestCase2_ShouldBe_String
@@ -135,6 +143,9 @@
  * @typedef {TestMatch12<() => (a: Boolean, b: String) => void>} MatchTestCase20_ShouldBe_Void_To_Pair_Of_Boolean_String_To_Void
  * @typedef {TestMatch12<() => (a: String, b: Boolean) => void>} MatchTestCase21_ShouldBe_Void_To_Pair_Of_String_Boolean_To_Void
  * @typedef {TestMatch12<() => () => (a: () => Boolean) => void>} MatchTestCase22_ShouldBe_Void_To_Void_To_Boolean_To_Void
+ * @typedef {TestMatch13<String>} MatchTestCase23_ShouldBe_String_Or_Boolean //failed
+ * @typedef {TestMatch13<Boolean>} MatchTestCase24_ShouldBe_String_Or_Boolean //failed
+ * @typedef {TestMatch13<String | Boolean>} MatchTestCase25_ShouldBe_String_Or_Boolean //failed
  */
 
 /**

@@ -23,8 +23,11 @@
  */
 
 /**
- * @template {[UnionOfNumbers]} T
- * @typedef {T} ASDF
+ * @typedef {Math.IncrementOf<1>} ASDF
+ */
+
+/**
+ * @typedef {Math.DecrementOf<0>} ASDF2
  */
 
 // /**

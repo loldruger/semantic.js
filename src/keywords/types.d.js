@@ -1,18 +1,18 @@
 // @ts-check
 
 /**
- * @template T
- * @typedef {Required<{mut: T}>} Mut<T>
+ * @template {unknown} T
+ * @typedef {{mut: T}} Mut<T>
  */
 
 /**
- * @template T
+ * @template {unknown} T
  * @typedef {Readonly<{imut: T}>} Imut<T>
  */
 
 /**
- * @template T
- * @typedef {T extends Mut<infer U> ? (T extends Imut<U> ? false : true) : false} IsMut<T>
+ * @template {unknown} T
+ * @typedef {T extends Mut<infer U> ? (T extends Imut<U> ? false : true) : false} Type.IsMut<T>
  */
 /**
  * @template T
@@ -25,12 +25,12 @@
  */
 
 /**
- * @typedef {IsMut<Imut<String>>} Test.MutTest1 // false
- * @typedef {IsMut<Mut<String>>} Test.MutTest2 // true
- * @typedef {IsMut<String>} Test.MutTest3       // false
- * @typedef {IsMut<Imut<Object>>} Test.MutTest4 // false
- * @typedef {IsMut<Mut<Object>>} Test.MutTest5  // true
- * @typedef {IsMut<Object>} Test.MutTest6       // false
+ * @typedef {Type.IsMut<Imut<String>>} MutTest1 // false
+ * @typedef {Type.IsMut<Mut<String>>} MutTest2 // true
+ * @typedef {Type.IsMut<String>} MutTest3       // false
+ * @typedef {Type.IsMut<Imut<Object>>} MutTest4 // false
+ * @typedef {Type.IsMut<Mut<Object>>} MutTest5  // true
+ * @typedef {Type.IsMut<Object>} MutTest6       // false
  */
 
 /**

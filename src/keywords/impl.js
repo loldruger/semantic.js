@@ -55,16 +55,6 @@ export class Impl {
 
 /**
  * @template {Object} Target
- * @template {Function} Fn
- * @template {Type.ToConcreteType<unknown>} T
- * @typedef {Fn extends (self: Target, params: T) => infer R 
- *   ? (self: Target, params: Type.ToInstanceType<T>) => R 
- *   : never
- * } NormalizedFn<Target, Fn>
- */
-
-/**
- * @template {Object} Target
  * @template {ConstMap} Consts
  * @template {FnMap<String, Type.CallableType>} Fns
  * @template {FnMap<String, Type.CallableType>} StaticFns
@@ -95,8 +85,8 @@ class Accessor {
     /**
      * @template {String} Name
      * @template Value
-     * @param {Name extends Uppercase<Name> ? Name : never} name
-     * @param {Value extends Type.IsLiteralType<Value> ? Value : never} value
+     * @param {Name extends Uppercase<Name> ? Name : Type.Error<"Name must be uppercase">} name
+     * @param {Value extends Type.IsLiteralType<Value> ? Value : Type.Error<"Value must be a literal type">} value
      * @return {Accessor<Target, Consts, Fns, StaticFns>}
      */
     const(name, value) {
@@ -107,16 +97,16 @@ class Accessor {
 
     /**
      * @template {String} Name
-     * @template {Type.ToConcreteType<unknown>} T
-     * @template {((self: Target, args: T) => ReturnType<Fn>)} Fn
+     * @template {Array<ConstructableTypeUnion>} T
+     * @template {((self: Target, ...args: T) => ReturnType<Fn>)} Fn
      * @param {Name} name
-     * @param {Fn} func
+     * @param {Type.ToInstanceType<Fn>} func
      * @return {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>}
      */
     fn(name, func) {
         this.#fns = {
             ...this.#fns,
-            [name]: (props) => func(this.#target, props)
+            [name]: (props) => func(this.#target, ...props)
         };
 
         return /** @type {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>} */ (this);

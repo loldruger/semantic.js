@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {StructType<String, ConstructableTypes>} Variants
+ * @template {StructType<String, Type.ConstructableTypes>} Variants
  */
 export class TaggedUnion {
     /** @type {Variants} */

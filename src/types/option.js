@@ -5,7 +5,7 @@ import { Matchable } from '../interfaces/matchable.js';
 
 import { TaggedUnion } from '../primitives/tagged-union.js';
 
-import { EnumConcreteType } from './enums.js';
+import { EnumConstructorType } from './enums.js';
 
 /**
  * @template {ConstructableTypeUnion} T
@@ -49,10 +49,10 @@ export class Option {
     /**
      * @template {Type.ToInstanceType<ConstructableTypeUnion>} T
      * @param {T} value
-     * @returns {Option<Type.ToConcreteType<T>>}
+     * @returns {Option<Type.ToConstructorType<T>>}
      */
     static Some(value) {
-        const a = /** @type {Type.ToConcreteType<T>} */(EnumConcreteType[typeof value]());
+        const a = /** @type {Type.ToConstructorType<T>} */(EnumConstructorType[typeof value]());
         return new Option(a);
     }
 
@@ -61,7 +61,7 @@ export class Option {
     }
     /**
      * @param {Type.ToInstanceType<T>} value
-     * @returns {Option<Type.ToConcreteType<T>>}
+     * @returns {Option<Type.ToConstructorType<T>>}
      */
     some(value) {
         if (this.isNone()) {
@@ -95,7 +95,7 @@ export class Option {
     }
 
     /**
-     * @template {Type.AbstConcreteType} U
+     * @template {Type.AbstConstructorType} U
      * @param {(value: T) => Option<U>} op
      * @return {Option<U>?}
      */

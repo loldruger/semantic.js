@@ -2,7 +2,7 @@
 
 import { TaggedUnion } from "../lib.js";
 
-export const EnumConcreteType = TaggedUnion.new()
+export const EnumConstructorType = TaggedUnion.new()
     .variant("number", Number)
     .variant("string", String)
     .variant("boolean", Boolean)
@@ -18,7 +18,7 @@ export const EnumConcreteType = TaggedUnion.new()
  * @readonly
  * @enum {ConstructableTypeUnion?}
  */
-export const EnumConcreteTypeBaked = {
+export const EnumConstructorTypeBaked = {
     number: Number,
     string: String,
     boolean: Boolean,

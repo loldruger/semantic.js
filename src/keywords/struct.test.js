@@ -1,6 +1,6 @@
 //@ts-check
 
-import { Struct, tuple, mut, Impl } from '../lib.js';
+import { Struct, tuple, mut, imut, Impl } from '../lib.js';
 
 //@ts-ignore
 const test0 = (() => {
@@ -36,12 +36,12 @@ const test2 = (() => {
 
     Impl.for(struct)
         .pub.const("CONST", 123)
-        .pub.fn("fnName", (self, a = Number, b = Boolean) => {
-            console.log("fnName called with: ", a, b);
+        .pub.fn("fnName", (self, a = mut(Number)['mut'], b = imut(Boolean)['imut']) => {
+            console.log("fnName called with: ", self, a, b);
             return a;
         })
-        .pub.async.fn("asyncFn", async (self, a = Number, b = Boolean) => {
-            console.log("asyncFn called with: ", a, b);
+        .pub.async.fn("asyncFnName", async (self, a = Number, b = Boolean) => {
+            console.log("asyncFnName called with: ", self, a, b);
             return a;
         })
 
