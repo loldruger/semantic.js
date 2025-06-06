@@ -55,15 +55,15 @@
  */
 
 /**
- * @typedef {Array<ConstructableTypeUnion|Imut<ConstructableTypeUnion>|Mut<ConstructableTypeUnion>>} Type.ConstructableTypes
+ * @typedef {Array<ConstructableTypeUnion|IMut<ConstructableTypeUnion>|Mut<ConstructableTypeUnion>>} Type.ConstructableTypes
  */
 
 /**
  * @typedef {|
- *     Type.CallableType | Imut<Type.CallableType> | Mut<Type.CallableType>
- *     | Type.ConstructorType | Imut<Type.ConstructorType> | Mut<Type.ConstructorType>
- *     | Type.AbstConstructorType | Imut<Type.AbstConstructorType> | Mut<Type.AbstConstructorType>
- *     | Type.ConstructableTypes | Imut<Type.ConstructableTypes> | Mut<Type.ConstructableTypes>
+ *     Type.CallableType | IMut<Type.CallableType> | Mut<Type.CallableType>
+ *     | Type.ConstructorType | IMut<Type.ConstructorType> | Mut<Type.ConstructorType>
+ *     | Type.AbstConstructorType | IMut<Type.AbstConstructorType> | Mut<Type.AbstConstructorType>
+ *     | Type.ConstructableTypes | IMut<Type.ConstructableTypes> | Mut<Type.ConstructableTypes>
  * } ConstructableTypeUnion
  */
 

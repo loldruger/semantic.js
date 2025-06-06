@@ -1,15 +1,15 @@
 //@ts-check
 
 /**
- * @template {ConstructableTypeUnion} T
+ * @template {unknown} T
  * @param {T} x
  * @returns {Mut<T>}
  */
 export const mut = (x) => { return { mut: x } };
 
 /**
- * @template {ConstructableTypeUnion} T
+ * @template {unknown} T
  * @param {T} x 
- * @returns {Imut<T>}
+ * @returns {IMut<T>}
  */
 export const imut = (x) => { return { imut: x } };
