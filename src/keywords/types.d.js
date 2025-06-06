@@ -12,7 +12,7 @@
 
 /**
  * @template {unknown} T
- * @typedef {T extends Mut<infer U> ? (T extends IMut<U> ? false : true) : false} Type.IsMut<T>
+ * @typedef {T extends Mut<infer U> ? Type.IsEqual<T, Mut<U>> : false} Type.IsMut<T>
  */
 /**
  * @template T
