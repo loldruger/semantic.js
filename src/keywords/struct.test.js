@@ -36,7 +36,7 @@ const test2 = (() => {
 
     Impl.for(struct)
         .pub.const("CONST", 123)
-        .pub.fn("fnName", (self, a = mut(Number)['mut'], b = imut(Boolean)['imut']) => {
+        .pub.fn("fnName", (self, a = mut(Number).mut, b = imut(Boolean).imut) => {
             console.log("fnName called with: ", self, a, b);
             return a;
         })
