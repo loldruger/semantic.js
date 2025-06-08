@@ -1,3 +1,5 @@
+//@ts-check
+
 /**
  * @template P
  * @typedef {Match<P, [
@@ -118,7 +120,7 @@
  * @typedef {Match<P, [
  *     (p: String | Boolean) => 'String or Boolean',
  *     () => void,
- * ], true>} TestMatch13<P>
+ * ], false>} TestMatch13<P>
  */
 
 /**
@@ -128,8 +130,8 @@
  * @typedef {TestMatch1<Number>} MatchTestCase3_ShouldBe_Void
  * @typedef {TestMatch2<Boolean>} MatchTestCase4_ShouldBe_Void
  * @typedef {TestMatch3<Boolean>} MatchTestCase5_ShouldBe_Boolean_With_True
- * @typedef {TestMatch4<Boolean>} MatchTestCase6_ShouldBe_Boolean_With_True
- * @typedef {TestMatch7<Number>} MatchTestCase9_ShouldBe_Feels_Good
+ * @typedef {TestMatch4<Boolean>} MatchTestCase6_ShouldBe_Boolean_When_True
+ * @typedef {TestMatch7<Number>} MatchTestCase9_ShouldBe_Number
  * @typedef {TestMatch8<(a: Number) => Boolean>} MatchTestCase10_ShouldBe_Num_To_Bool
  * @typedef {TestMatch8<(a: String) => Boolean>} MatchTestCase11_ShouldBe_Void
  * @typedef {TestMatch9<(a: (a: Number) => Boolean) => Boolean>} MatchTestCase12_ShouldBe_Num_To_Bool_To_Bool
@@ -137,17 +139,35 @@
  * @typedef {TestMatch10<(a: (a: Number, b: Boolean) => void) => Boolean>} MatchTestCase14_ShouldBe_Pair_Of_Number_Boolean_To_Void
  * @typedef {TestMatch10<(a: (a: Boolean, b: Number) => void) => Boolean>} MatchTestCase15_ShouldBe_Pair_Of_Boolean_Number_To_Void
  * @typedef {TestMatch11<(a: (a: (a: Boolean, b: String) => void, b: Number) => void) => Boolean>} MatchTestCase16_ShouldBe_Pair_Of_Fn_Of_Bool_String_To_Void_Number_To_Void
- * @typedef {TestMatch12<() => () => void>} MatchTestCase17_ShouldBe_void
+ * @typedef {TestMatch12<() => () => void>} MatchTestCase17_ShouldBe_void // failed
  * @typedef {TestMatch12<() => (a: Boolean) => void>} MatchTestCase18_ShouldBe_Intercepted
- * @typedef {TestMatch12<() => (a: String) => void>} MatchTestCase19_ShouldBe_Void
+ * @typedef {TestMatch12<() => (a: String) => void>} MatchTestCase19_ShouldBe_Void // failed
  * @typedef {TestMatch12<() => (a: Boolean, b: String) => void>} MatchTestCase20_ShouldBe_Void_To_Pair_Of_Boolean_String_To_Void
  * @typedef {TestMatch12<() => (a: String, b: Boolean) => void>} MatchTestCase21_ShouldBe_Void_To_Pair_Of_String_Boolean_To_Void
- * @typedef {TestMatch12<() => () => (a: () => Boolean) => void>} MatchTestCase22_ShouldBe_Void_To_Void_To_Boolean_To_Void
- * @typedef {TestMatch13<String>} MatchTestCase23_ShouldBe_String_Or_Boolean //failed
- * @typedef {TestMatch13<Boolean>} MatchTestCase24_ShouldBe_String_Or_Boolean //failed
- * @typedef {TestMatch13<String | Boolean>} MatchTestCase25_ShouldBe_String_Or_Boolean //failed
+ * @typedef {TestMatch12<() => () => (a: () => Boolean) => void>} MatchTestCase22_ShouldBe_Void_To_Void_To_Boolean_To_Void //failed
+ * @typedef {TestMatch13<String>} MatchTestCase23_ShouldBe_String_Or_Boolean
+ * @typedef {TestMatch13<Boolean>} MatchTestCase24_ShouldBe_String_Or_Boolean
+ * @typedef {TestMatch13<String | Boolean>} MatchTestCase25_ShouldBe_String_Or_Boolean
  */
+// --- Type.IsEqual Test Cases ---
+
+/** 
+ * @typedef {Type.IsEqual<
+ *     () => () => void,
+ *     () => (a: Boolean) => void
+ * >} TestTypeIsEqual0_ShouldBe_False
+ **/
+
+/** 
+ * @typedef {Type.IsEqual<
+ *     () => (a: String) => void,
+ *     () => (a: String, b: Boolean) => void
+ * >} TestTypeIsEqual1_ShouldBe_False
+ **/
 
 /**
  * @typedef {{e: false, when: false}  extends {when: true} ? 'yes' : 'no'} Egfgfd
  */
+
+
+

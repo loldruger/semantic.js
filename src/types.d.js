@@ -1,41 +1,29 @@
 //@ts-check
 
 /**
- * @typedef {
- *     | ((p: any, o: {e: true, when: true}) => unknown)
- *     | ((p: any, o: {e: true, when: false}) => unknown)
- *     | ((p: any, o: {e: false, when: true}) => unknown)
- *     | ((p: any, o: {e: false, when: false}) => unknown)
- *     | ((o: {when: false}) => unknown)
+ * @typedef {((p: any, o: {e: true, when: true}) => any) |
+ *     ((p: any, o: {e: true, when: false}) => any) |
+ *     ((p: any, o: {e: false, when: true}) => any) |
+ *     ((p: any, o: {e: false, when: false}) => any) |
+ *     ((o: {when: false}) => any)
  * } Internal.MatchCaseUnion
  */
 
 /**
- * @template {Internal.MatchCaseUnion} Pattern
- * @template {Internal.MatchCaseUnion} CaseArm
- * @template {ReadonlyArray<Internal.MatchCaseUnion>} RestCases
- * @template Result
+ * @template {unknown} Pattern
+ * @template {unknown} CaseArm
+ * @template {ReadonlyArray<unknown>} RestCases
+ * @template {unknown} Result
  * @template {Boolean} When
  * @template {Boolean} IsExactMatch
  * @typedef {If<When,
  *     If<IsExactMatch,
- *         Pattern extends (...args: any) => infer RetA
- *             ? CaseArm extends (...args: any) => infer RetB
- *                 ? And<
- *                     Type.IsEqual<Parameters<Pattern>, Parameters<CaseArm>>,
- *                     Type.IsEqual<ReturnType<Pattern>, ReturnType<CaseArm>>
- *                 > extends true
- *                     ? RetA extends (...args: any) => any
- *                         ? RetB extends (...args: any) => any
- *                             ? And<
- *                                 Type.IsEqual<Parameters<RetA>, Parameters<RetB>>,
- *                                 Type.IsEqual<ReturnType<RetA>, ReturnType<RetB>>
- *                             > extends true
- *                                 ? Result
- *                                 : Match<Pattern, RestCases>
- *                             : Match<Pattern, RestCases>
- *                         : Result
- *                     : Match<Pattern, RestCases>
+ *         Pattern extends (...args: ReadonlyArray<unknown>) => unknown
+ *             ? And<
+ *                 Type.IsSubType<CaseArm, (...args: ReadonlyArray<unknown>) => unknown>,
+ *                 Type.IsEqual<Pattern, CaseArm>
+ *             > extends true
+ *                 ? Result
  *                 : Match<Pattern, RestCases>
  *             : Type.IsEqual<Pattern, CaseArm> extends true
  *                 ? Result
@@ -63,7 +51,7 @@
 
 /**
  * @template {unknown} Pattern
- * @template {ReadonlyArray<Internal.MatchCaseUnion>} CaseArms
+ * @template {ReadonlyArray<unknown>} CaseArms
  * @template {Boolean} [IsExactMatch=false]
  * @typedef {CaseArms extends []
  *     ? Type.Error<"No match case found">
@@ -94,7 +82,7 @@
  */
 
 /**
- * @template {ReadonlyArray<any>} T
+ * @template {unknown} T
  * @typedef {{[K in keyof T]: T[K]}} Process<T>
  */
 
@@ -113,25 +101,40 @@
  * @typedef {{code: Code}} CodeBlock<Code>
  */
 
+/** @typedef {{ readonly _tag: "Internal.GotoAction" }} Internal.GotoAction */
+
 /**
- * @template {CodeBlock<any>|Label<any>|Goto<any>} Exec
- * @template {Boolean} Condition
- * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} ExecAll
- * @typedef {Match<Exec, [
- *     (p: Label<any>) => Exec,
- *     (p: Goto<any>) => Loop<Condition, ExecAll>,
- *     (p: CodeBlock<any>) => Exec
- * ]>} LoopMatcher<Exec>
+ * Helper to check if any element in a processed loop body tuple is Internal.GotoAction
+ * @template ProcessedBodyTuple extends readonly unknown[]
+ * @typedef {ProcessedBodyTuple extends [infer Head, ...infer Tail]
+ *   ? Head extends Internal.GotoAction
+ *     ? true
+ *     : Internal.DoesProcessedBodyContainGoto<Tail>
+ *   : false
+ * } Internal.DoesProcessedBodyContainGoto<ProcessedBodyTuple>
+ */
+
+/**
+ * Processes a single item in a loop body. If it's a Goto, returns a marker.
+ * (Replaces LoopMatcher to break circular dependency)
+ * @template {CodeBlock<any>|Label<any>|Goto<any>} ExecItem
+ * @typedef {Match<ExecItem, [
+ *     (p: Label<any>) => ExecItem,
+ *     (p: Goto<any>) => Internal.GotoAction,
+ *     (p: CodeBlock<any>) => ExecItem
+ * ]>} Internal.ProcessLoopItem<ExecItem>
  */
 
 /**
  * @template {Boolean} Condition
  * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} Exec
  * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} [LoopBody=[Label<"continue">, ...Exec, Goto<"continue">]]
- * @typedef {If<Condition, {
- *         [K in keyof LoopBody]: LoopMatcher<LoopBody[K], Condition, Exec>
- *     }, never>
- * } Loop<Condition, Exec>
+ * @typedef {If<Condition, 
+ *   Internal.DoesProcessedBodyContainGoto<{[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}> extends true
+ *     ? Loop<Condition, Exec> 
+ *     : {[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}, 
+ *   never
+ * >} Loop<Condition, Exec>
  */
 
 /**
@@ -170,6 +173,23 @@
  *         : false
  *     : false
  * } And3<A, B, C>
+ */
+
+/**
+ * @template {Boolean} A
+ * @template {Boolean} B
+ * @template {Boolean} C
+ * @template {Boolean} D
+ * @typedef {A extends true
+ *     ? B extends true
+ *         ? C extends true
+ *             ? D extends true
+ *                 ? true
+ *                 : false
+ *             : false
+ *         : false
+ *     : false
+ * } And4<A, B, C, D>
  */
 
 /**
