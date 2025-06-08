@@ -1,26 +1,27 @@
 {
   "compilerOptions": {
+    /* ----- Module System ----- */
     "module": "ES2022",
-    "target": "ES2023",
-    "alwaysStrict": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "strictBuiltinIteratorReturn": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    /* ----- Target & Strictness ----- */
+    "target": "esnext",
+    "strict": true, // Enables all strict type-checking options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    /* ----- Code Quality & Linting ----- */
     "noUnusedLocals": true,
-    "noImplicitOverride": true,
     "noUnusedParameters": true,
+    "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noErrorTruncation": true,
+    "allowUnreachableCode": false,
+    /* ----- Project Setup ----- */
     "checkJs": true,
     "forceConsistentCasingInFileNames": true,
-    "useUnknownInCatchVariables": true,
-    "exactOptionalPropertyTypes": true
+    "noErrorTruncation": true
   }
   // "include": ["src/**/*"]
 }

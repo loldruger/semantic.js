@@ -4,8 +4,8 @@
  * @template {StructType<String, Type.ConstructableTypes>} Variants
  */
 export class TaggedUnion {
-    /** @type {Variants} */
-    #variants = Object.create(null);
+
+    #variants = /** @type {Variants} */ (Object.create(null));
 
     /** @private */
     constructor() { }

@@ -132,7 +132,14 @@ export class Tuple4 {
         this._3 = _3;
         Object.freeze(this);
     }
-
+    /**
+     * @template T1, T2, T3, T4
+     * @param {T1} _0
+     * @param {T2} _1
+     * @param {T3} _2
+     * @param {T4} _3
+     * @returns {Tuple4<T1, T2, T3, T4>}
+     */
     static new(_0, _1, _2, _3) {
         return new Tuple4(_0, _1, _2, _3);
     }
@@ -164,6 +171,15 @@ export class Tuple5 {
         Object.freeze(this);
     }
 
+    /**
+     * @template T1, T2, T3, T4, T5
+     * @param {T1} _0
+     * @param {T2} _1
+     * @param {T3} _2
+     * @param {T4} _3
+     * @param {T5} _4
+     * @returns {Tuple5<T1, T2, T3, T4, T5>}
+     */
     static new(_0, _1, _2, _3, _4) {
         return new Tuple5(_0, _1, _2, _3, _4);
     }
@@ -198,6 +214,16 @@ export class Tuple6 {
         Object.freeze(this);
     }
 
+    /**
+     * @template T1, T2, T3, T4, T5, T6
+     * @param {T1} _0
+     * @param {T2} _1
+     * @param {T3} _2
+     * @param {T4} _3
+     * @param {T5} _4
+     * @param {T6} _5
+     * @returns {Tuple6<T1, T2, T3, T4, T5, T6>}
+     */
     static new(_0, _1, _2, _3, _4, _5) {
         return new Tuple6(_0, _1, _2, _3, _4, _5);
     }

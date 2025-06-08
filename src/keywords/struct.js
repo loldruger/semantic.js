@@ -5,14 +5,9 @@
  * @template {StructType<String, StructTypeUnion>} Prvs
  */
 export class Struct {
-    /**
-     * @type {Pubs}
-     */
+
     #pubs = /** @type {Pubs} */ (Object.create(null));
 
-    /**
-     * @type {Prvs}
-     */
     #prvs = /** @type {Prvs} */ (Object.create(null));
 
     /**
@@ -31,11 +26,11 @@ export class Struct {
      * @template {String} Name
      * @template {StructTypeUnion} TypeInfo
      * @param {Name} name
-     * @param {TypeInfo} _typeInfo
+     * @param {TypeInfo} type
      * @returns {Struct<Pubs, Prvs & StructType<Name, TypeInfo>>}
      */
-    prv(name, _typeInfo) {
-        // @ts-ignore
+    // @ts-ignore
+    prv(name, type) {
         this.#prvs[name] = undefined;
 
         return /** @type {Struct<Pubs, Prvs & StructType<Name, TypeInfo>>} */ (/** @type {unknown} */ (this));
@@ -45,11 +40,11 @@ export class Struct {
      * @template {String} Name
      * @template {StructTypeUnion} TypeInfo
      * @param {Name} name
-     * @param {TypeInfo} _typeInfo
+     * @param {TypeInfo} type
      * @returns {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>}
      */
-    pub(name, _typeInfo) {
-        // @ts-ignore
+    // @ts-ignore
+    pub(name, type) {
         this.#pubs[name] = undefined;
 
         return /** @type {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>} */ (/** @type {unknown} */ (this));
