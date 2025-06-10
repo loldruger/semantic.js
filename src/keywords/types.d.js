@@ -7,7 +7,7 @@
 
 /**
  * @template {unknown} T
- * @typedef {Readonly<{imut: T}>} IMut<T>
+ * @typedef {{readonly imut: T}} IMut<T>
  */
 
 /**
@@ -40,9 +40,9 @@
 /**
  * @template {String} Field
  * @template {ConstructableTypeUnion} T
- * @typedef {T extends Mut<any> 
+ * @typedef {T extends Mut<unknown>
  *   ? Record<Field, Type.ToInstanceType<T>>
- *   : Readonly<Record<Field, Type.ToInstanceType<T>>>
+ *   : Record<Field, Type.ToInstanceType<T>>
  * } StructType<Field, T>
  */
 

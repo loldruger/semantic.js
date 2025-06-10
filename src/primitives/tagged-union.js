@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {StructType<String, Type.ConstructableTypes>} Variants
+ * @template {StructType<String, ReadonlyArray<ConstructableTypeUnion>>} Variants
  */
 export class TaggedUnion {
 
@@ -21,11 +21,11 @@ export class TaggedUnion {
      * @template {String} Tag
      * @template {ConstructableTypeUnion} TypeInfo
      * @param {Tag} tag
-     * @param {TypeInfo=} typeInfo
+     * @param {TypeInfo=} type
      * @returns {TaggedUnion<Variants & StructType<Tag, TypeInfo>>}
      */
-    variant(tag, typeInfo) {
-        const fn = typeInfo
+    variant(tag, type) {
+        const fn = type
             ? (/** @type {TypeInfo} */args) => args
             : null;
 

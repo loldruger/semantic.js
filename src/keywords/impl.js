@@ -3,13 +3,13 @@
 /**
  * @template {String} Name
  * @template {Type.CallableType} Fn
- * @typedef {Readonly<Record<Name, Fn>>} FnMap
+ * @typedef {Record<Name, Fn>} FnMap
  */
 
 /**
  * @template {String} [Name=String]
- * @template [Value=any]
- * @typedef {Readonly<Record<Name, Value>>} ConstMap
+ * @template [Value=unknown]
+ * @typedef {Record<Name, Value>} ConstMap
  */
 
 /**
@@ -97,7 +97,7 @@ class Accessor {
 
     /**
      * @template {String} Name
-     * @template {Array<ConstructableTypeUnion>} T
+     * @template {ReadonlyArray<ConstructableTypeUnion>} T
      * @template {((self: Target, ...args: T) => ReturnType<Fn>)} Fn
      * @param {Name} name
      * @param {Type.ToInstanceType<Fn>} func

@@ -2,7 +2,7 @@
  * @template T, U
  * @typedef {U extends T
  *     ? true
- *     : U extends any
+ *     : U extends unknown
  *         ? T extends U
  *             ? true
  *             : false
@@ -13,7 +13,7 @@
 /**
  * @template U
  * @typedef {(
- *     U extends any ? (k: U) => void : never
+ *     U extends unknown ? (k: U) => void : never
  * ) extends (k: infer I) => void
  *     ? I
  *     : never
@@ -23,7 +23,7 @@
 /**
  * @template U
  * @typedef {Union.ToIntersection<
- *    U extends any ? (k: U) => void : never
+ *    U extends unknown ? (k: U) => void : never
  * > extends (k: infer I) => void
  *    ? [...Union.ToTuple<Exclude<U, I>>, I]
  *    : []

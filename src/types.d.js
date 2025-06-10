@@ -1,26 +1,26 @@
 //@ts-check
 
 /**
- * @typedef {((p: any, o: {e: true, when: true}) => any) |
- *     ((p: any, o: {e: true, when: false}) => any) |
- *     ((p: any, o: {e: false, when: true}) => any) |
- *     ((p: any, o: {e: false, when: false}) => any) |
- *     ((o: {when: false}) => any)
+ * @typedef {((p: unknown, o: {e: true, when: true}) => unknown) |
+ *     ((p: unknown, o: {e: true, when: false}) => unknown) |
+ *     ((p: unknown, o: {e: false, when: true}) => unknown) |
+ *     ((p: unknown, o: {e: false, when: false}) => unknown) |
+ *     ((o: {when: false}) => unknown)
  * } Internal.MatchCaseUnion
  */
 
 /**
  * @template {unknown} Pattern
  * @template {unknown} CaseArm
- * @template {ReadonlyArray<unknown>} RestCases
+ * @template {Array<unknown>} RestCases
  * @template {unknown} Result
  * @template {Boolean} When
  * @template {Boolean} IsExactMatch
  * @typedef {If<When,
  *     If<IsExactMatch,
- *         Pattern extends (...args: ReadonlyArray<unknown>) => unknown
+ *         Pattern extends (...args: Array<unknown>) => unknown
  *             ? And<
- *                 Type.IsSubType<CaseArm, (...args: ReadonlyArray<unknown>) => unknown>,
+ *                 Type.IsSubType<CaseArm, (...args: Array<unknown>) => unknown>,
  *                 Type.IsEqual<Pattern, CaseArm>
  *             > extends true
  *                 ? Result
@@ -51,7 +51,7 @@
 
 /**
  * @template {unknown} Pattern
- * @template {ReadonlyArray<unknown>} CaseArms
+ * @template {Array<unknown>} CaseArms
  * @template {Boolean} [IsExactMatch=false]
  * @typedef {CaseArms extends []
  *     ? Type.Error<"No match case found">
@@ -101,10 +101,10 @@
  * @typedef {{code: Code}} CodeBlock<Code>
  */
 
-/** @typedef {{ readonly _tag: "Internal.GotoAction" }} Internal.GotoAction */
+/** @typedef {{ tag: "Internal.GotoAction" }} Internal.GotoAction */
 
 /**
- * Helper to check if any element in a processed loop body tuple is Internal.GotoAction
+ * Helper to check if unknown element in a processed loop body tuple is Internal.GotoAction
  * @template ProcessedBodyTuple extends readonly unknown[]
  * @typedef {ProcessedBodyTuple extends [infer Head, ...infer Tail]
  *   ? Head extends Internal.GotoAction
@@ -117,18 +117,18 @@
 /**
  * Processes a single item in a loop body. If it's a Goto, returns a marker.
  * (Replaces LoopMatcher to break circular dependency)
- * @template {CodeBlock<any>|Label<any>|Goto<any>} ExecItem
+ * @template {CodeBlock<unknown>|Label<String>|Goto<String>} ExecItem
  * @typedef {Match<ExecItem, [
- *     (p: Label<any>) => ExecItem,
- *     (p: Goto<any>) => Internal.GotoAction,
- *     (p: CodeBlock<any>) => ExecItem
+ *     (p: Label<String>) => ExecItem,
+ *     (p: Goto<String>) => Internal.GotoAction,
+ *     (p: CodeBlock<unknown>) => ExecItem
  * ]>} Internal.ProcessLoopItem<ExecItem>
  */
 
 /**
  * @template {Boolean} Condition
- * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} Exec
- * @template {ReadonlyArray<CodeBlock<any>|Label<any>|Goto<any>>} [LoopBody=[Label<"continue">, ...Exec, Goto<"continue">]]
+ * @template {Array<CodeBlock<unknown>|Label<String>|Goto<String>>} Exec
+ * @template {Array<CodeBlock<unknown>|Label<String>|Goto<String>>} [LoopBody=[Label<"continue">, ...Exec, Goto<"continue">]]
  * @typedef {If<Condition, 
  *   Internal.DoesProcessedBodyContainGoto<{[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}> extends true
  *     ? Loop<Condition, Exec> 
@@ -138,8 +138,8 @@
  */
 
 /**
- * @template {ReadonlyArray<unknown>} T
- * @template {(item: any) => any} CustomMapFn
+ * @template {Array<unknown>} T
+ * @template {(item: unknown) => unknown} CustomMapFn
  * @typedef {{[K in keyof T]: CustomMapFn extends (item: T[K]) => infer R ? R : EvalFailed}} IterToMap<T, CustomMapFn>
  */
 
