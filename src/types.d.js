@@ -6,102 +6,99 @@
  *     ((p: unknown, o: {e: false, when: true}) => unknown) |
  *     ((p: unknown, o: {e: false, when: false}) => unknown) |
  *     ((o: {when: false}) => unknown)
- * } Internal.MatchCaseUnion
+ * } Internal.Match.MatchCaseUnion
  */
 
 /**
- * @template {unknown} Pattern
- * @template {unknown} CaseArm
- * @template {Array<unknown>} RestCases
+ * @template {unknown} Case
+ * @typedef {|
+ *     Or4<
+ *         Type.IsSubType<{e: true, when: true}, Case>,
+ *         Type.IsSubType<{e: true, when: false}, Case>,
+ *         Type.IsSubType<{e: false, when: true}, Case>,
+ *         Type.IsSubType<{e: false, when: false}, Case>
+ *     >
+ * } Internal.Match.IsOptionMatched <Case>
+ */
+
+/**
+ * @template {unknown} Pattern - Pattern to match against
+ * @template {unknown} Case - Case being matched
+ * @template {ReadonlyArray<unknown>} RestCases
  * @template {unknown} Result
  * @template {Boolean} When
  * @template {Boolean} IsExactMatch
- * @typedef {If<When,
- *     If<IsExactMatch,
- *         Pattern extends (...args: Array<unknown>) => unknown
- *             ? And<
- *                 Type.IsSubType<CaseArm, (...args: Array<unknown>) => unknown>,
- *                 Type.IsEqual<Pattern, CaseArm>
- *             > extends true
+ * @typedef {|
+ *     If<When,
+ *         If<IsExactMatch,
+ *             Type.IsEqual<Pattern, Case> extends true
  *                 ? Result
- *                 : Match<Pattern, RestCases>
- *             : Type.IsEqual<Pattern, CaseArm> extends true
- *                 ? Result
- *                 : Or4<
- *                     Type.IsSubType<{e: true, when: true}, CaseArm>,
- *                     Type.IsSubType<{e: true, when: false}, CaseArm>,
- *                     Type.IsSubType<{e: false, when: true}, CaseArm>,
- *                     Type.IsSubType<{e: false, when: false}, CaseArm>
- *                 > extends true
+ *                 : Internal.Match.IsOptionMatched<Case> extends true
  *                     ? Result
  *                     : Match<Pattern, RestCases>,
- *     Pattern extends CaseArm
- *         ? Result
- *         : Or4<
- *             Type.IsSubType<{e: true, when: true}, CaseArm>,
- *             Type.IsSubType<{e: true, when: false}, CaseArm>,
- *             Type.IsSubType<{e: false, when: true}, CaseArm>,
- *             Type.IsSubType<{e: false, when: false}, CaseArm>
- *         > extends true
- *             ? Result
- *             : Match<Pattern, RestCases>>,
- *     Match<Pattern, RestCases>
- * >} Internal.MatchEvaluator<Pattern, CaseArm, Cases, Result, When, IsExactMatch>
+ *             Type.IsSubType<Pattern, Case> extends true
+ *                 ? Result
+ *                 : Internal.Match.IsOptionMatched<Case> extends true
+ *                     ? Result
+ *                     : Match<Pattern, RestCases>
+ *         >,
+ *         Match<Pattern, RestCases>
+ *     >
+ * } Internal.Match.MatchEvaluator <Pattern, CaseArm, Cases, Result, When, IsExactMatch>
  */
 
 /**
  * @template {unknown} Pattern
- * @template {Array<unknown>} CaseArms
+ * @template {ReadonlyArray<unknown>} CaseArms
  * @template {Boolean} [IsExactMatch=false]
- * @typedef {CaseArms extends []
- *     ? Type.Error<"No match case found">
- *     : CaseArms extends [infer First, ...infer Rest]
+ * @typedef {|
+ *     CaseArms extends [infer First, ...infer Rest]
  *         ? First extends (() => infer S)
  *             ? S
- *             : First extends ((po: infer PtnOrOpt) => infer Result)
- *                 ? Internal.MatchEvaluator<
+ *             : First extends ((po: infer POrOption) => infer Result)
+ *                 ? Internal.Match.MatchEvaluator<
  *                     Pattern,
- *                     PtnOrOpt,
+ *                     POrOption,
  *                     Rest,
  *                     Result,
- *                     PtnOrOpt extends {when: false} ? false : true,
+ *                     POrOption extends {when: false} ? false : true,
  *                     IsExactMatch
+ *             >
+ *             : First extends ((p: infer P, o: infer Option) => infer Result)
+ *                 ? Internal.Match.MatchEvaluator<
+ *                     Pattern,
+ *                     P,
+ *                     Rest,
+ *                     Result,
+ *                     Option extends {when: false} ? false : true,
+ *                     Option extends {e: false} ? false : Option extends {e: true} ? true : IsExactMatch
  *                 >
- *                 : First extends ((p: infer Ptn, o: infer Opt) => infer Result)
- *                     ? Internal.MatchEvaluator<
- *                         Pattern,
- *                         Ptn,
- *                         Rest,
- *                         Result,
- *                         Opt extends {when: false} ? false : true,
- *                         Opt extends {e: false} ? false : Opt extends {e: true} ? true : IsExactMatch
- *                     >
- *                     : Match<Pattern, Rest>
- *         : never
- * } Match<P, MatchArm>
+ *                 : Match<Pattern, Rest>
+ *         : Type.Error<"No match case found">
+ * } Match <Pattern, CaseArms, IsExactMatch=false>
  */
 
 /**
  * @template {unknown} T
- * @typedef {{[K in keyof T]: T[K]}} Process<T>
+ * @typedef {{[K in keyof T]: T[K]}} Process <T>
  */
 
 /**
  * @template {String} L
- * @typedef {{label: L}} Label<L>
+ * @typedef {{label: L}} Label <L>
  */
 
 /**
  * @template {String} T
- * @typedef {{label: T}} Goto<T>
+ * @typedef {{label: T}} Goto <T>
  */
 
 /**
  * @template Code
- * @typedef {{code: Code}} CodeBlock<Code>
+ * @typedef {{code: Code}} CodeBlock <Code>
  */
 
-/** @typedef {{ tag: "Internal.GotoAction" }} Internal.GotoAction */
+/** @typedef {{ tag: "goto" }} Internal.GotoAction */
 
 /**
  * Helper to check if unknown element in a processed loop body tuple is Internal.GotoAction
@@ -111,7 +108,7 @@
  *     ? true
  *     : Internal.DoesProcessedBodyContainGoto<Tail>
  *   : false
- * } Internal.DoesProcessedBodyContainGoto<ProcessedBodyTuple>
+ * } Internal.DoesProcessedBodyContainGoto <ProcessedBodyTuple>
  */
 
 /**
@@ -122,7 +119,7 @@
  *     (p: Label<String>) => ExecItem,
  *     (p: Goto<String>) => Internal.GotoAction,
  *     (p: CodeBlock<unknown>) => ExecItem
- * ]>} Internal.ProcessLoopItem<ExecItem>
+ * ]>} Internal.ProcessLoopItem <ExecItem>
  */
 
 /**
@@ -134,20 +131,20 @@
  *     ? Loop<Condition, Exec> 
  *     : {[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}, 
  *   never
- * >} Loop<Condition, Exec>
+ * >} Loop <Condition, Exec>
  */
 
 /**
  * @template {Array<unknown>} T
  * @template {(item: unknown) => unknown} CustomMapFn
- * @typedef {{[K in keyof T]: CustomMapFn extends (item: T[K]) => infer R ? R : EvalFailed}} IterToMap<T, CustomMapFn>
+ * @typedef {{[K in keyof T]: CustomMapFn extends (item: T[K]) => infer R ? R : EvalFailed}} IterToMap <T, CustomMapFn>
  */
 
 /**
  * @template {Boolean} Condition
  * @template {unknown} Then
  * @template {unknown} Else
- * @typedef {Condition extends true ? Then : Else} If<Condition, Then, Else>
+ * @typedef {Condition extends true ? Then : Else} If <Condition, Then, Else>
  */
 
 /**
@@ -158,7 +155,7 @@
 *         ? true
 *         : false
 *     : false
-* } And<A, B>
+* } And <A, B>
 */
 
 /**
@@ -172,7 +169,7 @@
  *             : false
  *         : false
  *     : false
- * } And3<A, B, C>
+ * } And3 <A, B, C>
  */
 
 /**
@@ -189,7 +186,7 @@
  *             : false
  *         : false
  *     : false
- * } And4<A, B, C, D>
+ * } And4 <A, B, C, D>
  */
 
 /**
@@ -200,7 +197,7 @@
  *     : U extends true
  *         ? true
  *         : false
- * } Or<A, B>
+ * } Or <A, B>
  */
 
 /**
@@ -214,7 +211,7 @@
  *         : C extends true
  *             ? true
  *             : false
- * } Or3<A, B>
+ * } Or3 <A, B>
  */
 
 /**
@@ -231,10 +228,10 @@
  *             : D extends true
  *                 ? true
  *                 : false
- * } Or4<A, B, C, D>
+ * } Or4 <A, B, C, D>
  */
 
 /**
  * @template {Boolean} A
- * @typedef {A extends true ? false : true} Not<A>
+ * @typedef {A extends true ? false : true} Not <A>
  */

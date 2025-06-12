@@ -43,19 +43,34 @@
 /**
  * @template {unknown} [P=unknown|void]
  * @template {unknown} [R=unknown]
- * @typedef {(...args: ReadonlyArray<P>) => R} Type.CallableType<P, R>
+ * @typedef {P extends ReadonlyArray<infer A>
+ *     ? (...args: ReadonlyArray<A>) => R
+ *     : P extends infer B
+ *         ? (...args: ReadonlyArray<B>) => R
+ *         : never
+ * } Type.CallableType<P, R>
  */
 
 /**
  * @template {unknown} [P=unknown|void]
  * @template {unknown} [R=unknown]
- * @typedef {new (...args: ReadonlyArray<P>) => R} Type.ConstructorType<P, R>
+ * @typedef {P extends ReadonlyArray<infer A>
+ *     ? new (...args: ReadonlyArray<A>) => R
+ *     : P extends infer B
+ *         ? new (...args: ReadonlyArray<B>) => R
+ *         : never
+ * } Type.ConstructorType<P, R>
  */
 
 /**
  * @template {unknown} [P=unknown|void]
  * @template {unknown} [R=unknown]
- * @typedef {abstract new (...args: ReadonlyArray<P>) => R} Type.AbstConstructorType<P, R>
+ * @typedef {P extends ReadonlyArray<infer A>
+ *     ? abstract new (...args: ReadonlyArray<A>) => R
+ *     : P extends infer B
+ *         ? abstract new (...args: ReadonlyArray<B>) => R
+ *         : never
+ * } Type.AbstConstructorType<P, R>
  */
 
 /**
@@ -102,12 +117,12 @@
  * @typedef {Type.IsTupleType<Arg_T> extends true ? {
  *     [K in keyof Arg_T]: (
  *         Match<Arg_T[K], [
- *             (p: ConstructableTypeUnion ) => Internal.ToInstanceTypeMatcher<As<Arg_T[K], ConstructableTypeUnion >>,
- *             (p: Type.AbstConstructorType) => Readonly<InstanceType<As<Arg_T[K], Type.AbstConstructorType>>>,
+ *             (p: ConstructableTypeUnion ) => Internal.ToInstanceTypeMatcher<As<Arg_T[K], ConstructableTypeUnion>>,
+ *             (p: Type.AbstConstructorType) => InstanceType<As<Arg_T[K], IMut<Type.AbstConstructorType>['imut']>>,
  *             (p: Type.CallableType) =>
- *                 (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T[K], Type.CallableType>>, ConstructableTypeUnion >>) =>
- *                     Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T[K], Type.CallableType>>, ConstructableTypeUnion >>,
- *             (p: IMut<Type.AbstConstructorType>) => Readonly<InstanceType<As<Arg_T[K], Type.AbstConstructorType>>>,
+ *                 (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>) =>
+ *                     Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>,
+ *             (p: IMut<Type.AbstConstructorType>) => InstanceType<As<Arg_T[K], IMut<Type.AbstConstructorType>>['imut']>,
  *             (p: IMut<Type.CallableType>) =>
  *                 (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>) =>
  *                     Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>,
@@ -117,18 +132,18 @@
  *                     Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T[K], Mut<Type.CallableType>>['mut']>, ConstructableTypeUnion >>,
  *     ]>)} :
  *     Match<Arg_T, [
- *             (p: Type.AbstConstructorType) => Readonly<InstanceType<As<Arg_T, Type.AbstConstructorType>>>,
- *             (p: Type.CallableType) =>
- *                 (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T, Type.CallableType>>, ConstructableTypeUnion >>) =>
- *                     Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, Type.CallableType>>, ConstructableTypeUnion >>,
- *             (p: IMut<Type.AbstConstructorType>) => Readonly<InstanceType<As<Arg_T, Type.AbstConstructorType>>>,
- *             (p: IMut<Type.CallableType>) =>
- *                 (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>) =>
- *                     Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>,
- *             (p: Mut<Type.AbstConstructorType>) => InstanceType<As<Arg_T, Mut<Type.AbstConstructorType>>['mut']>,
- *             (p: Mut<Type.CallableType>) =>
- *                 (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>, ConstructableTypeUnion >>) =>
- *                     Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, Mut<Type.CallableType>>['mut']>, ConstructableTypeUnion >>,
+ *         (p: Type.AbstConstructorType) => InstanceType<As<Arg_T, IMut<Type.AbstConstructorType>['imut']>>,
+ *         (p: Type.CallableType) =>
+ *             (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>) =>
+ *                 Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>,
+ *         (p: IMut<Type.AbstConstructorType>) => InstanceType<As<Arg_T, IMut<Type.AbstConstructorType>>['imut']>,
+ *         (p: IMut<Type.CallableType>) =>
+ *             (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>) =>
+ *                 Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, IMut<Type.CallableType>>['imut']>, ConstructableTypeUnion >>,
+ *         (p: Mut<Type.AbstConstructorType>) => InstanceType<As<Arg_T, Mut<Type.AbstConstructorType>>['mut']>,
+ *         (p: Mut<Type.CallableType>) =>
+ *             (a: Internal.ToInstanceTypeMatcher<As<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>, ConstructableTypeUnion >>) =>
+ *                 Internal.ToInstanceTypeMatcher<As<ReturnType<As<Arg_T, Mut<Type.CallableType>>['mut']>, ConstructableTypeUnion >>,
  *     ]>
  * } Internal.ToInstanceTypeMatcher<Arg_T>
  */
@@ -141,7 +156,7 @@
 /**
  * @typedef {Type.ToInstanceType<NumberConstructor>} Test1
  * @typedef {Type.ToInstanceType<[Mut<NumberConstructor>, BooleanConstructor, StringConstructor]>} Test2
- * @typedef {Type.ToInstanceType<[NumberConstructor, [BooleanConstructor, StringConstructor]]>} Test3
+ * @typedef {Type.ToInstanceType<[NumberConstructor, [BooleanConstructor, IMut<StringConstructor>]]>} Test3
  * @typedef {Type.ToInstanceType<[[NumberConstructor], BooleanConstructor, StringConstructor, ObjectConstructor]>} Test4
  * @typedef {Type.ToInstanceType<(a: BooleanConstructor) => StringConstructor>} Test5
  * @typedef {Type.ToInstanceType<(a: [Mut<NumberConstructor>]) => BooleanConstructor>} Test6

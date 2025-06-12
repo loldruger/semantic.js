@@ -1,36 +1,37 @@
 // @ts-check
 
 /**
- * @template {unknown} T
+ * @template {ConstructableTypeUnion} T
  * @typedef {{mut: T}} Mut<T>
  */
 
 /**
- * @template {unknown} T
- * @typedef {{readonly imut: T}} IMut<T>
+ * @template {ConstructableTypeUnion} T
+ * @typedef {Readonly<{imut: T}>} IMut<T>
  */
 
 /**
  * @template {unknown} T
  * @typedef {T extends Mut<infer U> ? Type.IsEqual<T, Mut<U>> : false} Type.IsMut<T>
  */
+
 /**
- * @template T
+ * @template {ConstructableTypeUnion} T
  * @typedef {As<T, Mut<T>>} AsMut<T>
  */
 
 /**
- * @template T
- * @typedef {As<T, IMut<T>>} AsImut<T>
+ * @template {ConstructableTypeUnion} T
+ * @typedef {As<T, IMut<T>>} AsIMut<T>
  */
 
 /**
- * @typedef {Type.IsMut<IMut<String>>} MutTest1 // false
- * @typedef {Type.IsMut<Mut<String>>} MutTest2 // true
- * @typedef {Type.IsMut<String>} MutTest3       // false
- * @typedef {Type.IsMut<IMut<Object>>} MutTest4 // false
- * @typedef {Type.IsMut<Mut<Object>>} MutTest5  // true
- * @typedef {Type.IsMut<Object>} MutTest6       // false
+ * @typedef {Type.IsMut<IMut<StringConstructor>>} MutTest1 // false
+ * @typedef {Type.IsMut<Mut<StringConstructor>>} MutTest2  // true
+ * @typedef {Type.IsMut<StringConstructor>} MutTest3       // false
+ * @typedef {Type.IsMut<IMut<ObjectConstructor>>} MutTest4 // false
+ * @typedef {Type.IsMut<Mut<ObjectConstructor>>} MutTest5  // true
+ * @typedef {Type.IsMut<ObjectConstructor>} MutTest6       // false
  */
 
 /**
@@ -40,7 +41,7 @@
 /**
  * @template {String} Field
  * @template {ConstructableTypeUnion} T
- * @typedef {T extends Mut<unknown>
+ * @typedef {T extends Mut<infer _A>
  *   ? Record<Field, Type.ToInstanceType<T>>
  *   : Record<Field, Type.ToInstanceType<T>>
  * } StructType<Field, T>
