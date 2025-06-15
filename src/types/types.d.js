@@ -236,9 +236,19 @@
  * @typedef {T extends U ? true : false} Type.IsSubType<T, U>
  */
 
+// /**
+//  * @template X, Y
+//  * @typedef { (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false } Type.IsEqual <X, Y>
+//  */
+
 /**
- * @template X, Y
- * @typedef { (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false } Type.IsEqual<X, Y>
+ * @template X The first type to compare.
+ * @template Y The second type to compare, or a pattern containing 'infer' to match against X.
+ * @typedef {|
+ *     X extends Y
+ *         ? ((<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false)
+ *         : false
+ * } Type.IsEqual <X, Y>
  */
 
 /**

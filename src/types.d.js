@@ -1,15 +1,6 @@
 //@ts-check
 
 /**
- * @typedef {((p: unknown, o: {e: true, when: true}) => unknown) |
- *     ((p: unknown, o: {e: true, when: false}) => unknown) |
- *     ((p: unknown, o: {e: false, when: true}) => unknown) |
- *     ((p: unknown, o: {e: false, when: false}) => unknown) |
- *     ((o: {when: false}) => unknown)
- * } Internal.Match.MatchCaseUnion
- */
-
-/**
  * @template {unknown} Case
  * @typedef {|
  *     Or4<
@@ -22,60 +13,96 @@
  */
 
 /**
- * @template {unknown} Pattern - Pattern to match against
- * @template {unknown} Case - Case being matched
+ * @template {unknown} PatternInput
+ * @template {unknown} PatternToMatchAgainst
  * @template {ReadonlyArray<unknown>} RestCases
  * @template {unknown} Result
- * @template {Boolean} When
- * @template {Boolean} IsExactMatch
+ * @template {Boolean} WhenFlagForThisArm
+ * @template {Boolean} UseExactMatchForThisArm
+ * @template {Boolean} IsExactMatch_GlobalDefault
  * @typedef {|
- *     If<When,
- *         If<IsExactMatch,
- *             Type.IsEqual<Pattern, Case> extends true
+ *     If<WhenFlagForThisArm,
+ *         If<UseExactMatchForThisArm,
+ *             Type.IsEqual<PatternInput, PatternToMatchAgainst> extends true
  *                 ? Result
- *                 : Internal.Match.IsOptionMatched<Case> extends true
+ *                 : Internal.Match.IsOptionMatched<PatternToMatchAgainst> extends true
  *                     ? Result
- *                     : Match<Pattern, RestCases>,
- *             Type.IsSubType<Pattern, Case> extends true
+ *                     : Match<PatternInput, RestCases, IsExactMatch_GlobalDefault>,
+ *             Type.IsSubType<PatternInput, PatternToMatchAgainst> extends true
  *                 ? Result
- *                 : Internal.Match.IsOptionMatched<Case> extends true
+ *                 : Internal.Match.IsOptionMatched<PatternToMatchAgainst> extends true
  *                     ? Result
- *                     : Match<Pattern, RestCases>
+ *                     : Match<PatternInput, RestCases, IsExactMatch_GlobalDefault>
  *         >,
- *         Match<Pattern, RestCases>
+ *         Match<PatternInput, RestCases, IsExactMatch_GlobalDefault>
  *     >
- * } Internal.Match.MatchEvaluator <Pattern, CaseArm, Cases, Result, When, IsExactMatch>
+ * } Internal.Match.MatchEvaluator <PatternInput, PatternToMatchAgainst, RestCases, Result, WhenFlagForThisArm, UseExactMatchForThisArm, IsExactMatch_GlobalDefault>
  */
 
 /**
- * @template {unknown} Pattern
+ * @template {unknown} PInput
  * @template {ReadonlyArray<unknown>} CaseArms
- * @template {Boolean} [IsExactMatch=false]
+ * @template {Boolean} [IsExactMatch_GlobalDefault=false]
  * @typedef {|
  *     CaseArms extends [infer First, ...infer Rest]
  *         ? First extends (() => infer S)
  *             ? S
- *             : First extends ((po: infer POrOption) => infer Result)
+ *             : First extends ((p: infer P, o: infer Opt) => infer Result)
  *                 ? Internal.Match.MatchEvaluator<
- *                     Pattern,
- *                     POrOption,
- *                     Rest,
- *                     Result,
- *                     POrOption extends {when: false} ? false : true,
- *                     IsExactMatch
- *             >
- *             : First extends ((p: infer P, o: infer Option) => infer Result)
- *                 ? Internal.Match.MatchEvaluator<
- *                     Pattern,
+ *                     PInput,
  *                     P,
  *                     Rest,
  *                     Result,
- *                     Option extends {when: false} ? false : true,
- *                     Option extends {e: false} ? false : Option extends {e: true} ? true : IsExactMatch
- *                 >
- *                 : Match<Pattern, Rest>
+ *                     Opt extends {when: infer W extends boolean} ? W : true,
+ *                     Opt extends {e: infer E extends boolean} ? E : IsExactMatch_GlobalDefault,
+ *                     IsExactMatch_GlobalDefault
+ *                   >
+ *                 : First extends ((po: infer PatternOrOption) => infer Result)
+ *                     ? PatternOrOption extends object
+ *                         ? PatternOrOption extends { pattern: infer PFromOpt }
+ *                             ? Internal.Match.MatchEvaluator<
+ *                                 PInput,
+ *                                 PFromOpt,
+ *                                 Rest,
+ *                                 Result,
+ *                                 PatternOrOption extends {when: infer W extends boolean} ? W : true,
+ *                                 PatternOrOption extends {e: infer E extends boolean} ? E : IsExactMatch_GlobalDefault,
+ *                                 IsExactMatch_GlobalDefault
+ *                               >
+ *                           : Or<
+ *                                 Type.IsSubType<PatternOrOption, {when: unknown}>,
+ *                                 Type.IsSubType<PatternOrOption, {e: unknown}>
+ *                             > extends true
+ *                               ? Internal.Match.MatchEvaluator<
+ *                                   PInput,
+ *                                   PatternOrOption,
+ *                                   Rest,
+ *                                   Result,
+ *                                   PatternOrOption extends {when: infer W extends boolean} ? W : true,
+ *                                   PatternOrOption extends {e: infer E extends boolean} ? E : IsExactMatch_GlobalDefault,
+ *                                   IsExactMatch_GlobalDefault
+ *                                 >
+ *                               : Internal.Match.MatchEvaluator<
+ *                                   PInput,
+ *                                   PatternOrOption,
+ *                                   Rest,
+ *                                   Result,
+ *                                   true,
+ *                                   IsExactMatch_GlobalDefault,
+ *                                   IsExactMatch_GlobalDefault
+ *                                 >
+ *                         : Internal.Match.MatchEvaluator<
+ *                             PInput,
+ *                             PatternOrOption,
+ *                             Rest,
+ *                             Result,
+ *                             true,
+ *                             IsExactMatch_GlobalDefault,
+ *                             IsExactMatch_GlobalDefault
+ *                           >
+ *                     : Match<PInput, Rest, IsExactMatch_GlobalDefault>
  *         : Type.Error<"No match case found">
- * } Match <Pattern, CaseArms, IsExactMatch=false>
+ * } Match <PInput, CaseArms, IsExactMatch_GlobalDefault=false>
  */
 
 /**
