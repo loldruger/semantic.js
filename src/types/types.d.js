@@ -32,21 +32,21 @@
  */
 
 /**
- * @template {unknown} [P=unknown|void]
- * @template {unknown} [R=unknown]
- * @typedef {(...args: ReadonlyArray<unknown>) => unknown} Type.CallableType <P, R>
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any | void} [R=any | void]
+ * @typedef {(...args: P) => R} Type.CallableType
  */
 
 /**
- * @template {unknown} [P=unknown|void]
- * @template {unknown} [R=unknown]
- * @typedef {new (...args: ReadonlyArray<unknown>) => unknown} Type.ConstructorType <P, R>
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {new (...args: P) => R} Type.ConstructorType
  */
 
 /**
- * @template {unknown} [P=unknown|void]
- * @template {unknown} [R=unknown]
- * @typedef {abstract new (...args: ReadonlyArray<unknown>) => unknown} Type.AbstConstructorType <P, R>
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {abstract new (...args: P) => R} Type.AbstConstructorType
  */
 
 /**
@@ -88,40 +88,33 @@
  */
 
 /**
+ * @template {ReadonlyArray<unknown>} T
+ * @typedef {T extends readonly [infer Head, ...infer Tail]
+ *   ? [Type.ToInstanceType<Head>, ...Internal.TupleToInstances<Tail>]
+ *   : []
+ * } Internal.TupleToInstances
+ */
+
+/**
  * @template {unknown} Arg_T
  * @typedef {|
  *     Type.IsTupleType<Arg_T> extends true
- *         ? {[K in keyof Arg_T]: (
- *             Match<Arg_T[K], [
- *                 (p: Internal.UnknownTypes) => Type.ToInstanceType<As<Arg_T[K], Internal.UnknownTypes>>,
- *                 (p: Type.AbstConstructorType) => InstanceType<As<Arg_T[K], IMut<Type.AbstConstructorType>['imut']>>,
- *                 (p: Type.CallableType) =>
- *                     (a: Type.ToInstanceType<As<Parameters<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>) =>
- *                         Type.ToInstanceType<As<ReturnType<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>,
- *                 (p: IMut<Type.AbstConstructorType>) => InstanceType<As<Arg_T[K], IMut<Type.AbstConstructorType>>['imut']>,
- *                 (p: IMut<Type.CallableType>) =>
- *                     (a: Type.ToInstanceType<As<Parameters<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>) =>
- *                         Type.ToInstanceType<As<ReturnType<As<Arg_T[K], IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>,
- *                 (p: Mut<Type.AbstConstructorType>) => InstanceType<As<Arg_T[K], Mut<Type.AbstConstructorType>>['mut']>,
- *                 (p: Mut<Type.CallableType>) =>
- *                     (a: Type.ToInstanceType<As<Parameters<As<Arg_T[K], Mut<Type.CallableType>>['mut']>, Internal.UnknownTypes>>) =>
- *                         Type.ToInstanceType<As<ReturnType<As<Arg_T[K], Mut<Type.CallableType>>['mut']>, Internal.UnknownTypes>>,
- *         ]>)}
+ *         ? Internal.TupleToInstances<As<Arg_T, ReadonlyArray<unknown>>>
  *         : Match<Arg_T, [
- *             (p: Type.AbstConstructorType) => InstanceType<As<Arg_T, IMut<Type.AbstConstructorType>['imut']>>,
+ *             (p: Type.AbstConstructorType) => InstanceType<As<Arg_T, Type.AbstConstructorType>>,
  *             (p: Type.CallableType) =>
- *                 (a: Type.ToInstanceType<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>) =>
- *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>,
+ *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, Type.CallableType>>, ReadonlyArray<unknown>>>) =>
+ *                     Type.ToInstanceType<ReturnType<As<Arg_T, Type.CallableType>>>,
  *             (p: IMut<Type.AbstConstructorType>) => InstanceType<As<Arg_T, IMut<Type.AbstConstructorType>>['imut']>,
  *             (p: IMut<Type.CallableType>) =>
- *                 (a: Type.ToInstanceType<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>) =>
- *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, IMut<Type.CallableType>>['imut']>, Internal.UnknownTypes>>,
+ *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, ReadonlyArray<unknown>>>) =>
+ *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, Type.CallableType>>, Internal.UnknownTypes>>,
  *             (p: Mut<Type.AbstConstructorType>) => InstanceType<As<Arg_T, Mut<Type.AbstConstructorType>>['mut']>,
  *             (p: Mut<Type.CallableType>) =>
- *                 (a: Type.ToInstanceType<As<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>, Internal.UnknownTypes>>) =>
- *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, Mut<Type.CallableType>>['mut']>, Internal.UnknownTypes>>,
+ *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>, ReadonlyArray<unknown>>>) =>
+ *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, Type.CallableType>>, Internal.UnknownTypes>>,
  *         ]>
- * } Type.ToInstanceType<Arg_T>
+ * } Type.ToInstanceType
  */
 
 /**
@@ -248,21 +241,6 @@
  * }
  * } Strict<T>
  */
-
-// /**
-//  * @template T An object type.
-//  * @template F A generic type constructor that takes a type argument and returns a new type (e.g., Array, Option).
-//  * @typedef {{[K in keyof T]: F<T[K]>}} Internal.TransformedObjectProperties<T, F>
-//  */
-
-// /**
-//  * Takes an object type T and a generic type constructor F.
-//  * It first transforms each property of T using F,
-//  * and then creates a union of all these transformed property types.
-//  * @template T An object type.
-//  * @template F A generic type constructor that takes a type argument and returns a new type (e.g., Array, Option).
-//  * @typedef {Internal.TransformedObjectProperties<T, F>[keyof T]} Type.UnionOfTransformedProperties<T, F>
-//  */
 
 /**
  * @template T

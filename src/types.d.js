@@ -166,7 +166,7 @@
 /**
  * @template {Array<unknown>} T
  * @template {(item: unknown) => unknown} CustomMapFn
- * @typedef {{[K in keyof T]: CustomMapFn extends (item: T[K]) => infer R ? R : EvalFailed}} IterToMap <T, CustomMapFn>
+ * @typedef {{[K in keyof T]: CustomMapFn extends (item: T[K]) => infer R ? R : Type.Error<"EvalFailed">}} IterToMap <T, CustomMapFn>
  */
 
 /**
