@@ -54,7 +54,8 @@
  * @typedef {IMut<Type.CallableType> | IMut<Type.ConstructorType> | IMut<Type.AbstConstructorType>} Type.ImmutableConstructableType
  * @typedef {Mut<Type.CallableType> | Mut<Type.ConstructorType> | Mut<Type.AbstConstructorType>} Type.MutableConstructableType
  *
- * @typedef {Type.ConstructableType | Type.ImmutableConstructableType | Type.MutableConstructableType} Internal.AnyConstructableType
+ * @typedef {Type.ConstructableType | Type.ImmutableConstructableType | Type.MutableConstructableType} Internal.AnyConstructable
+ * @typedef {Internal.AnyConstructable | ReadonlyArray<Internal.AnyConstructable>} Internal.AnyConstructableType
  * @typedef {Internal.AnyConstructableType | ReadonlyArray<Internal.AnyConstructableType>} Internal.AnyConstructableTypes
  *
  * @typedef {Internal.AnyConstructableTypes | ReadonlyArray<Internal.AnyConstructableTypes>} ConstructableTypeUnion
@@ -90,8 +91,8 @@
 /**
  * @template {ReadonlyArray<unknown>} T
  * @typedef {T extends readonly [infer Head, ...infer Tail]
- *   ? [Type.ToInstanceType<Head>, ...Internal.TupleToInstances<Tail>]
- *   : []
+ *     ? [Type.ToInstanceType<Head>, ...Internal.TupleToInstances<Tail>]
+ *     : []
  * } Internal.TupleToInstances
  */
 
@@ -101,11 +102,11 @@
  *     Type.IsTupleType<Arg_T> extends true
  *         ? Internal.TupleToInstances<As<Arg_T, ReadonlyArray<unknown>>>
  *         : Match<Arg_T, [
- *             (p: Type.AbstConstructorType) => InstanceType<As<Arg_T, Type.AbstConstructorType>>,
+ *             (p: Type.AbstConstructorType) => Readonly<InstanceType<As<Arg_T, Type.AbstConstructorType>>>,
  *             (p: Type.CallableType) =>
  *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, Type.CallableType>>, ReadonlyArray<unknown>>>) =>
  *                     Type.ToInstanceType<ReturnType<As<Arg_T, Type.CallableType>>>,
- *             (p: IMut<Type.AbstConstructorType>) => InstanceType<As<Arg_T, IMut<Type.AbstConstructorType>>['imut']>,
+ *             (p: IMut<Type.AbstConstructorType>) => Readonly<InstanceType<As<Arg_T, IMut<Type.AbstConstructorType>>['imut']>>,
  *             (p: IMut<Type.CallableType>) =>
  *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, ReadonlyArray<unknown>>>) =>
  *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, Type.CallableType>>, Internal.UnknownTypes>>,
@@ -114,7 +115,7 @@
  *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>, ReadonlyArray<unknown>>>) =>
  *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, Type.CallableType>>, Internal.UnknownTypes>>,
  *         ]>
- * } Type.ToInstanceType
+ * } Type.ToInstanceType <Arg_T>
  */
 
 /**
@@ -143,36 +144,37 @@
 
 /**
  * @template T
- * @typedef {T extends ReadonlyArray<unknown> ? number extends T['length'] ? false : true : false} Type.IsTupleType<T>
+ * @typedef {T extends ReadonlyArray<unknown> ? number extends T['length'] ? false : true : false} Type.IsTupleType <T>
  */
 
 /**
  * @template T
- * @typedef {T extends Type.AbstConstructorType ? true : false} Type.IsConstructorType<T>
+ * @typedef {T extends Type.AbstConstructorType ? true : false} Type.IsConstructorType <T>
  */
 
 /**
  * @template T
- * @typedef {T extends Type.CallableType ? true : false} Type.IsFunctionType<T>
+ * @typedef {T extends Type.CallableType ? true : false} Type.IsFunctionType <T>
  */
 
 /**
  * @template T
- * @typedef {T extends string | number | boolean | symbol | bigint
- *     ? (string extends T
- *         ? never
- *         : number extends T
+ * @typedef {|
+ *     T extends string | number | boolean | symbol | bigint
+ *         ? (string extends T
  *             ? never
- *             : boolean extends T
+ *             : number extends T
  *                 ? never
- *                 : symbol extends T
+ *                 : boolean extends T
  *                     ? never
- *                     : bigint extends T
+ *                     : symbol extends T
  *                         ? never
- *                         : T
- *     )
- *     : never
- * } Type.IsLiteralType<T>
+ *                         : bigint extends T
+ *                             ? never
+ *                             : T
+ *         )
+ *         : never
+ * } Type.IsLiteralType <T>
  */
 
 ////////////////////
@@ -181,31 +183,27 @@
 
 /**
  * @template T
- * @typedef {T extends object
- * ? (
- *     string extends keyof T
- *     ? true
- *     : number extends keyof T
- *         ? true
- *         : symbol extends keyof T
- *           ? true
- *           : (keyof T extends never ? true:
- *               { [K in keyof T]-?: T[K] } extends T ? true : false)
- *   )
- * : false
- * } Type.IsExtensible<T>
+ * @typedef {|
+ * T extends object
+ *      ? (string extends keyof T
+ *          ? true
+ *          : number extends keyof T
+ *              ? true
+ *              : symbol extends keyof T
+ *                  ? true
+ *                  : (keyof T extends never
+ *                      ? true
+ *                      : { [K in keyof T]-?: T[K] } extends T ? true : false)
+ *      )
+ *      : false
+ * } Type.IsExtensible <T>
  */
 
 /**
  * @template T
  * @template U
- * @typedef {T extends U ? true : false} Type.IsSubType<T, U>
+ * @typedef {T extends U ? true : false} Type.IsSubType <T, U>
  */
-
-// /**
-//  * @template X, Y
-//  * @typedef { (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false } Type.IsEqual <X, Y>
-//  */
 
 /**
  * @template X The first type to compare.
@@ -219,33 +217,28 @@
 
 /**
  * @template T
- * @typedef {T extends { [k: string]: unknown }
- *     ? T extends { [K in keyof T]: infer U }[keyof T]
- *         ? U
- *         : never
- *     : T extends Array<infer U>
- *         ? U
- *         : T extends (...args: Array<unknown>) => infer U
+ * @typedef {|
+ *     T extends { [k: string]: unknown }
+ *         ? T extends { [K in keyof T]: infer U }[keyof T]
  *             ? U
- *             : T extends Promise<infer U>
+ *             : never
+ *         : T extends Array<infer U>
+ *             ? U
+ *             : T extends (...args: Array<unknown>) => infer U
  *                 ? U
- *                 : T
- * } Unwrap<T>
+ *                 : T extends Promise<infer U>
+ *                     ? U
+ *                     : T
+ * } Unwrap <T>
  */
 
 /**
  * @template T
- * @typedef {{[K in keyof T]: T[K]
- * } & {
- *     [P in Exclude<string, keyof T>]?: never
- * }
- * } Strict<T>
+ * @typedef {{[K in keyof T]: T[K]} & {[P in Exclude<string, keyof T>]?: never}} Strict <T> - A type that ensures all properties of T are present and no additional properties are allowed.
  */
 
 /**
  * @template T
  * @template X
- * @typedef {T & {
- *   [K in keyof X]: K extends keyof T ? X[K] : never
- * }} Exact<T, X>
+ * @typedef {T & {[K in keyof X]: K extends keyof T ? X[K] : never}} Exact <T, X> - A type that ensures all properties of T are present and no additional properties are allowed.
  */
