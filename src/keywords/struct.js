@@ -21,13 +21,13 @@ export class Struct {
      * @template {Internal.UnknownTypes} TypeInfo
      * @param {Name} name
      * @param {TypeInfo} type
-     * @returns {Struct<Pubs, Prvs & StructType<`#${Name}`, TypeInfo>>}
+     * @returns {Struct<Pubs, Prvs & StructType<`_${Name}`, TypeInfo>>}
      */
     // @ts-ignore
     prv(name, type) {
-        /** @type {Record<string, unknown>} */(this.#prvs)[`#${name}`] = undefined;
+        /** @type {Record<string, unknown>} */(this.#prvs)[`_${name}`] = undefined;
 
-        return /** @type {Struct<Pubs, Prvs & StructType<`#${Name}`, TypeInfo>>} */ (/** @type {unknown} */ (this));
+        return /** @type {Struct<Pubs, Prvs & StructType<`_${Name}`, TypeInfo>>} */ (/** @type {unknown} */ (this));
     }
 
     /**
@@ -48,7 +48,7 @@ export class Struct {
      * @returns {{[K in keyof (Pubs & Prvs)]: (Pubs & Prvs)[K]}}
      */
     build() {
-        return /** @type {*} */(Object.assign(this.#pubs, this.#prvs));
+        return /** @type {{[K in keyof (Pubs & Prvs)]: (Pubs & Prvs)[K]}} */(Object.assign(this.#pubs, this.#prvs));
     }
 }
 

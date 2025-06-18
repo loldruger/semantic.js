@@ -50,21 +50,53 @@
  */
 
 /**
- * @typedef {Type.CallableType | Type.ConstructorType | Type.AbstConstructorType} Type.ConstructableType
- * @typedef {Type.ConstructableType | ReadonlyArray<Type.ConstructableType>} Internal.ConstructableType
- *
- * @typedef {IMut<Internal.ConstructableType>} Type.ImmutableConstructableType
- * @typedef {Mut<Internal.ConstructableType>} Type.MutableConstructableType
- *
- * @typedef {Type.ImmutableConstructableType | ReadonlyArray<Type.ImmutableConstructableType>} Internal.ImmutableConstructableType
- * @typedef {Type.MutableConstructableType | ReadonlyArray<Type.MutableConstructableType>} Internal.MutableConstructableType
- *
- * @typedef {Internal.ConstructableType | Internal.ImmutableConstructableType | Internal.MutableConstructableType} Internal.AnyConstructable
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {Type.CallableType<P, R> | Type.ConstructorType<P, R> | Type.AbstConstructorType<P, R>} Type.ConstructableType <P, R>
+ */
+
+/**
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {IMut<Internal.ConstructableType<P, R>>} Type.ImmutableConstructableType <P, R>
+ */
+
+/**
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {Mut<Internal.ConstructableType<P, R>>} Type.MutableConstructableType <P, R>
+ */
+
+/**
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {Type.ConstructableType<P, R> | ReadonlyArray<Type.ConstructableType<P, R>>} Internal.ConstructableType <P, R>
+ */
+
+/**
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {Type.ImmutableConstructableType<P, R> | ReadonlyArray<Type.ImmutableConstructableType<P, R>>} Internal.ImmutableConstructableType <P, R>
+ */
+
+/**
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {Type.MutableConstructableType<P, R> | ReadonlyArray<Type.MutableConstructableType<P, R>>} Internal.MutableConstructableType <P, R>
+ */
+
+/**
+ * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
+ * @template {any} [R=any]
+ * @typedef {Internal.ConstructableType<P, R> | Internal.ImmutableConstructableType<P, R> | Internal.MutableConstructableType<P, R>} Internal.AnyConstructable <P, R>
+ */
+
+/**
  * @typedef {Internal.AnyConstructable | ReadonlyArray<Internal.AnyConstructable>} Internal.AnyConstructableType
  * @typedef {Internal.AnyConstructableType | ReadonlyArray<Internal.AnyConstructableType>} Internal.AnyConstructableTypes
  *
- * @typedef {Internal.AnyConstructableTypes | ReadonlyArray<Internal.AnyConstructableTypes>} ConstructableTypeUnion
- * @typedef {ConstructableTypeUnion | ReadonlyArray<ConstructableTypeUnion>} Internal.UnknownTypes
+ * @typedef {Internal.AnyConstructableTypes | ReadonlyArray<Internal.AnyConstructableTypes>} Internal.ConstructableTypeUnion
+ * @typedef {Internal.ConstructableTypeUnion | ReadonlyArray<Internal.ConstructableTypeUnion>} Internal.UnknownTypes
  */
 
 /////////////////////////////////

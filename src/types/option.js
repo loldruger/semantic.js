@@ -8,7 +8,7 @@ import { TaggedUnion } from '../primitives/tagged-union.js';
 import { EnumConstructorType } from './enums.js';
 
 /**
- * @template {ConstructableTypeUnion} T
+ * @template {Internal.ConstructableTypeUnion} T
  * @implements {Cloneable<Option<T>>}
  * @implements {Matchable<Option<T>>}
  */
@@ -38,7 +38,7 @@ export class Option {
     }
 
     /**
-     * @template {ConstructableTypeUnion} T
+     * @template {Internal.ConstructableTypeUnion} T
      * @param {T} type
      * @returns {Option<T>}
      */
@@ -47,7 +47,7 @@ export class Option {
     }
 
     /**
-     * @template {Type.ToInstanceType<ConstructableTypeUnion>} T
+     * @template {Type.ToInstanceType<Internal.ConstructableTypeUnion>} T
      * @param {T} value
      * @returns {Option<Type.ToConstructorType<T>>}
      */

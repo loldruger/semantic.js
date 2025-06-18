@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {StructType<String, ReadonlyArray<ConstructableTypeUnion>>} Variants
+ * @template {StructType<String, ReadonlyArray<Internal.ConstructableTypeUnion>>} Variants
  */
 export class TaggedUnion {
 
@@ -19,7 +19,7 @@ export class TaggedUnion {
 
     /**
      * @template {String} Tag
-     * @template {ConstructableTypeUnion} TypeInfo
+     * @template {Internal.ConstructableTypeUnion} TypeInfo
      * @param {Tag} tag
      * @param {TypeInfo=} type
      * @returns {TaggedUnion<Variants & StructType<Tag, TypeInfo>>}

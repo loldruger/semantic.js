@@ -2,21 +2,21 @@
 
 /**
  * @template {String} Name
- * @template {Type.CallableType} Fn
- * @typedef {Record<Name, Fn>} FnMap
+ * @template {Internal.AnyConstructable} Fn
+ * @typedef {Record<Name, Fn>} FnMap <Name, Fn>
  */
 
 /**
  * @template {String} [Name=String]
- * @template [Value=unknown]
- * @typedef {Record<Name, Value>} ConstMap
+ * @template {unknown} [Value=unknown]
+ * @typedef {Record<Name, Value>} ConstMap <Name, Value>
  */
 
 /**
  * @template {Object} Target
  * @template {ConstMap} Consts
- * @template {FnMap<String, Type.CallableType>} Fns
- * @template {FnMap<String, Type.CallableType>} StaticFns
+ * @template {FnMap<String, Internal.AnyConstructable>} Fns
+ * @template {FnMap<String, Internal.AnyConstructable>} StaticFns
  */
 export class Impl {
     #target = /** @type {Target} */ (Object.create(null));
@@ -27,7 +27,7 @@ export class Impl {
     /**
      * @template {Object} T
      * @param {Type.IsExtensible<T> extends true ? T : never} target
-     * @returns {Accessor<T, {}, {}, {}>}
+     * @returns {Accessor<T, ConstMap, FnMap<String, Type.CallableType>, FnMap<String, Type.CallableType>>}
      */
     static for(target) {
         return new Accessor(target, {}, {}, {});
@@ -56,8 +56,8 @@ export class Impl {
 /**
  * @template {Object} Target
  * @template {ConstMap} Consts
- * @template {FnMap<String, Type.CallableType>} Fns
- * @template {FnMap<String, Type.CallableType>} StaticFns
+ * @template {FnMap<String, Internal.AnyConstructable<ReadonlyArray<Internal.UnknownTypes>>>} Fns
+ * @template {FnMap<String, Internal.AnyConstructable>} StaticFns
  */
 class Accessor {
     pub = this;
@@ -97,16 +97,16 @@ class Accessor {
 
     /**
      * @template {String} Name
-     * @template {ReadonlyArray<ConstructableTypeUnion>} T
+     * @template {ReadonlyArray<Internal.UnknownTypes>} T
      * @template {((self: Target, ...args: T) => ReturnType<Fn>)} Fn
      * @param {Name} name
-     * @param {Type.ToInstanceType<Fn>} func
+     * @param {Fn} method
      * @return {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>}
      */
-    fn(name, func) {
+    fn(name, method) {
         this.#fns = {
             ...this.#fns,
-            [name]: (props) => func(this.#target, ...props)
+            [name]: (parameters) => method(this.#target, ...parameters)
         };
 
         return /** @type {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>} */ (this);

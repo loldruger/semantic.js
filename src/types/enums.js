@@ -16,7 +16,7 @@ export const EnumConstructorType = TaggedUnion.new()
 
 /**
  * @readonly
- * @enum {ConstructableTypeUnion?}
+ * @enum {Internal.ConstructableTypeUnion?}
  */
 export const EnumConstructorTypeBaked = {
     number: Number,

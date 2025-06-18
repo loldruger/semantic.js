@@ -9,7 +9,7 @@ const test0 = (() => {
         .prv("tag", mut(Number))
         .build();
 
-    console.log("Struct1: ", struct);
+    // console.log("Struct1: ", struct);
 })();
 
 //@ts-ignore
@@ -24,7 +24,7 @@ const test1 = (() => {
         tag: 11123,
     };
 
-    console.log("Struct2: ", struct);
+    // console.log("Struct2: ", struct);
 })();
 
 //@ts-ignore
@@ -36,7 +36,7 @@ const test2 = (() => {
 
     Impl.for(struct)
         .pub.const("CONST", 123)
-        .pub.fn("fnName", (self, a = mut(Number).mut, b = imut(Boolean).imut) => {
+        .pub.fn("fnName", (self, a = Number, b = Boolean) => {
             console.log("fnName called with: ", self, a, b);
             return a;
         })
