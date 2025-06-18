@@ -2,12 +2,21 @@
     "configurations": [
         {
             "type": "firefox",
-            "name": "http://127.0.0.1:3000",
+            "name": "Launch Debug",
             "request": "launch",
             "url": "http://127.0.0.1:3000",
             "firefoxArgs": [
                 "-headless"
             ],
+            "preLaunchTask": "Start Live Preview Server"
+        },
+        {
+            "type": "firefox",
+            "name": "Attach to Firefox",
+            "request": "attach",
+            "url": "http://127.0.0.1:3000",
+            "webRoot": "${workspaceFolder}",
+            "reloadOnAttach": true,
             "preLaunchTask": "Start Live Preview Server"
         }
     ]
