@@ -5,7 +5,10 @@
             "name": "http://127.0.0.1:3000",
             "request": "launch",
             "url": "http://127.0.0.1:3000",
-            "firefoxArgs": ["-headless"]
+            "firefoxArgs": [
+                "-headless"
+            ],
+            "preLaunchTask": "Start Live Preview Server"
         }
     ]
 }

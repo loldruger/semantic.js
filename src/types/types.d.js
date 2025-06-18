@@ -34,27 +34,32 @@
 /**
  * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
  * @template {any | void} [R=any | void]
- * @typedef {(...args: P) => R} Type.CallableType
+ * @typedef {(...args: P) => R} Type.CallableType <P, R>
  */
 
 /**
  * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
  * @template {any} [R=any]
- * @typedef {new (...args: P) => R} Type.ConstructorType
+ * @typedef {new (...args: P) => R} Type.ConstructorType <P, R>
  */
 
 /**
  * @template {ReadonlyArray<any>} [P=ReadonlyArray<any>]
  * @template {any} [R=any]
- * @typedef {abstract new (...args: P) => R} Type.AbstConstructorType
+ * @typedef {abstract new (...args: P) => R} Type.AbstConstructorType <P, R>
  */
 
 /**
  * @typedef {Type.CallableType | Type.ConstructorType | Type.AbstConstructorType} Type.ConstructableType
- * @typedef {IMut<Type.CallableType> | IMut<Type.ConstructorType> | IMut<Type.AbstConstructorType>} Type.ImmutableConstructableType
- * @typedef {Mut<Type.CallableType> | Mut<Type.ConstructorType> | Mut<Type.AbstConstructorType>} Type.MutableConstructableType
+ * @typedef {Type.ConstructableType | ReadonlyArray<Type.ConstructableType>} Internal.ConstructableType
  *
- * @typedef {Type.ConstructableType | Type.ImmutableConstructableType | Type.MutableConstructableType} Internal.AnyConstructable
+ * @typedef {IMut<Internal.ConstructableType>} Type.ImmutableConstructableType
+ * @typedef {Mut<Internal.ConstructableType>} Type.MutableConstructableType
+ *
+ * @typedef {Type.ImmutableConstructableType | ReadonlyArray<Type.ImmutableConstructableType>} Internal.ImmutableConstructableType
+ * @typedef {Type.MutableConstructableType | ReadonlyArray<Type.MutableConstructableType>} Internal.MutableConstructableType
+ *
+ * @typedef {Internal.ConstructableType | Internal.ImmutableConstructableType | Internal.MutableConstructableType} Internal.AnyConstructable
  * @typedef {Internal.AnyConstructable | ReadonlyArray<Internal.AnyConstructable>} Internal.AnyConstructableType
  * @typedef {Internal.AnyConstructableType | ReadonlyArray<Internal.AnyConstructableType>} Internal.AnyConstructableTypes
  *
@@ -68,7 +73,7 @@
 
 /**
  * @template T, U
- * @typedef {T extends U ? T : never} As<T, U>
+ * @typedef {T extends U ? T : never} As <T, U>
  */
 
 /**
@@ -85,11 +90,11 @@
  *     T extends object ? ObjectConstructor :
  *     T extends Object ? ObjectConstructor :
  *     Type.Error<`Unsupported type T has been provided`>
- * } Type.ToConstructorType<T>
+ * } Type.ToConstructorType <T>
  */
 
 /**
- * @template {ReadonlyArray<unknown>} T
+ * @template {ReadonlyArray<any>} T
  * @typedef {T extends readonly [infer Head, ...infer Tail]
  *     ? [Type.ToInstanceType<Head>, ...Internal.TupleToInstances<Tail>]
  *     : []
@@ -100,20 +105,26 @@
  * @template {unknown} Arg_T
  * @typedef {|
  *     Type.IsTupleType<Arg_T> extends true
- *         ? Internal.TupleToInstances<As<Arg_T, ReadonlyArray<unknown>>>
+ *         ? { [K in keyof Arg_T]:
+ *             Match<Arg_T[K], [
+ *                 (p: any) => Type.ToInstanceType<As<Arg_T[K], any>>
+ *             ]>
+ *           }
  *         : Match<Arg_T, [
  *             (p: Type.AbstConstructorType) => Readonly<InstanceType<As<Arg_T, Type.AbstConstructorType>>>,
  *             (p: Type.CallableType) =>
- *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, Type.CallableType>>, ReadonlyArray<unknown>>>) =>
+ *                 (...args: As<Type.ToInstanceType<Parameters<As<Arg_T, Type.CallableType>>>, ReadonlyArray<any>>) =>
  *                     Type.ToInstanceType<ReturnType<As<Arg_T, Type.CallableType>>>,
+ *             (p: IMut<ReadonlyArray<any>>) => Internal.TupleToInstances<As<As<Arg_T, IMut<ReadonlyArray<any>>>['imut'], ReadonlyArray<any>>>,
  *             (p: IMut<Type.AbstConstructorType>) => Readonly<InstanceType<As<Arg_T, IMut<Type.AbstConstructorType>>['imut']>>,
  *             (p: IMut<Type.CallableType>) =>
- *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>, ReadonlyArray<unknown>>>) =>
- *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, Type.CallableType>>, Internal.UnknownTypes>>,
+ *                 (...args: As<Type.ToInstanceType<Parameters<As<Arg_T, IMut<Type.CallableType>>['imut']>>, ReadonlyArray<any>>) =>
+ *                     Type.ToInstanceType<ReturnType<As<Arg_T, IMut<Type.CallableType>>['imut']>>,
+ *             (p: Mut<ReadonlyArray<any>>) => Internal.TupleToInstances<As<As<Arg_T, Mut<ReadonlyArray<any>>>['mut'], ReadonlyArray<any>>>,
  *             (p: Mut<Type.AbstConstructorType>) => InstanceType<As<Arg_T, Mut<Type.AbstConstructorType>>['mut']>,
  *             (p: Mut<Type.CallableType>) =>
- *                 (...args: Internal.TupleToInstances<As<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>, ReadonlyArray<unknown>>>) =>
- *                     Type.ToInstanceType<As<ReturnType<As<Arg_T, Type.CallableType>>, Internal.UnknownTypes>>,
+ *                 (...args: As<Type.ToInstanceType<Parameters<As<Arg_T, Mut<Type.CallableType>>['mut']>>, ReadonlyArray<any>>) =>
+ *                     Type.ToInstanceType<ReturnType<As<Arg_T, Mut<Type.CallableType>>['mut']>>,
  *         ]>
  * } Type.ToInstanceType <Arg_T>
  */
@@ -133,7 +144,9 @@
  * @typedef {Type.ToInstanceType<(a: Mut<NumberConstructor>) => [NumberConstructor, BooleanConstructor]>} Test10
  * @typedef {Type.ToInstanceType<(a: Mut<NumberConstructor>) => [StringConstructor, [BooleanConstructor]]>} Test11
  * @typedef {Type.ToInstanceType<(a: [NumberConstructor]) => [BooleanConstructor]>} Test12
- * @typedef {Type.ToInstanceType<(a: [NumberConstructor]) => [NumberConstructor, BooleanConstructor]>} Test13
+ * @typedef {Type.ToInstanceType<(a: Mut<[NumberConstructor]>) => [NumberConstructor, BooleanConstructor]>} Test13
+ * @typedef {Type.ToInstanceType<Mut<(a: [NumberConstructor]) => [NumberConstructor, BooleanConstructor]>>} Test17
+ * @typedef {Type.ToInstanceType<Mut<[(a: [NumberConstructor]) => [NumberConstructor, BooleanConstructor]]>>} Test18
  * @typedef {Type.ToInstanceType<[(a: [NumberConstructor]) => [NumberConstructor, BooleanConstructor]]>} Test14
  * @typedef {Type.ToInstanceType<[(a: [NumberConstructor], b: [BooleanConstructor]) => [NumberConstructor, BooleanConstructor]]>} Test15
  */

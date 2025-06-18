@@ -20,6 +20,19 @@
                 "isDefault": false
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Start Live Preview Server",
+            "type": "shell",
+            "command": "echo \"Starting Live Preview: ${input:startLivePreview}\"",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "startLivePreview",
+            "type": "command",
+            "command": "livePreview.start"
         }
     ]
 }

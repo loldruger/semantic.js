@@ -1,27 +1,27 @@
 // @ts-check
 
 /**
- * @template {ConstructableTypeUnion} T
+ * @template {unknown} T
  * @typedef {{mut: T}} Mut<T>
  */
 
 /**
- * @template {ConstructableTypeUnion} T
+ * @template {unknown} T
  * @typedef {Readonly<{imut: T}>} IMut<T>
  */
 
 /**
- * @template {unknown} T
+ * @template {Internal.UnknownTypes} T
  * @typedef {T extends Mut<infer U> ? Type.IsEqual<T, Mut<U>> : false} Type.IsMut<T>
  */
 
 /**
- * @template {ConstructableTypeUnion} T
+ * @template {Internal.UnknownTypes} T
  * @typedef {As<T, Mut<T>>} AsMut<T>
  */
 
 /**
- * @template {ConstructableTypeUnion} T
+ * @template {Internal.UnknownTypes} T
  * @typedef {As<T, IMut<T>>} AsIMut<T>
  */
 
@@ -35,15 +35,8 @@
  */
 
 /**
- * @typedef {ConstructableTypeUnion} StructTypeUnion
- */
-
-/**
  * @template {String} Field
- * @template {ConstructableTypeUnion} T
- * @typedef {T extends Mut<infer _A>
- *   ? Record<Field, Type.ToInstanceType<T>>
- *   : Record<Field, Type.ToInstanceType<T>>
- * } StructType<Field, T>
+ * @template {Internal.UnknownTypes} T
+ * @typedef {Record<Field, Type.ToInstanceType<T>>} StructType <Field, T>
  */
 
