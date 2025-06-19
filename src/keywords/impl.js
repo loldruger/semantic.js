@@ -98,24 +98,21 @@ class Accessor {
     /**
      * @template {String} Name
      * @template {ReadonlyArray<Internal.UnknownTypes>} T
-     * @template {((self: Target, ...args: T) => ReturnType<Fn>)} Fn
+     * @template R
+     * @template {(self: Target, ...args: T) => R} Fn
      * @param {Name} name
      * @param {Fn} method
-     * @return {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>}
+     * @return {Accessor<Target, Consts, Fns & Record<Name, (...args: T) => R>, StaticFns>}
      */
     fn(name, method) {
         this.#fns = {
             ...this.#fns,
-            [name]: (parameters) => method(this.#target, ...parameters)
+            [name]: (...parameters) => method(this.#target, .../** @type {T} */(parameters))
         };
 
-        return /** @type {Accessor<Target, Consts, Fns & Record<Name, Fn>, StaticFns>} */ (this);
+        return /** @type {Accessor<Target, Consts, Fns & Record<Name, (...args: T) => R>, StaticFns>} */ (this);
     }
 }
-
-class Async { }
-
-class Public { }
 
 Object.setPrototypeOf(Impl, null);
 Object.setPrototypeOf(Impl.prototype, null);
