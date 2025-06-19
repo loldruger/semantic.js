@@ -34,7 +34,7 @@ const test2 = (() => {
         .pub("tag", Number)
         .build();
 
-    Impl.for(struct)
+    Impl.for(struct, i => i
         .pub.const("CONST", 123)
         .pub.fn("fnName", (self, a = Number, b = Boolean) => {
             console.log("fnName called with: ", self, a, b);
@@ -44,7 +44,7 @@ const test2 = (() => {
             console.log("asyncFnName called with: ", self, a, b);
             return a;
         })
+    );
 
-
-
+    console.log("Struct3: ", struct);
 })();
