@@ -1,8 +1,6 @@
 // @ts-check
 
 /**
- * 복잡하게 계산된 타입을 강제로 펼쳐서(expand) IDE에 예쁘게 표시합니다.
- * `& {}` 트릭을 사용하여 타입 별칭이 중첩되는 것을 방지합니다.
  * @template T
  * @typedef {{[K in keyof T]: T[K]} & {}} Prettify
  */
@@ -52,7 +50,6 @@ export class Struct {
     }
 
     /**
-     * 최종적으로 평탄화된 타입의 객체를 빌드합니다.
      * @returns {Prettify<Pubs & Prvs>}
      */
     build() {
