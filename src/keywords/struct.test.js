@@ -36,11 +36,11 @@ const test2 = (() => {
 
     Impl.for(struct, i => i
         .pub.const("CONST", 123)
-        .pub.fn("fnName", (self, a = Number, b = Boolean) => {
+        .pub.fn("fnName", (self, a = mut(Number), b = imut(Boolean)) => {
             console.log("fnName called with: ", self, a, b);
             return a;
         })
-        .pub.async.fn("asyncFnName", async (self, a = Number, b = Boolean) => {
+        .pub.async.fn("asyncFnName", async (self, a = mut(Number), b = imut(Boolean)) => {
             console.log("asyncFnName called with: ", self, a, b);
             return a;
         })
