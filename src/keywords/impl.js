@@ -1,93 +1,156 @@
 // @ts-check
 
 /**
- * @template {String} Name
- * @template {Internal.AnyConstructable} Fn
- * @typedef {Record<Name, Fn>} FnMap
- */
-
-/**
- * @template {String} [Name=String]
- * @template {unknown} [Value=unknown]
+ * @template {string} Name
+ * @template {unknown} Value
  * @typedef {Record<Name, Value>} ConstMap
  */
 
 /**
- * @template T
- * @typedef {{[K in keyof T]: T[K]} & {}} Prettify
+ * @template {string} Name
+ * @template {Function} Fn
+ * @typedef {Record<Name, Fn>} FnMap
+ */
+
+/**
+ * @description This type represents the `self` parameter inside implementation functions.
+ * It correctly reflects the sequentially accumulated state of the builder at any given point in the chain.
+ * @template {Object} Target
+ * @template {ConstMap<string, unknown>} PubConsts
+ * @template {ConstMap<string, unknown>} PrvConsts
+ * @template {FnMap<string, Function>} PubFns
+ * @template {FnMap<string, Function>} PrvFns
+ * @typedef {Internal.Prettify<Target & PubConsts & PrvConsts & PubFns & PrvFns>} InternalSelfType
  */
 
 /**
  * @template {Object} Target
- * @template {ConstMap} Consts
- * @template {FnMap<String, Internal.AnyConstructable<ReadonlyArray<Internal.UnknownTypes>>>} Fns
- * @template {FnMap<String, Internal.AnyConstructable>} StaticFns
+ * @template {ConstMap<string, unknown>} PubConsts
+ * @template {ConstMap<string, unknown>} PrvConsts
+ * @template {FnMap<string, Function>} PubFns
+ * @template {FnMap<string, Function>} PrvFns
+ * @template {FnMap<string, Function>} StaticFns
  */
 class Accessor {
-    pub = this;
-    prv = this;
-    async = this;
-    /** @private */_target;
-    /** @private */_consts;
-    /** @private */_fns;
-    /** @private */_staticFns;
-    /** @type {Prettify<Readonly<Consts> & Fns & StaticFns>} */_finalImplType;
+    /** @private */ _target;
+    /** @private */ _pubConsts;
+    /** @private */ _prvConsts;
+    /** @private */ _pubFns;
+    /** @private */ _prvFns;
+    /** @private */ _staticFns;
+    /** @private @type {Map<string, Function>} */ _pendingFns;
+
+    /**
+     * @description Public members builder
+     * @type {{
+     * const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, PubConsts & Readonly<Record<Name, Value>>, PrvConsts, PubFns, PrvFns, StaticFns>,
+     * fn: <Name extends string, TArgs extends any[], TReturn>(name: Name, method: (self: InternalSelfType<Target, PubConsts, PrvConsts, PubFns, PrvFns>, ...args: TArgs) => TReturn) => Accessor<Target, PubConsts, PrvConsts, PubFns & Record<Name, (self: any, ...args: TArgs) => TReturn>, PrvFns, StaticFns>
+     * }}
+     */
+    pub;
+
+    /**
+     * @description Private members builder
+     * @type {{
+     * const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, PubConsts, PrvConsts & Readonly<Record<`_${Name}`, Value>>, PubFns, PrvFns, StaticFns>,
+     * fn: <Name extends string, TArgs extends any[], TReturn>(name: Name, method: (self: InternalSelfType<Target, PubConsts, PrvConsts, PubFns, PrvFns>, ...args: TArgs) => TReturn) => Accessor<Target, PubConsts, PrvConsts, PubFns, PrvFns & Record<`_${Name}`, (self: any, ...args: TArgs) => TReturn>, StaticFns>
+     * }}
+     */
+    prv;
 
     /**
      * @param {Target} target
-     * @param {Consts} consts
-     * @param {Fns} fns
+     * @param {PubConsts} pubConsts
+     * @param {PrvConsts} prvConsts
+     * @param {PubFns} pubFns
+     * @param {PrvFns} prvFns
      * @param {StaticFns} staticFns
+     * @param {Map<string, Function>} pendingFns
      */
-    constructor(target, consts, fns, staticFns) {
-        this._target = target; this._consts = consts; this._fns = fns; this._staticFns = staticFns;
-        // @ts-ignore
-        this._finalImplType = undefined;
+    constructor(target, pubConsts, prvConsts, pubFns, prvFns, staticFns, pendingFns) {
+        this._target = target;
+        this._pubConsts = pubConsts;
+        this._prvConsts = prvConsts;
+        this._pubFns = pubFns;
+        this._prvFns = prvFns;
+        this._staticFns = staticFns;
+        this._pendingFns = pendingFns;
+
+        this.pub = {
+            const: (name, value) => {
+                const newPubConsts = { ...this._pubConsts, [name]: value };
+                return new Accessor(this._target, newPubConsts, this._prvConsts, this._pubFns, this._prvFns, this._staticFns, this._pendingFns);
+            },
+            fn: (name, method) => {
+                this._pendingFns.set(name, method);
+                const newPubFns = { ...this._pubFns, [name]: /** @type {any} */(method) };
+                return new Accessor(this._target, this._pubConsts, this._prvConsts, newPubFns, this._prvFns, this._staticFns, this._pendingFns);
+            }
+        };
+
+        this.prv = {
+            const: (name, value) => {
+                const newPrvConsts = { ...this._prvConsts, [`_${name}`]: value };
+                return new Accessor(this._target, this._pubConsts, newPrvConsts, this._pubFns, this._prvFns, this._staticFns, this._pendingFns);
+            },
+            fn: (name, method) => {
+                const privateName = `_${name}`;
+                this._pendingFns.set(privateName, method);
+                const newPrvFns = { ...this._prvFns, [privateName]: /** @type {any} */(method) };
+                return new Accessor(this._target, this._pubConsts, this._prvConsts, this._pubFns, newPrvFns, this._staticFns, this._pendingFns);
+            }
+        };
     }
-    /** 
-     * @template {String} Name
-     * @template Value
-     * @param {Name} name
-     * @param {Value} value
-     * @returns {Accessor<Target, Consts & Record<Name, Value>, Fns, StaticFns>}
-     **/
-    const(name, value) {
-        const newConsts = { ...this._consts, [name]: value };
-        return new Accessor(this._target, newConsts, this._fns, this._staticFns);
-    }
-    /**
-     * @template {String} Name
-     * @template {ReadonlyArray<Internal.UnknownTypes>} T
-     * @template R
-     * @param {Name} name
-     * @param {(self: Target, ...args: T) => R} method
-     * @returns {Accessor<Target, Consts, Fns & Record<Name, (...args: T) => R>, StaticFns>}
-     */
-    fn(name, method) {
-        const newFns = { ...this._fns, [name]: (...parameters) => method(this._target, .../** @type {T} */(parameters)) };
-        return new Accessor(this._target, this._consts, newFns, this._staticFns);
-    }
+
     /** @private */
     _applyToTarget() {
         Object.setPrototypeOf(this._target, this._staticFns);
-        Object.assign(this._target, this._fns);
-        Object.assign(this._target, this._consts);
+        Object.assign(this._target, this._pubConsts, this._prvConsts);
+
+        // Shelling phase: Ensure all functions exist on the target for runtime mutual recursion.
+        for (const name of this._pendingFns.keys()) {
+             /** @type {Record<string, any>} */(this._target)[name] = () => { throw new Error(`'${name}' is called before implementation binding.`); };
+        }
+
+        // Binding phase: Bind the real implementation with the now-complete target.
+        for (const [name, fnBody] of this._pendingFns) {
+            /** @type {Record<string, any>} */(this._target)[name] = fnBody.bind(null, this._target);
+        }
+
         Object.freeze(this._target);
+    }
+
+    /**
+    * @private
+    * @description This "fake" method is for type inference only. It returns the final public shape of the object.
+    * @returns {Internal.Prettify<Type.PickPublicKeys<Target & PrvConsts & PrvFns> & Readonly<PubConsts> & PubFns & StaticFns>}
+    */
+    _build() {
+        throw new Error("This method is for type inference only and should not be called.");
     }
 }
 
 export const Impl = {};
 
 /**
- * @template {object} TTarget
- * @template {Accessor<TTarget, any, any, any>} TAccessor
- * @param {Type.IsExtensible<TTarget> extends true ? TTarget : never} target
- * @param {(builder: Accessor<TTarget, {}, {}, {}>) => TAccessor} implCallback
- * @returns {asserts target is Prettify<(Type.IsExtensible<TTarget> extends true ? TTarget : never) & TAccessor['_finalImplType']>}
+ * Applies implementation to a target object, enabling full mutual recursion for methods at runtime.
+ * @template {object} TTarget The raw object from `Struct.build()`.
+ * @template {Accessor<TTarget, any, any, any, any, any>} TAccessor
+ * @param {TTarget} target The target object. Must be extensible.
+ * @param {(builder: Accessor<TTarget, {}, {}, {}, {}, {}>) => TAccessor} implCallback
+ * @returns {asserts target is ReturnType<TAccessor['_build']>}
  */
 Impl.for = (target, implCallback) => {
-    const initialAccessor = new Accessor(target, {}, {}, {});
+    // A runtime check to ensure the object is not frozen.
+    if (!Object.isExtensible(target)) {
+        throw new Error("Impl.for target must be an extensible object.");
+    }
+
+    const initialAccessor = new Accessor(target, {}, {}, {}, {}, {}, new Map());
+
     const finalAccessor = implCallback(initialAccessor);
+
+    // This applies the collected implementations to the target object.
     // @ts-ignore
     finalAccessor._applyToTarget();
 };

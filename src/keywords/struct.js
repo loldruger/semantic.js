@@ -6,6 +6,12 @@
  */
 
 /**
+ * @template {String} Field
+ * @template {Internal.UnknownTypes} T
+ * @typedef {Record<Field, Type.ToInstanceType<T>>} StructType
+ */
+
+/**
  * @template {StructType<String, Internal.UnknownTypes>} Pubs
  * @template {StructType<String, Internal.UnknownTypes>} Prvs
  */
@@ -13,40 +19,41 @@ export class Struct {
     #pubs = /** @type {Pubs} */ (Object.create(null));
     #prvs = /** @type {Prvs} */ (Object.create(null));
 
+    /**
+     * @description Public members builder
+     * @type {{
+     * field: <Name extends String, TypeInfo extends Internal.UnknownTypes>(name: Name, type: TypeInfo) => Struct<Pubs & StructType<Name, TypeInfo>, Prvs>
+     * }}
+     */
+    pub;
+
+    /**
+     * @description Private members builder
+     * @type {{
+     * field: <Name extends String, TypeInfo extends Internal.UnknownTypes>(name: Name, type: TypeInfo) => Struct<Pubs, Prvs & StructType<`_${Name}`, TypeInfo>>
+     * }}
+     */
+    prv;
+
     /** @private */
-    constructor() { }
+    constructor() {
+        this.pub = {
+            field: (name, type) => {
+                /** @type {Record<string, unknown>} */(this.#pubs)[name] = undefined;
+                return /** @type {*} */ (this);
+            }
+        };
+        this.prv = {
+            field: (name, type) => {
+                /** @type {Record<string, unknown>} */(this.#prvs)[`_${name}`] = undefined;
+                return /** @type {*} */ (this);
+            }
+        };
+    }
 
     /** @returns {Struct<{}, {}>} */
     static new() {
         return new Struct();
-    }
-
-    /**
-     * @template {String} Name
-     * @template {Internal.UnknownTypes} TypeInfo
-     * @param {Name} name
-     * @param {TypeInfo} type
-     * @returns {Struct<Pubs, Prvs & StructType<`_${Name}`, TypeInfo>>}
-     */
-    // @ts-ignore
-    prv(name, type) {
-        /** @type {Record<string, unknown>} */(this.#prvs)[`_${name}`] = undefined;
-
-        return /** @type {Struct<Pubs, Prvs & StructType<`_${Name}`, TypeInfo>>} */ (/** @type {unknown} */ (this));
-    }
-
-    /**
-     * @template {String} Name
-     * @template {Internal.UnknownTypes} TypeInfo
-     * @param {Name} name
-     * @param {TypeInfo} type
-     * @returns {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>}
-     */
-    // @ts-ignore
-    pub(name, type) {
-        /** @type {Record<string, unknown>} */(this.#pubs)[name] = undefined;
-
-        return /** @type {Struct<Pubs & StructType<Name, TypeInfo>, Prvs>} */ (/** @type {unknown} */ (this));
     }
 
     /**
@@ -59,3 +66,4 @@ export class Struct {
 
 Object.setPrototypeOf(Struct, null);
 Object.setPrototypeOf(Struct.prototype, null);
+

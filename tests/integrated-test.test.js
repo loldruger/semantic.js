@@ -28,7 +28,7 @@ const test2 = (() => {
 //@ts-ignore
 const test3 = (() => {
     const struct = Struct.new()
-        .prv("callable", () => String)
+        .prv.field("callable", () => String)
         .build();
 
     // console.log(struct.callable(() => "Hello, World!"));
@@ -40,7 +40,7 @@ const test4 = (() => {
     const a = (_a, _b) => String;
 
     const struct = Struct.new()
-        .prv("callable", tuple(Number, a))
+        .prv.field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_a) => "Hello, World!"]));
@@ -52,7 +52,7 @@ const test5 = (() => {
     const a = (_a) => tuple(Boolean);
 
     const struct = Struct.new()
-        .prv("callable", tuple(Number, a))
+        .prv.field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => [true]]));
@@ -64,7 +64,7 @@ const test6 = (() => {
     const a = (_a) => tuple(String, Boolean, tuple(Number));
 
     const struct = Struct.new()
-        .prv("callable", tuple(Number, a))
+        .prv.field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => ["Hello, World!", true, [1]]]));
@@ -76,7 +76,7 @@ const test7 = (() => {
     const a = ([_a, _b]) => String;
 
     const struct = Struct.new()
-        .prv("callable", tuple(Number, a))
+        .prv.field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => "Hello, World!"]));
@@ -88,7 +88,7 @@ const test8 = (() => {
     const a = ([_a, _b]) => tuple(String, Boolean, tuple(Number));
 
     const struct = Struct.new()
-        .prv("callable", tuple(Number, a))
+        .prv.field("callable", tuple(Number, a))
         .build();
 
     // console.log(struct.callable([1, (_q) => ["Hello, World!", true, [1]]]));
