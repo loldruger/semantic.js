@@ -51,5 +51,10 @@ const test2 = (() => {
     );
 
     console.log("Struct3: ", struct);
+
+    // @ts-expect-error
     struct._string = true;
+
+    // @ts-expect-error
+    struct._fnName(1, 1);
 })();

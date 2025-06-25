@@ -22,6 +22,8 @@
     "checkJs": true,
     "forceConsistentCasingInFileNames": true,
     "noErrorTruncation": true
-  }
-  // "include": ["src/**/*"]
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
