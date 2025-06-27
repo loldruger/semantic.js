@@ -22,7 +22,7 @@
 
 /**
  * @template {String} Message
- * @typedef {`${"ERROR: "}${Message}` & { __brand: 'error' }} Type.Error <Message>
+ * @typedef {{__message: `${"ERROR: "}${Message}`,  __brand: 'Error' }} Type.Error <Message>
  */
 
 /**
@@ -105,7 +105,7 @@
 
 /**
  * @template T, U
- * @typedef {T extends U ? T : never} As <T, U>
+ * @typedef {T extends U ? T : Type.Error<"Failed assertion"> & never} As <T, U>
  */
 
 /**
@@ -194,6 +194,162 @@
  * @typedef {Type.ToInstanceType<[(a: [NumberConstructor], b: [BooleanConstructor]) => [NumberConstructor, BooleanConstructor]]>} Test15
  */
 
+/**
+ * =================================================================================
+ * 타입 레벨 고정점 조합기 (Y-Combinator) - 인터페이스 재귀 패턴 (최종본)
+ * =================================================================================
+ */
+
+// --- 매니페스트 디스크립터(Manifest Descriptors) ---
+/**
+ * @template {string} Name
+ * @template {unknown} Value
+ * @typedef {{ kind: 'pubConst', name: Name, value: Value }} PubConstDescriptor
+ */
+/**
+ * @template {string} Name
+ * @template {unknown} Value
+ * @typedef {{ kind: 'prvConst', name: Name, value: Value }} PrvConstDescriptor
+ */
+/**
+ * @template {string} Name
+ * @template {Function} M
+ * @typedef {{ kind: 'pubFn', name: Name, method: M }} PubFnDescriptor
+ */
+/**
+ * @template {string} Name
+ * @template {Function} M
+ * @typedef {{ kind: 'prvFn', name: Name, method: M }} PrvFnDescriptor
+ */
+/**
+ * @template {string} Name
+ * @template {Function} M
+ * @typedef {{ kind: 'pubAsyncFn', name: Name, method: M }} PubAsyncFnDescriptor
+ */
+
+/**
+ * @typedef {PubConstDescriptor<any, any> | PrvConstDescriptor<any, any> | PubFnDescriptor<any, any> | PrvFnDescriptor<any, any> | PubAsyncFnDescriptor<any, any>} Internal.AnyDescriptor
+ */
+
+// --- 타입 레벨 컴파일러(Type-Level Compiler) ---
+/**
+ * @private
+ * @description Manifest 배열에서 모든 디스크립터의 `name` 속성을 유니온 타입으로 추출합니다.
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @typedef {Manifest[number]['name']} Internal.ManifestKeys
+ */
+/** @private */
+/**
+ * @template {string} Name
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @template {object} SelfType
+ * @typedef {Extract<Manifest[number], { name: Name }> extends infer Desc
+ *   ? Desc extends { kind: 'pubConst' | 'prvConst', value: infer V }
+ *     ? Readonly<V>
+ *     : Desc extends { method: (...args: [any, ...infer A]) => infer R }
+ *       ? (self: SelfType, ...args: A) => R
+ *       : Desc extends { method: () => infer R }
+ *         ? (self: SelfType) => R
+ *         : never
+ *   : never
+ * } Internal.ResolveDescriptor
+ */
+/**
+ * @description 1단계: Manifest를 순회하며 모든 멤버의 "초안"을 포함하는 단일 객체 타입을 빌드합니다.
+ * 이 단계의 함수 시그니처는 `self` 타입이 아직 확인되지 않은 상태입니다.
+ * @template {object} Base
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @typedef {Manifest extends readonly [infer Head, ...infer Tail]
+ *   ? Head extends Internal.AnyDescriptor
+ *     ? Tail extends ReadonlyArray<Internal.AnyDescriptor>
+ *       ? Internal.CreateFullInterface<Base & Internal.DescriptorToProperty<Head>, Tail>
+ *       : Base
+ *     : Base
+ *   : Base
+ * } Internal.CreateFullInterface
+ */
+
+/**
+ * @description CreateFullInterface의 헬퍼 타입. 단일 디스크립터를 속성(오염된 타입)으로 변환합니다.
+ * @template {Internal.AnyDescriptor} Desc
+ * @typedef {Desc extends { name: infer N, value: infer V }
+ *    ? N extends string ? { [K in N]: V } : {}
+ *    : Desc extends { name: infer N, method: infer M }
+ *      ? N extends string ? { [K in N]: M } : {}
+ *      : {}
+ * } Internal.DescriptorToProperty
+ */
+
+/**
+ * @description 2단계: "전지적 Self 타입"을 사용하여 각 함수의 'self' 매개변수 타입을 올바르게 교체합니다.
+ * 이것은 이전과 달리, `SelfType`의 속성들을 "덮어쓰는(override)" 방식으로 동작합니다.
+ * @template {object} SelfType
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @typedef {{
+ *   [K in keyof SelfType]: K extends Internal.ExtractFunctionNames<Manifest>
+ *     ? Internal.FindAndResolveDescriptor<K, Manifest, SelfType>
+ *     : SelfType[K]
+ * }} Internal.ResolveFunctionSignatures
+ */
+
+/**
+ * @description ResolveFunctionSignatures의 헬퍼 타입. 디스크립터를 완전히 확인된 함수 시그니처를 가진 속성으로 변환합니다.
+ * @template {object} SelfType
+ * @template {Internal.AnyDescriptor} Desc
+ * @typedef {Desc extends { kind: 'pubConst' | 'prvConst', name: infer N, value: infer V }
+ *    ? N extends string ? Readonly<{ [K in N]: V }> : {}
+ *    : Desc extends { name: infer N, method: (firstArg: any, ...args: infer A) => infer R }
+ *      ? N extends string ? { [K in N]: (self: SelfType, ...args: A) => R } : {}
+ *      : Desc extends { name: infer N, method: () => infer R }
+ *        ? N extends string ? { [K in N]: (self: SelfType) => R } : {}
+ *        : {}
+ * } Internal.DescriptorToResolvedProperty
+ */
+
+/**
+ * @description 타입 레벨 컴파일러의 주 진입점.
+ * @template {object} TTarget
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @typedef {|
+ *    Internal.Prettify<
+ *      Type.PickPublicKeys<
+ *        Internal.FinalType<TTarget, Manifest>
+ *      >
+ *    >
+ * } Internal.ResolveImplementation
+ */
+
+/** @helper */
+/**
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @typedef {Extract<Manifest[number], { kind: 'pubFn' | 'prvFn' | 'pubAsyncFn' }>['name']} Internal.ExtractFunctionNames
+ */
+
+/** @helper */
+/**
+ * @template {string} Name
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @template {object} SelfType
+ * @typedef {Extract<Manifest[number], { name: Name }> extends { method: (...args: [any, ...infer A]) => infer R }
+ *   ? (self: SelfType, ...args: A) => R
+ *   : Extract<Manifest[number], { name: Name }> extends { method: () => infer R }
+ *     ? (self: SelfType) => R
+ *     : never
+ * } Internal.FindAndResolveDescriptor
+ */
+/** @private */
+/**
+ * @template {object} Base
+ * @template {ReadonlyArray<Internal.AnyDescriptor>} Manifest
+ * @typedef {{
+ *   [K in keyof Base | Internal.ManifestKeys<Manifest>]:
+ *     K extends Internal.ManifestKeys<Manifest>
+ *       ? Internal.ResolveDescriptor<K & string, Manifest, Internal.FinalType<Base, Manifest>>
+ *       : K extends keyof Base
+ *         ? Base[K]
+ *         : never
+ * }} Internal.FinalType
+ */
 ///////////////////
 // Type Checkers //
 ///////////////////
@@ -273,6 +429,7 @@
  */
 
 /**
+ * @memberof Type
  * @template X The first type to compare.
  * @template Y The second type to compare, or a pattern containing 'infer' to match against X.
  * @typedef {|

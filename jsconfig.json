@@ -23,7 +23,8 @@
     "forceConsistentCasingInFileNames": true,
     "noErrorTruncation": true
   },
-  "include": [
-    "src/**/*"
-  ]
+  // "include": [
+  //   "src/**/*",
+  //   "tests/*"
+  // ]
 }

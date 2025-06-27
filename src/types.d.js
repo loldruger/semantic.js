@@ -132,35 +132,40 @@
 /**
  * Helper to check if unknown element in a processed loop body tuple is Internal.GotoAction
  * @template ProcessedBodyTuple extends readonly unknown[]
- * @typedef {ProcessedBodyTuple extends [infer Head, ...infer Tail]
- *   ? Head extends Internal.GotoAction
- *     ? true
- *     : Internal.DoesProcessedBodyContainGoto<Tail>
- *   : false
- * } Internal.DoesProcessedBodyContainGoto <ProcessedBodyTuple>
+ * @typedef {|
+ *     ProcessedBodyTuple extends [infer Head, ...infer Tail]
+ *       ? Head extends Internal.GotoAction
+ *         ? true
+ *         : Internal.HasProcessedBodyContainedGoto<Tail>
+ *       : false
+ * } Internal.HasProcessedBodyContainedGoto <ProcessedBodyTuple>
  */
 
 /**
  * Processes a single item in a loop body. If it's a Goto, returns a marker.
  * (Replaces LoopMatcher to break circular dependency)
  * @template {CodeBlock<unknown>|Label<String>|Goto<String>} ExecItem
- * @typedef {Match<ExecItem, [
- *     (p: Label<String>) => ExecItem,
- *     (p: Goto<String>) => Internal.GotoAction,
- *     (p: CodeBlock<unknown>) => ExecItem
- * ]>} Internal.ProcessLoopItem <ExecItem>
+ * @typedef {|
+ *     Match<ExecItem, [
+ *         (p: Label<String>) => ExecItem,
+ *         (p: Goto<String>) => Internal.GotoAction,
+ *         (p: CodeBlock<unknown>) => ExecItem
+ *     ]>
+ * } Internal.ProcessLoopItem <ExecItem>
  */
 
 /**
  * @template {Boolean} Condition
  * @template {Array<CodeBlock<unknown>|Label<String>|Goto<String>>} Exec
  * @template {Array<CodeBlock<unknown>|Label<String>|Goto<String>>} [LoopBody=[Label<"continue">, ...Exec, Goto<"continue">]]
- * @typedef {If<Condition, 
- *   Internal.DoesProcessedBodyContainGoto<{[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}> extends true
- *     ? Loop<Condition, Exec> 
- *     : {[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}, 
- *   never
- * >} Loop <Condition, Exec>
+ * @typedef {|
+ *     If<Condition, 
+ *         Internal.HasProcessedBodyContainedGoto<{[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}> extends true
+ *             ? Loop<Condition, Exec> 
+ *             : {[K in keyof LoopBody]: Internal.ProcessLoopItem<LoopBody[K]>}, 
+ *         never
+ *     >
+ * } Loop <Condition, Exec>
  */
 
 /**
@@ -179,11 +184,12 @@
 /**
  * @template {Boolean} A
  * @template {Boolean} B
- * @typedef {A extends true
-*     ? B extends true
-*         ? true
+ * @typedef {|
+ *     A extends true
+*         ? B extends true
+*             ? true
+*             : false
 *         : false
-*     : false
 * } And <A, B>
 */
 
@@ -191,13 +197,14 @@
  * @template {Boolean} A
  * @template {Boolean} B
  * @template {Boolean} C
- * @typedef {A extends true
- *     ? B extends true
- *         ? C extends true
- *             ? true
+ * @typedef {|
+ *     A extends true
+ *         ? B extends true
+ *             ? C extends true
+ *                 ? true
+ *                 : false
  *             : false
  *         : false
- *     : false
  * } And3 <A, B, C>
  */
 
@@ -206,26 +213,28 @@
  * @template {Boolean} B
  * @template {Boolean} C
  * @template {Boolean} D
- * @typedef {A extends true
- *     ? B extends true
- *         ? C extends true
- *             ? D extends true
- *                 ? true
+ * @typedef {|
+ *     A extends true
+ *         ? B extends true
+ *             ? C extends true
+ *                 ? D extends true
+ *                     ? true
+ *                     : false
  *                 : false
  *             : false
  *         : false
- *     : false
  * } And4 <A, B, C, D>
  */
 
 /**
  * @template {Boolean} T
  * @template {Boolean} U
- * @typedef {T extends true
- *     ? true
- *     : U extends true
+ * @typedef {|
+ *     T extends true
  *         ? true
- *         : false
+ *         : U extends true
+ *             ? true
+ *             : false
  * } Or <A, B>
  */
 
@@ -233,13 +242,14 @@
  * @template {Boolean} A
  * @template {Boolean} B
  * @template {Boolean} C
- * @typedef {A extends true
- *     ? true
- *     : B extends true
+ * @typedef {|
+ *     A extends true
  *         ? true
- *         : C extends true
+ *         : B extends true
  *             ? true
- *             : false
+ *             : C extends true
+ *                 ? true
+ *                 : false
  * } Or3 <A, B>
  */
 
@@ -248,15 +258,16 @@
  * @template {Boolean} B
  * @template {Boolean} C
  * @template {Boolean} D
- * @typedef {A extends true
- *     ? true
- *     : B extends true
+ * @typedef {|
+ *     A extends true
  *         ? true
- *         : C extends true
+ *         : B extends true
  *             ? true
- *             : D extends true
+ *             : C extends true
  *                 ? true
- *                 : false
+ *                 : D extends true
+ *                     ? true
+ *                     : false
  * } Or4 <A, B, C, D>
  */
 
