@@ -39,4 +39,3 @@
  * @template {Internal.UnknownTypes} T
  * @typedef {Record<Field, Type.ToInstanceType<T>>} StructType <Field, T>
  */
-

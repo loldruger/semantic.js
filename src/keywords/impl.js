@@ -102,33 +102,30 @@ class Accessor {
 
         Object.freeze(this._target);
     }
+
+    /**
+     * @description Applies the implementation to the target object.
+     * @returns {void}
+     */
+    build() {
+        this._applyToTarget();
+    }
 }
 
 export const Impl = {};
 
 /**
- * 대상 객체에 구현을 적용하여 런타임에 메서드 간의 완전한 상호 재귀를 활성화합니다.
- * @template {object} TTarget `Struct.build()`에서 반환된 원시 객체
- * @template {ReadonlyArray<any>} Manifest - 최종 매니페스트 타입을 추론하기 위한 제네릭
- * @template {Accessor<TTarget, Manifest>} FinalAccessor - 최종 Accessor 타입을 추론하기 위한 제네릭
+ * 대상 객체에 대한 구현을 시작하기 위한 빌더를 반환합니다.
  *
+ * @template {object} TTarget
  * @param {TTarget} target 대상 객체. 반드시 확장 가능(extensible)해야 합니다.
- * @param {(builder: Accessor<TTarget, []>) => FinalAccessor} implCallback
- * @returns {asserts target is Internal.ResolveImplementation<TTarget, Manifest>}
+ * @returns {Accessor<TTarget, []>}
  */
-Impl.for = (target, implCallback) => {
+Impl.for = (target) => {
     if (!Object.isExtensible(target)) {
         throw new Error("Impl.for target must be an extensible object.");
     }
-    // @ts-ignore - 초기 Accessor의 Manifest는 빈 배열[] 입니다.
-    const initialAccessor = new Accessor(target, []);
-
-    //Argument of type 'Accessor<TTarget, never[]>' is not assignable to parameter of type 'Accessor<TTarget, []>'.
-    //  Type 'never[]' is not assignable to type '[]'.
-    //    Target allows only 0 element(s) but source may have more.
-    const finalAccessor = implCallback(initialAccessor);
-    // @ts-ignore
-    finalAccessor._applyToTarget();
+    return new Accessor(target, []);
 };
 
 Object.setPrototypeOf(Impl, null);
