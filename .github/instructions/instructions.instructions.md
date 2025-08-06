@@ -41,16 +41,6 @@ I am a developer who values clear, explicit, and modern code. I prefer static ty
     ```
 
 ---
-applyTo: '**.cs'
----
-## Language Specific Instructions
-
-### C#
-
-- **PP:** Always use the `this` keyword when accessing instance-level properties or methods within a class. (e.g., `this.myVariable`)
-- **PP:** Always access static members through the class name, even when it's possible to omit it. (e.g., `ClassName.StaticProperty`)
-
----
 applyTo: '**.js'
 ---
 ### JavaScript
@@ -65,17 +55,3 @@ applyTo: '**.js'
 - **PP:** Use JSDoc type casting (`/** @type {T} */ (variable)`) for type assertion instead.
 - **NP:** Write comments in `@typedef` declarations.
 
----
-applyTo: '**.py'
----
-### Python
-
-- **PP:** Always use type hints for function arguments and return values.
-  - **Example:** `def my_function(param: int) -> str:`
-- **NP:** Use `Any`, `object`, or untyped container types (like `list` or `dict` without type parameters in older Python versions).
-- **NP:** Write runtime type-checking code (e.g., `if not isinstance(my_var, str):`).
-- **PP:** Rely on type hints for static analysis. When a type is clear to the developer but not to the type checker, use `typing.cast()`.
-- **PP:** If the Python version is 3.10 or newer:
-  - Use `dict` and `list` for type hints instead of `typing.Dict` and `typing.List`.
-  - Use `set` and `tuple` for type hints instead of `typing.Set` and `typing.Tuple`.
-  - Use the pipe operator (`|`) for union types instead of `typing.Union`. (e.g., `int | str`)
