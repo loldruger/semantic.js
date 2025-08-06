@@ -12,9 +12,9 @@ class Accessor {
      * @description Public members builder
      * @type {{
      *  const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'pubConst', name: Name, value: Value }]>,
-     *  fn: <Name extends string, M extends (self: any,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pubFn', name: Name, method: M }]>,
+     *  fn: <Name extends string, M extends (self: Internal.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pubFn', name: Name, method: M }]>,
      *  async: {
-     *      fn: <Name extends string, M extends (self: any,...args: any) => Promise<any>>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pubAsyncFn', name: Name, method: M }]>
+     *      fn: <Name extends string, M extends (self: Internal.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => Promise<any>>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pubAsyncFn', name: Name, method: M }]>
      *  }
      * }}
      */
@@ -24,7 +24,7 @@ class Accessor {
      * @description Private members builder
      * @type {{
      *  const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'prvConst', name: `_${Name}`, value: Value }]>,
-     *  fn: <Name extends string, M extends (self: any,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'prvFn', name: `_${Name}`, method: M }]>
+     *  fn: <Name extends string, M extends (self: Internal.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'prvFn', name: `_${Name}`, method: M }]>
      * }}
      */
     prv;
