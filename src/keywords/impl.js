@@ -117,14 +117,11 @@ export const Impl = {};
 /**
  * 대상 객체에 대한 구현을 시작하기 위한 빌더를 반환합니다.
  *
- * @template {object} TTarget
- * @param {TTarget} target 대상 객체. 반드시 확장 가능(extensible)해야 합니다.
- * @returns {Accessor<TTarget, []>}
+ * @template {object} T
+ * @param {Type.IsExtensible<T> extends true ? T : never} target 대상 객체. 반드시 확장 가능(extensible)해야 합니다.
+ * @returns {Accessor<T, []>}
  */
 Impl.for = (target) => {
-    if (!Object.isExtensible(target)) {
-        throw new Error("Impl.for target must be an extensible object.");
-    }
     return new Accessor(target, []);
 };
 

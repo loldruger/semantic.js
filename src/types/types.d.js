@@ -124,18 +124,7 @@
  *     Type.Error<`Unsupported type T has been provided`>
  * } Type.ToConstructorType <T>
  */
-/**
- * @template R
- * @typedef {R extends Promise<infer U> ? Promise<Type.ToInstanceType<U>> : Type.ToInstanceType<R>} Internal.MapReturnTypeToInstance
- */
 
-/**
- * @template {Function} Fn
- * @typedef {Fn extends (self: any, ...args: infer P) => infer R
- * ? (...args: Internal.TupleToInstances<P>) => Internal.MapReturnTypeToInstance<R>
- * : never
- * } Internal.InferFnType
- */
 /**
  * @template {ReadonlyArray<any>} T
  * @typedef {T extends readonly [infer Head, ...infer Tail]
@@ -385,14 +374,14 @@
 ////////////////////
 /**
  * @template T
- * @typedef {{[K in keyof T as K extends `_${string}` ? never : K]: T[K]}} Type.PickPublicKeys
+ * @typedef {{[K in keyof T as K extends `_${string}` ? never : K]: T[K]}} Type.PickPublicKeys <T>
  * - 객체 타입 T에서 `_`로 시작하지 않는 public 키와 해당 값만 골라내어 새로운 타입을 만듭니다.
  * - 이 타입은 최종적으로 외부에 노출될 객체의 형태를 정의하는 데 사용됩니다.
  */
 
 /**
  * @template T
- * @typedef {{[K in keyof T]: T[K]} & {}} Internal.Prettify
+ * @typedef {{[K in keyof T]: T[K]} & {}} Internal.Prettify <T>
  */
 
 /**

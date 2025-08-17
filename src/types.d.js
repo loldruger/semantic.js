@@ -134,10 +134,10 @@
  * @template ProcessedBodyTuple extends readonly unknown[]
  * @typedef {|
  *     ProcessedBodyTuple extends [infer Head, ...infer Tail]
- *       ? Head extends Internal.GotoAction
- *         ? true
- *         : Internal.HasProcessedBodyContainedGoto<Tail>
- *       : false
+ *         ? Head extends Internal.GotoAction
+ *             ? true
+ *             : Internal.HasProcessedBodyContainedGoto<Tail>
+ *         : false
  * } Internal.HasProcessedBodyContainedGoto <ProcessedBodyTuple>
  */
 

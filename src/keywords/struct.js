@@ -1,11 +1,6 @@
 // @ts-check
 
 /**
- * @template T
- * @typedef {{[K in keyof T]: T[K]} & {}} Prettify
- */
-
-/**
  * @template {String} Field
  * @template {Internal.UnknownTypes} T
  * @typedef {Record<Field, Type.ToInstanceType<T>>} StructType
@@ -22,7 +17,7 @@ export class Struct {
     /**
      * @description Public members builder
      * @type {{
-     * field: <Name extends String, TypeInfo extends Internal.UnknownTypes>(name: Name, type: TypeInfo) => Struct<Pubs & StructType<Name, TypeInfo>, Prvs>
+     *     field: <Name extends String, TypeInfo extends Internal.UnknownTypes>(name: Name, type: TypeInfo) => Struct<Pubs & StructType<Name, TypeInfo>, Prvs>
      * }}
      */
     pub;
@@ -30,7 +25,7 @@ export class Struct {
     /**
      * @description Private members builder
      * @type {{
-     * field: <Name extends String, TypeInfo extends Internal.UnknownTypes>(name: Name, type: TypeInfo) => Struct<Pubs, Prvs & StructType<`_${Name}`, TypeInfo>>
+     *     field: <Name extends String, TypeInfo extends Internal.UnknownTypes>(name: Name, type: TypeInfo) => Struct<Pubs, Prvs & StructType<`_${Name}`, TypeInfo>>
      * }}
      */
     prv;
@@ -57,10 +52,10 @@ export class Struct {
     }
 
     /**
-     * @returns {Prettify<Pubs & Prvs>}
+     * @returns {Internal.Prettify<Pubs & Prvs>}
      */
     build() {
-        return /** @type {Prettify<Pubs & Prvs>} */(Object.assign(this.#pubs, this.#prvs));
+        return /** @type {Internal.Prettify<Pubs & Prvs>} */(Object.assign(this.#pubs, this.#prvs));
     }
 }
 
