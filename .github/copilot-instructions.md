@@ -1,55 +1,52 @@
-# GitHub Copilot Instructions
+# Copilot Instructions for semantic.js
 
-## Architecture
+This is a JS-only, browser-first library that brings Rust-like ergonomics (Option/Result, struct, tagged union) to JavaScript using aggressive JSDoc typing. No TypeScript files; all typing is via JSDoc with `// @ts-check`.
 
-`Semantic.js` is a JavaScript library that brings Rust-inspired features and types to the browser environment. Key architectural points are:
+## Big picture
+- Core idea: describe data shapes and behavior via builders, then rely on JSDoc advanced types for static guarantees.
+- Key modules:
+  - `src/keywords/struct.js`: defines data shape via a builder. Public fields vs private fields (`_` prefix) are tracked in types.
+  - `src/keywords/impl.js`: attaches behavior to an object using a manifest builder (pub/prv const/fn/async.fn). Binds functions to the finalized object and freezes it.
+  - `src/primitives/tuple.js`, `src/keywords/mut.js`: wrappers like `tuple`, `mut`, `imut` used as type-level signals.
+  - `src/types/types.d.js`: heavy JSDoc type utilities (ToInstanceType, constructor→instance conversions, manifest compilation, public key picking).
 
-- **Core Goal**: To provide Rust-like types such as `Option<T>`, `Result<T, E>`, and concepts like `struct` and `tagged union`.
-- **Type Safety**: The project achieves static type safety without runtime overhead by leveraging extensive JSDoc annotations. TypeScript's `checkJs` feature is used to validate types.
-- **Environment**: It is designed to run directly in modern web browsers, with Firefox being the primary development and debugging target.
-- **Dependencies**: The project intentionally avoids using package managers like npm. A `minify` binary is downloaded during the build process for code compression.
-- **Structure**:
-    - `src/`: Contains the core source code.
-        - `interfaces/`: Defines common interfaces like `Cloneable`.
-        - `keywords/`: Implements Rust-like keywords (`struct`, `impl`).
-        - `primitives/`: Contains fundamental types like `tagged-union`.
-        - `types/`: Holds implementations for types like `Option` and `Result`.
-    - `dist/`: Contains the minified and bundled output files for production.
-    - `tests/`: Contains integration and unit tests.
+## Project conventions (must follow)
+- JS only; no `.ts`. Use JSDoc everywhere for types and generics.
+- Comments in English only. Use JSDoc for public APIs, functions, variables, classes.
+- Prefer arrow functions assigned to `const`.
+- No `++`/`--`, no ternary; always use braces for control flow.
+- Do not write runtime type checks; rely on static JSDoc types. Avoid `any` (prefer `unknown` or specific types). Avoid default parameters.
 
-## Core Commands
+## Patterns you’ll use
+- Define shapes with Struct:
+  - `Struct.new().pub.field("name", TypeInfo).prv.field("secret", TypeInfo).build()` → returns an object with public + private keys at runtime. Private keys start with `_`.
+- Attach behavior with Impl:
+  - `Impl.for(target).pub.const("FOO", 1).prv.fn("do", (self, x) => {...}).pub.async.fn("load", async (self) => {...}).build();`
+  - Functions are declared `(self, ...args)` and bound as methods `(...args)` on the target. Private members are defined as non-enumerable.
+  - After build, the target is frozen (`Object.freeze`). Don’t mutate or extend it afterward.
+- Type wrappers:
+  - Use `mut(...)`/`imut(...)` and `tuple(...)` to express mutability/tuple intent at the type level when defining fields or function params.
 
-- **Build**: To build the project, run the default VS Code build task (`Ctrl+Shift+B` or `Cmd+Shift+B`). This executes the `build.sh` script, which handles:
-    - Downloading the `minify` tool if it's not present.
-    - Minifying all `.js` files from `src/` into the `dist/` directory.
-    - Creating a bundled `semantic.min.js` file.
-    - To run manually: `chmod +x build.sh && ./build.sh`
+## Developer workflows
+- Build (minify for dist):
+  - VS Code: press `Ctrl+Shift+B` to run the task “Minify and Copy Files to dist”, which executes `build.sh`.
+  - The script fetches a static `minify` binary, minifies JS files under `src`, and emits `dist/semantic.min.js`.
+- Run in browser:
+  - Open `index.html` and use DevTools. Example module tests live under `src/keywords/struct.test.js` and can be toggled in `index.html`.
+- Tests:
+  - There are browser-loaded examples under `tests/` and `src/**.test.js`. No Node test runner; prefer opening in a browser.
 
-- **Test**: The project contains a test suite but does not use a standard test runner. Tests are run in the browser.
-    - The "Integrated Tests" task is a placeholder. To run tests, open `index.html` in a browser with the developer console open.
-    - Test files are located in `tests/` and alongside source files with a `.test.js` extension.
+## Important file references
+- `src/keywords/struct.js`: Struct builder API. Public vs private field typing.
+- `src/keywords/impl.js`: Implementation builder API. `pub|prv.{const, fn, async.fn}`, then `build()` to bind and freeze.
+- `src/types/types.d.js`: type-level machinery (manifest → interface compile, self binding, public key pickers, constructor/instance conversions).
+- `jsconfig.json`: strict `@ts-check` settings; JS is type-checked like TS.
+- `build.sh`: release build/minify for the browser (no npm).
 
-- **Linting/Type-Checking**: Static analysis is performed via TypeScript's JS checking capabilities, configured in `jsconfig.json`. There is no separate lint command; checking happens automatically in a configured editor like VS Code.
+## Practical tips for contributions
+- New APIs: add precise JSDoc types (generics, templates) and keep comments in English. Ensure public/private keys align with the `_` prefix rule.
+- When adding functions to `Impl`, follow `(self, ...args)` form and let the builder bind them. Do not rely on `this`.
+- Avoid using private keys from outside; treat `_`-prefixed members as internal even though they exist at runtime.
+- If you need new type utilities, colocate them in `src/types/types.d.js` and prefer composable conditional/mapped types.
 
-## Style Rules
-
-### General
-
-- **Clarity**: Prefer explicit `if ... else ...` statements over the ternary operator (`a ? b : c`).
-- **Operators**: Do not use increment (`++`) or decrement (`--`) operators. Use `+= 1` or `-= 1` instead.
-- **Blocks**: Always use curly braces for `if`, `for`, or `while` statements, even for single lines.
-- **Comments**: All comments must be written in English.
-
-### JavaScript (via `jsconfig.json` and project conventions)
-
-- **JSDoc**: All functions, methods, classes, and variables must have comprehensive JSDoc comments. This is critical for static type analysis.
-- **Type System**:
-    - **No Runtime Checks**: Do not write runtime type-checking code (e.g., `typeof myVar === 'string'`). Rely on JSDoc for static analysis.
-    - **No `any`**: The `any` type is forbidden. Avoid `unknown` when a more specific type can be used.
-    - **Type Casting**: Use JSDoc-style casting `/** @type {T} */ (variable)` instead of the `as T` syntax.
-- **Function Declarations**: Prefer `const func = () => {}` over `function func() {}`.
-- **Strictness**: The project enforces a strict set of rules via `jsconfig.json`, including:
-    - `strict: true`
-    - `noUncheckedIndexedAccess: true`
-    - `noUnusedLocals: true`
-    - `noUnusedParameters: true`
+If any of the above is unclear (e.g., how `mut/imut/tuple` flow through `ToInstanceType`, or expected public-only exposure), tell me where you’re adding code and I’ll refine these instructions for that path.

@@ -30,13 +30,13 @@ I am a developer who values clear, explicit, and modern code. I prefer static ty
 - **NP:** Use default arguments in function definitions.
 - **NP:** Omit curly braces for single-line `if`, `for`, or `while` statements.
   - **Correct:**
-    ```
+    ```js
     if (condition) {
         doSomething();
     }
     ```
   - **Incorrect:**
-    ```
+    ```js
     if (condition) doSomething();
     ```
 
@@ -48,6 +48,8 @@ applyTo: '**.js'
 - **PP:** Actively use JSDoc comments for all variables, functions, closures, methods, and classes.
 - **PP:** Aggressively leverage JSDoc for static type analysis and to enable TypeScript's pre-runtime type checking capabilities.
 - **NP:** Write runtime type-checking code (e.g., `if (typeof myVar !== 'string')`). Rely on JSDoc for static analysis.
+- **NP:** Write runtime null-checking code (e.g., `if (myVar !== null)`). Rely on JSDoc for static analysis.
+- **NP:** Write runtime undefined-checking code (e.g., `if (myVar !== undefined)`). Rely on JSDoc for static analysis.
 - **NP:** Use the `any` type.
 - **PNP:** Avoid using the `unknown` type if a more specific type can be used.
 - **PPP:** Prefer declaring functions using `const` and arrow function syntax (`const func = () => {}`) instead of `function func() {}`.
