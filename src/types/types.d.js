@@ -232,7 +232,7 @@
  *     Manifest extends readonly [infer Head, ...infer Tail]
  *         ? Head extends AnyDescriptor
  *             ? Tail extends ReadonlyArray<AnyDescriptor>
- *                 ? Internal.TypeCompiler.CreateFullInterface<Internal.Prettify<Base & Internal.TypeCompiler.DescriptorToProperty<Head>>, Tail>
+ *                 ? Internal.Prettify<Internal.TypeCompiler.CreateFullInterface<Base & Internal.TypeCompiler.DescriptorToProperty<Head>, Tail>>
  *                 : Base
  *             : Base
  *         : Base
@@ -310,7 +310,7 @@
  *     Desc extends { kind: 'pub_const' | 'prv_const', name: infer N, value: infer V }
  *         ? N extends String ? Readonly<{ [K in N]: V }> : {}
  *         : Desc extends { name: infer N, method: (self: unknown, ...args: infer A) => infer R }
- *             ? N extends String ? { [K in N]: (...args: A) => R } : {}
+ *             ? N extends String ? { [K in N]: (self: SelfType, ...args: A) => R } : {}
  *             : {}
  * } Internal.TypeCompiler.DescriptorToBoundMethod <SelfType, Desc>
  */
@@ -338,7 +338,7 @@
  * @typedef {|
  *     Type.PickPublicKeys<
  *         Target & Internal.TypeCompiler.BindSelfToMethods<
- *             Target & Internal.TypeCompiler.CreateFullInterface<Target, Manifest>,
+ *             Internal.Prettify<Target & Internal.TypeCompiler.CreateFullInterface<Target, Manifest>>,
  *             Manifest
  *         >
  *     >
