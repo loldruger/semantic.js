@@ -308,9 +308,13 @@
  * @template {AnyDescriptor} Desc
  * @typedef {|
  *     Desc extends { kind: 'pub_const' | 'prv_const', name: infer N, value: infer V }
- *         ? N extends String ? Readonly<{ [K in N]: V }> : {}
- *         : Desc extends { name: infer N, method: (self: unknown, ...args: infer A) => infer R }
- *             ? N extends String ? { [K in N]: (self: SelfType, ...args: A) => R } : {}
+ *         ? N extends String
+ *             ? Readonly<{ [K in N]: V }>
+ *             : {}
+ *         : Desc extends { name: infer N, method: (self: any, ...args: infer A) => infer R }
+ *             ? N extends String
+ *                 ? { [K in N]: (self: SelfType, ...args: A) => R }
+ *                 : {}
  *             : {}
  * } Internal.TypeCompiler.DescriptorToBoundMethod <SelfType, Desc>
  */
