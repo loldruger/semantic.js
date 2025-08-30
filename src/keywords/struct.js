@@ -33,14 +33,16 @@ export class Struct {
     /** @private */
     constructor() {
         this.pub = {
+            //@ts-ignore - ignore type variable unused
             field: (name, type) => {
-                /** @type {Record<string, unknown>} */(this.#pubs)[name] = undefined;
+                /** @type {Record<String, unknown>} */(this.#pubs)[name] = undefined;
                 return /** @type {*} */ (this);
             }
         };
         this.prv = {
+            //@ts-ignore - ignore type variable unused
             field: (name, type) => {
-                /** @type {Record<string, unknown>} */(this.#prvs)[`_${name}`] = undefined;
+                /** @type {Record<String, unknown>} */(this.#prvs)[`_${name}`] = undefined;
                 return /** @type {*} */ (this);
             }
         };
@@ -52,10 +54,10 @@ export class Struct {
     }
 
     /**
-     * @returns {Internal.Prettify<Pubs & Prvs>}
+     * @returns {Type.PickPublicKeys<Internal.Prettify<Pubs & Prvs>>}
      */
     build() {
-        return /** @type {Internal.Prettify<Pubs & Prvs>} */(Object.assign(this.#pubs, this.#prvs));
+        return /** @type {Type.PickPublicKeys<Internal.Prettify<Pubs & Prvs>>} */(Object.assign(this.#pubs, this.#prvs));
     }
 }
 

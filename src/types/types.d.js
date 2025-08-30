@@ -130,7 +130,7 @@
  * @typedef {T extends readonly [infer Head, ...infer Tail]
  *     ? [Type.ToInstanceType<Head>, ...Internal.TupleToInstances<Tail>]
  *     : []
- * } Internal.TupleToInstances
+ * } Internal.TupleToInstances <T>
  */
 
 /**
@@ -192,33 +192,33 @@
 // --- 매니페스트 디스크립터(Manifest Descriptors) ---
 // 각 빌더 호출에 대한 정보를 담는 타입입니다.
 /**
- * @template {string} Name
+ * @template {String} Name
  * @template {unknown} Value
- * @typedef {{ kind: 'pubConst', name: Name, value: Value }} PubConstDescriptor
+ * @typedef {{ kind: 'pub_const', name: Name, value: Value }} PubConstDescriptor <Name, Value>
  */
 /**
- * @template {string} Name
+ * @template {String} Name
  * @template {unknown} Value
- * @typedef {{ kind: 'prvConst', name: `_${Name}`, value: Value }} PrvConstDescriptor
+ * @typedef {{ kind: 'prv_const', name: `_${Name}`, value: Value }} PrvConstDescriptor <Name, Value>
  */
 /**
- * @template {string} Name
- * @template {(self: any, ...args: any[]) => any} M
- * @typedef {{ kind: 'pubFn', name: Name, method: M }} PubFnDescriptor
+ * @template {String} Name
+ * @template {(self: unknown, ...args: ReadonlyArray<unknown>) => unknown} M
+ * @typedef {{ kind: 'pub_fn', name: Name, method: M }} PubFnDescriptor <Name, M>
  */
 /**
- * @template {string} Name
- * @template {(self: any, ...args: any[]) => any} M
- * @typedef {{ kind: 'prvFn', name: `_${Name}`, method: M }} PrvFnDescriptor
+ * @template {String} Name
+ * @template {(self: unknown, ...args: ReadonlyArray<unknown>) => unknown} M
+ * @typedef {{ kind: 'prv_fn', name: `_${Name}`, method: M }} PrvFnDescriptor <Name, M>
  */
 /**
- * @template {string} Name
- * @template {(self: any, ...args: any[]) => Promise<any>} M
- * @typedef {{ kind: 'pubAsyncFn', name: Name, method: M }} PubAsyncFnDescriptor
+ * @template {String} Name
+ * @template {(self: unknown, ...args: ReadonlyArray<unknown>) => Promise<unknown>} M
+ * @typedef {{ kind: 'pub_async_fn', name: Name, method: M }} PubAsyncFnDescriptor <Name, M>
  */
 
 /**
- * @typedef {PubConstDescriptor<any, any> | PrvConstDescriptor<any, any> | PubFnDescriptor<any, any> | PrvFnDescriptor<any, any> | PubAsyncFnDescriptor<any, any>} AnyDescriptor
+ * @typedef {PubConstDescriptor<String, unknown> | PrvConstDescriptor<String, unknown> | PubFnDescriptor<String, any> | PrvFnDescriptor<String, any> | PubAsyncFnDescriptor<String, any>} AnyDescriptor
  */
 
       
@@ -226,107 +226,123 @@
 
 /**
  * @description 1단계: 매니페스트를 재귀적으로 순회하여 모든 멤버의 이름과 (아직 처리되지 않은) 타입을 포함하는 기본 인터페이스를 생성합니다.
- * @template {object} Base
+ * @template {Object} Base
  * @template {ReadonlyArray<AnyDescriptor>} Manifest
- * @typedef {Manifest extends readonly [infer Head, ...infer Tail]
- *   ? Head extends AnyDescriptor
- *     ? Tail extends ReadonlyArray<AnyDescriptor>
- *       ? Internal.CreateFullInterface<Base & Internal.DescriptorToProperty<Head>, Tail>
- *       : Base
- *     : Base
- *   : Base
- * } Internal.CreateFullInterface
+ * @typedef {|
+ *     Manifest extends readonly [infer Head, ...infer Tail]
+ *         ? Head extends AnyDescriptor
+ *             ? Tail extends ReadonlyArray<AnyDescriptor>
+ *                 ? Internal.TypeCompiler.CreateFullInterface<Internal.Prettify<Base & Internal.TypeCompiler.DescriptorToProperty<Head>>, Tail>
+ *                 : Base
+ *             : Base
+ *         : Base
+ * } Internal.TypeCompiler.CreateFullInterface <Base, Manifest>
  */
 
 /**
  * @description CreateFullInterface의 헬퍼 타입. 단일 디스크립터를 속성으로 변환합니다.
  * @template {AnyDescriptor} Desc
- * @typedef {Desc extends { name: infer N, value: infer V }
- *   ? N extends string ? { [K in N]: V } : {}
- *   : Desc extends { name: infer N, method: infer M }
- *     ? N extends string ? { [K in N]: M } : {}
- *     : {}
- * } Internal.DescriptorToProperty
+ * @typedef {|
+ *     Desc extends { name: infer N, value: infer V }
+ *         ? N extends String
+ *             ? { [K in N]: V }
+ *             : {}
+ *         : Desc extends { name: infer N, method: infer M }
+ *             ? N extends String
+ *                 ? { [K in N]: M }
+ *                 : {}
+ *             : {}
+ * } Internal.TypeCompiler.DescriptorToProperty <Desc>
  */
 
 /**
  * @description 2단계: 완전한 'SelfType'을 사용하여 각 함수의 'self' 매개변수 타입을 올바르게 지정합니다.
- * @template {object} SelfType
+ * @template {Object} SelfType
  * @template {ReadonlyArray<AnyDescriptor>} Manifest
- * @typedef {Manifest extends readonly [infer Head, ...infer Tail]
- *   ? Head extends AnyDescriptor
- *     ? Tail extends ReadonlyArray<AnyDescriptor>
- *       ? Internal.ResolveFunctionSignatures<SelfType, Tail> & Internal.DescriptorToResolvedProperty<SelfType, Head>
- *       : Internal.DescriptorToResolvedProperty<SelfType, Head>
- *     : {}
- *   : {}
- * } Internal.ResolveFunctionSignatures
+ * @typedef {|
+ *     Manifest extends readonly [infer Head, ...infer Tail]
+ *         ? Head extends AnyDescriptor
+ *             ? Tail extends ReadonlyArray<AnyDescriptor>
+ *                 ? Internal.TypeCompiler.ResolveFunctionSignatures<SelfType, Tail> & Internal.TypeCompiler.DescriptorToResolvedProperty<SelfType, Head>
+ *                 : Internal.TypeCompiler.DescriptorToResolvedProperty<SelfType, Head>
+ *             : {}
+ *         : {}
+ * } Internal.TypeCompiler.ResolveFunctionSignatures <SelfType, Manifest>
  */
 
 /**
  * @description ResolveFunctionSignatures의 헬퍼 타입. 디스크립터를 'self' 타입이 적용된 완전한 속성으로 변환합니다.
- * @template {object} SelfType
+ * @template {Object} SelfType
  * @template {AnyDescriptor} Desc
- * @typedef {Desc extends { kind: 'pubConst' | 'prvConst', name: infer N, value: infer V }
- *   ? N extends string ? Readonly<{ [K in N]: V }> : {}
- *   : Desc extends { name: infer N, method: (self: any, ...args: infer A) => infer R }
- *     ? N extends string ? { [K in N]: (self: SelfType, ...args: A) => R } : {}
- *     : {}
- * } Internal.DescriptorToResolvedProperty
+ * @typedef {|
+ *     Desc extends { kind: 'pub_const' | 'prv_const', name: infer N, value: infer V }
+ *         ? N extends String
+ *             ? Readonly<{ [K in N]: V }>
+ *             : {}
+ *         : Desc extends { name: infer N, method: (self: any, ...args: infer A) => infer R }
+ *             ? N extends String
+ *                 ? { [K in N]: (self: SelfType, ...args: A) => R }
+ *                 : {}
+ *             : {}
+ * } Internal.TypeCompiler.DescriptorToResolvedProperty <SelfType, Desc>
  */
 
 /**
  * @description 3단계: 'self'가 바인딩되어 제거된 최종 함수 시그니처를 가진 객체 타입을 생성합니다.
- * @template {object} SelfType
+ * @template {Object} SelfType
  * @template {ReadonlyArray<AnyDescriptor>} Manifest
- * @typedef {Manifest extends readonly [infer Head, ...infer Tail]
- *   ? Head extends AnyDescriptor
- *     ? Tail extends ReadonlyArray<AnyDescriptor>
- *       ? Internal.BindSelfToMethods<SelfType, Tail> & Internal.DescriptorToBoundMethod<SelfType, Head>
- *       : Internal.DescriptorToBoundMethod<SelfType, Head>
- *     : {}
- *   : {}
- * } Internal.BindSelfToMethods
+ * @typedef {|
+ *     Manifest extends readonly [infer Head, ...infer Tail]
+ *         ? Head extends AnyDescriptor
+ *             ? Tail extends ReadonlyArray<AnyDescriptor>
+ *                 ? Internal.TypeCompiler.BindSelfToMethods<SelfType, Tail> & Internal.TypeCompiler.DescriptorToBoundMethod<SelfType, Head>
+ *                 : Internal.TypeCompiler.DescriptorToBoundMethod<SelfType, Head>
+ *             : {}
+ *         : {}
+ * } Internal.TypeCompiler.BindSelfToMethods <SelfType, Manifest>
  */
 
 /**
  * @description BindSelfToMethods의 헬퍼 타입.
- * @template {object} SelfType
+ * @template {Object} SelfType
  * @template {AnyDescriptor} Desc
- * @typedef {Desc extends { kind: 'pubConst' | 'prvConst', name: infer N, value: infer V }
- *   ? N extends string ? Readonly<{ [K in N]: V }> : {}
- *   : Desc extends { name: infer N, method: (self: any, ...args: infer A) => infer R }
- *     ? N extends string ? { [K in N]: (...args: A) => R } : {}
- *     : {}
- * } Internal.DescriptorToBoundMethod
+ * @typedef {|
+ *     Desc extends { kind: 'pub_const' | 'prv_const', name: infer N, value: infer V }
+ *         ? N extends String ? Readonly<{ [K in N]: V }> : {}
+ *         : Desc extends { name: infer N, method: (self: unknown, ...args: infer A) => infer R }
+ *             ? N extends String ? { [K in N]: (...args: A) => R } : {}
+ *             : {}
+ * } Internal.TypeCompiler.DescriptorToBoundMethod <SelfType, Desc>
  */
 
 // --- 컴파일러 진입점(Entry Points) ---
 
 /**
  * @description [진입점 1] 빌더 콜백 내의 'self' 타입을 결정합니다. 모든 멤버와 그 시그니처가 포함된 완전한 타입입니다.
- * @template {object} TTarget
- * @template {ReadonlyArray<AnyDescriptor>} TManifest
- * @typedef {Internal.Prettify<
- *      TTarget & Internal.ResolveFunctionSignatures<
- *          TTarget & Internal.CreateFullInterface<TTarget, TManifest>,
- *          TManifest
- *      >
- * >} Internal.ResolveSelfTypeForBuilder
+ * @template {Object} Target
+ * @template {ReadonlyArray<AnyDescriptor>} Manifest
+ * @typedef {|
+ *     Internal.Prettify<
+ *         Target & Internal.TypeCompiler.ResolveFunctionSignatures<
+ *             Internal.Prettify<Target & Internal.TypeCompiler.CreateFullInterface<Target, Manifest>>,
+ *             Manifest
+ *         >
+ *     >
+ * } Internal.TypeCompiler.ResolveSelfTypeForBuilder <Target, Manifest>
  */
 
 /**
  * @description [진입점 2] 최종 빌드 결과물의 타입을 결정합니다. Public 멤버만 필터링하고, self가 바인딩된 최종 함수 시그니처를 포함합니다.
- * @template {object} TTarget
- * @template {ReadonlyArray<AnyDescriptor>} TManifest
- * @typedef {Internal.Prettify<
- *      Type.PickPublicKeys<
- *          TTarget & Internal.BindSelfToMethods<
- *              TTarget & Internal.CreateFullInterface<TTarget, TManifest>,
- *              TManifest
- *          >
- *      >
- * >} Internal.ResolveImplementation
+ * @template {Object} Target
+ * @template {ReadonlyArray<AnyDescriptor>} Manifest
+ * @typedef {|
+ *     Type.PickPublicKeys<
+ *         Target & Internal.TypeCompiler.BindSelfToMethods<
+ *             Target & Internal.TypeCompiler.CreateFullInterface<Target, Manifest>,
+ *             Manifest
+ *         >
+ *     >
+ * } Internal.TypeCompiler.ResolveImplementation <Target, Manifest>
  */
 
     
@@ -374,9 +390,14 @@
 ////////////////////
 /**
  * @template T
- * @typedef {{[K in keyof T as K extends `_${string}` ? never : K]: T[K]}} Type.PickPublicKeys <T>
- * - 객체 타입 T에서 `_`로 시작하지 않는 public 키와 해당 값만 골라내어 새로운 타입을 만듭니다.
- * - 이 타입은 최종적으로 외부에 노출될 객체의 형태를 정의하는 데 사용됩니다.
+ * @typedef {|
+ *     keyof T extends never
+ *         ? {}
+ *         : {[K in keyof T as K extends `_${string}`
+ *             ? never
+ *             : K
+ *         ]: T[K]}
+ * } Type.PickPublicKeys <T>
  */
 
 /**
@@ -409,9 +430,8 @@
  */
 
 /**
- * @memberof Type
- * @template X The first type to compare.
- * @template Y The second type to compare, or a pattern containing 'infer' to match against X.
+ * @template X
+ * @template Y
  * @typedef {|
  *     X extends Y
  *         ? ((<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2) ? true : false)

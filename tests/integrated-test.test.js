@@ -110,15 +110,15 @@ const test0 = (() => {
     // 2. 사용자가 Impl.for에서 호출했다고 가정한 동작들의 Manifest
     /**
      * @typedef {[
-     *  { kind: 'pubConst', name: 'CONST', value: 123 },
-     *  { kind: 'prvFn', name: '_fnName', method: (self: unknown, a: Mut<number>, b: IMut<boolean>) => Mut<number> },
-     *  { kind: 'pubAsyncFn', name: 'asyncFnName', method: (self: unknown, a: Mut<number>, b: IMut<boolean>) => Promise<Mut<number>> }
+     *  { kind: 'pub_const', name: 'CONST', value: 123 },
+     *  { kind: 'prv_fn', name: '_fnName', method: (self: unknown, a: Mut<number>, b: IMut<boolean>) => Mut<number> },
+     *  { kind: 'pub_async_fn', name: 'asyncFnName', method: (self: unknown, a: Mut<number>, b: IMut<boolean>) => Promise<Mut<number>> }
      * ]} MyManifest
      */
 
     // 3. 우리의 타입 컴파일러를 직접 실행!
     /**
-     * @typedef {Internal.Prettify<Internal.ResolveImplementation<MyStruct, MyManifest>>} FinalType
+     * @typedef {Internal.Prettify<Internal.TypeCompiler.ResolveImplementation<MyStruct, MyManifest>>} FinalType
      */
 
     /** @type {FinalType} */
@@ -149,16 +149,16 @@ const test10 = (() => {
 
     /**
      * @typedef {[
-     *   { kind: 'pubConst', name: 'CONST', value: 123 },
-     *   { kind: 'prvFn', name: '_fnName', method: (self: any, a: number) => number },
-     *   { kind: 'pubAsyncFn', name: 'asyncFnName', method: (self: any, b: boolean) => Promise<number> }
+     *   { kind: 'pub_const', name: 'CONST', value: 123 },
+     *   { kind: 'prv_fn', name: '_fnName', method: (self: any, a: number) => number },
+     *   { kind: 'pub_async_fn', name: 'asyncFnName', method: (self: any, b: boolean) => Promise<number> }
      * ]} MockManifest
      */
 
     /**
      * `Internal.CreateFullInterface`가 `self`의 완전한 형태를 만드는지 테스트합니다.
      * @typedef {Internal.Prettify<
-     *   Internal.CreateFullInterface<MockTarget, MockManifest>
+     *   Internal.TypeCompiler.CreateFullInterface<MockTarget, MockManifest>
      * >} Test_SelfType
      *
      * // 예상 결과 (IDE에서 마우스를 올려 확인):
@@ -174,7 +174,7 @@ const test10 = (() => {
     /**
      * 최종 구현이 `self` 타입을 올바르게 주입하고 public만 남기는지 테스트합니다.
      * @typedef {Internal.Prettify<
-     *   Internal.ResolveImplementation<MockTarget, MockManifest>
+     *   Internal.TypeCompiler.ResolveImplementation<MockTarget, MockManifest>
      * >} Test_FinalPublicType
      *
      * // 예상 결과 (IDE에서 마우스를 올려 확인):
@@ -186,6 +186,6 @@ const test10 = (() => {
      * // 참고: self 타입이 재귀적으로 올바르게 들어가야 성공입니다.
      */
 
-    /** @type {Internal.ResolveImplementation<MockTarget, MockManifest>} */
+    /** @type {Internal.TypeCompiler.ResolveImplementation<MockTarget, MockManifest>} */
     const a;
 })();

@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @template {object} Target
+ * @template {Object} Target
  * @template {ReadonlyArray<any>} Manifest
  */
 class Accessor {
@@ -11,11 +11,11 @@ class Accessor {
     /**
      * @description Public members builder
      * @type {{
-     *  const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'pubConst', name: Name, value: Value }]>,
-     *  fn: <Name extends string, M extends (self: Internal.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pubFn', name: Name, method: M }]>,
-     *  async: {
-     *      fn: <Name extends string, M extends (self: Internal.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => Promise<any>>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pubAsyncFn', name: Name, method: M }]>
-     *  }
+     *     const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'pub_const', name: Name, value: Value }]>,
+     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pub_fn', name: Name, method: M }]>,
+     *     async: {
+     *         fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => Promise<any>>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pub_async_fn', name: Name, method: M }]>
+     *     }
      * }}
      */
     pub;
@@ -23,8 +23,8 @@ class Accessor {
     /**
      * @description Private members builder
      * @type {{
-     *  const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'prvConst', name: `_${Name}`, value: Value }]>,
-     *  fn: <Name extends string, M extends (self: Internal.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'prvFn', name: `_${Name}`, method: M }]>
+     *     const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'prv_const', name: `_${Name}`, value: Value }]>,
+     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: M }]>
      * }}
      */
     prv;
@@ -39,16 +39,16 @@ class Accessor {
 
         this.pub = {
             const: (name, value) => {
-                const newManifest = [...this._manifest, { kind: 'pubConst', name, value }];
+                const newManifest = [...this._manifest, { kind: 'pub_const', name, value }];
                 return /** @type {*} */ (new Accessor(this._target, newManifest));
             },
             fn: (name, method) => {
-                const newManifest = [...this._manifest, { kind: 'pubFn', name, method }];
+                const newManifest = [...this._manifest, { kind: 'pub_fn', name, method }];
                 return /** @type {*} */ (new Accessor(this._target, newManifest));
             },
             async: {
                 fn: (name, method) => {
-                    const newManifest = [...this._manifest, { kind: 'pubAsyncFn', name, method }];
+                    const newManifest = [...this._manifest, { kind: 'pub_async_fn', name, method }];
                     return /** @type {*} */ (new Accessor(this._target, newManifest));
                 }
             }
@@ -56,11 +56,11 @@ class Accessor {
 
         this.prv = {
             const: (name, value) => {
-                const newManifest = [...this._manifest, { kind: 'prvConst', name: `_${name}`, value }];
+                const newManifest = [...this._manifest, { kind: 'prv_const', name: `_${name}`, value }];
                 return /** @type {*} */ (new Accessor(this._target, newManifest));
             },
             fn: (name, method) => {
-                const newManifest = [...this._manifest, { kind: 'prvFn', name: `_${name}`, method }];
+                const newManifest = [...this._manifest, { kind: 'prv_fn', name: `_${name}`, method }];
                 return /** @type {*} */ (new Accessor(this._target, newManifest));
             }
         };
@@ -73,14 +73,14 @@ class Accessor {
 
         // 첫 번째 패스: 상수(const)를 적용하고 함수(fn)를 수집합니다.
         for (const descriptor of this._manifest) {
-            if (descriptor.kind === 'pubConst' || descriptor.kind === 'prvConst') {
+            if (descriptor.kind === 'pub_const' || descriptor.kind === 'prv_const') {
                 Object.defineProperty(this._target, descriptor.name, {
                     value: descriptor.value,
                     writable: false,
                     enumerable: !descriptor.name.startsWith('_'),
                     configurable: true,
                 });
-            } else if (descriptor.kind === 'pubFn' || descriptor.kind === 'prvFn' || descriptor.kind === 'pubAsyncFn') {
+            } else if (descriptor.kind === 'pub_fn' || descriptor.kind === 'prv_fn' || descriptor.kind === 'pub_async_fn') {
                 pendingFns.set(descriptor.name, descriptor.method);
             }
         }
@@ -97,7 +97,7 @@ class Accessor {
 
         // 바인딩(Binding) 단계: 이제 완전해진 대상 객체에 실제 구현을 바인딩합니다.
         for (const [name, fnBody] of pendingFns) {
-            /** @type {Record<string, any>} */(this._target)[name] = fnBody.bind(null, this._target);
+            /** @type {Record<String, any>} */(this._target)[name] = fnBody.bind(null, this._target);
         }
 
         Object.freeze(this._target);
@@ -105,10 +105,11 @@ class Accessor {
 
     /**
      * @description Applies the implementation to the target object.
-     * @returns {void}
+     * @returns {Internal.TypeCompiler.ResolveImplementation<Target, Manifest>}
      */
     build() {
         this._applyToTarget();
+        return /** @type {Internal.TypeCompiler.ResolveImplementation<Target, Manifest>} */ (this._target);
     }
 }
 
@@ -117,7 +118,7 @@ export const Impl = {};
 /**
  * 대상 객체에 대한 구현을 시작하기 위한 빌더를 반환합니다.
  *
- * @template {object} T
+ * @template {Object} T
  * @param {Type.IsExtensible<T> extends true ? T : never} target 대상 객체. 반드시 확장 가능(extensible)해야 합니다.
  * @returns {Accessor<T, []>}
  */
