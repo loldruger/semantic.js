@@ -50,13 +50,13 @@ const test2 = (() => {
         })
         .build();
 
-    console.log("Struct3: ", struct);
+    console.log("Struct3: ", result);
 
     // @ts-expect-error - Private field access now properly detected by TypeScript
-    struct._string = false;
+    result._string = false;
 
     // @ts-expect-error - Private method access now properly detected by TypeScript
-    struct._fnName(1, 1)
+    result._fnName(1, 1)
 })();
 
 //@ts-ignore

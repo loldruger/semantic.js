@@ -348,7 +348,25 @@
  *     >
  * } Internal.TypeCompiler.ResolveImplementation <Target, Manifest>
  */
-
+/**
+ * @description [V2 진입점] 개선된 빌드 결과물 타입 - self가 항상 완전한 타입을 참조
+ * @template {Object} Target  
+ * @template {ReadonlyArray<AnyDescriptor>} Manifest
+ * @typedef {|
+ *     Type.PickPublicKeys<
+ *         Internal.Prettify<
+ *             Target & {
+ *                 [K in Manifest[number] as K extends {name: infer N} ? N : never]: 
+ *                     K extends {method: infer M} 
+ *                         ? M extends (self: any, ...args: infer A) => infer R
+ *                             ? (...args: A) => R
+ *                             : K extends {value: infer V} ? V : never
+ *                         : K extends {value: infer V} ? V : never
+ *             }
+ *         >
+ *     >
+ * } Internal.TypeCompiler.ResolveImplementationV2 <Target, Manifest>
+ */
     
 ///////////////////
 // Type Checkers //

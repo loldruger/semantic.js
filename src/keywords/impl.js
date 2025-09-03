@@ -12,12 +12,12 @@ class Accessor {
      * @description Public members builder  
      * @type {{
      *     const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'pub_const', name: Name, value: Value }]>,
-     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>, ...args: never) => any>(
+     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, [...Manifest, { kind: 'pub_fn', name: Name, method: any }]>, ...args: never) => any>(
      *         name: Name, 
      *         method: M
      *     ) => Accessor<Target, [...Manifest, { kind: 'pub_fn', name: Name, method: M }]>,
      *     async: {
-     *         fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>, ...args: never) => Promise<any>>(
+     *         fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, [...Manifest, { kind: 'pub_async_fn', name: Name, method: any }]>, ...args: never) => Promise<any>>(
      *             name: Name, 
      *             method: M
      *         ) => Accessor<Target, [...Manifest, { kind: 'pub_async_fn', name: Name, method: M }]>
@@ -30,7 +30,7 @@ class Accessor {
      * @description Private members builder
      * @type {{
      *     const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'prv_const', name: `_${Name}`, value: Value }]>,
-     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>, ...args: never) => any>(
+     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: any }]>, ...args: never) => any>(
      *         name: Name,
      *         method: M
      *     ) => Accessor<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: M }]>
@@ -114,11 +114,11 @@ class Accessor {
 
     /**
      * @description Applies the implementation to the target object.
-     * @returns {Internal.TypeCompiler.ResolveImplementation<Target, Manifest>}
+     * @returns {Internal.TypeCompiler.ResolveImplementationV2<Target, Manifest>}
      */
     build() {
         this._applyToTarget();
-        return /** @type {Internal.TypeCompiler.ResolveImplementation<Target, Manifest>} */ (this._target);
+        return /** @type {Internal.TypeCompiler.ResolveImplementationV2<Target, Manifest>} */ (this._target);
     }
 }
 
