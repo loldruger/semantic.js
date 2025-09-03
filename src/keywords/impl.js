@@ -9,12 +9,18 @@ class Accessor {
     /** @private */ _manifest;
 
     /**
-     * @description Public members builder
+     * @description Public members builder  
      * @type {{
      *     const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'pub_const', name: Name, value: Value }]>,
-     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pub_fn', name: Name, method: M }]>,
+     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>, ...args: never) => any>(
+     *         name: Name, 
+     *         method: M
+     *     ) => Accessor<Target, [...Manifest, { kind: 'pub_fn', name: Name, method: M }]>,
      *     async: {
-     *         fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => Promise<any>>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'pub_async_fn', name: Name, method: M }]>
+     *         fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>, ...args: never) => Promise<any>>(
+     *             name: Name, 
+     *             method: M
+     *         ) => Accessor<Target, [...Manifest, { kind: 'pub_async_fn', name: Name, method: M }]>
      *     }
      * }}
      */
@@ -24,7 +30,10 @@ class Accessor {
      * @description Private members builder
      * @type {{
      *     const: <Name extends string, Value>(name: Name, value: Value) => Accessor<Target, [...Manifest, { kind: 'prv_const', name: `_${Name}`, value: Value }]>,
-     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>,...args: any) => any>(name: Name, method: M) => Accessor<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: M }]>
+     *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, Manifest>, ...args: never) => any>(
+     *         name: Name,
+     *         method: M
+     *     ) => Accessor<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: M }]>
      * }}
      */
     prv;
