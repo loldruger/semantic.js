@@ -281,7 +281,7 @@
  *             : {}
  *         : Desc extends { name: infer N, method: (self: any, ...args: infer A) => infer R }
  *             ? N extends String
- *                 ? { [K in N]: (self: SelfType, ...args: A) => R }
+ *                 ? { [K in N]: (...args: A) => R }
  *                 : {}
  *             : {}
  * } Internal.TypeCompiler.DescriptorToResolvedProperty <SelfType, Desc>
