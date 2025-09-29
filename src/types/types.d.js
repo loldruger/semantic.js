@@ -216,9 +216,14 @@
  * @template {(self: unknown, ...args: ReadonlyArray<unknown>) => Promise<unknown>} M
  * @typedef {{ kind: 'pub_async_fn', name: Name, method: M }} PubAsyncFnDescriptor <Name, M>
  */
+/**
+ * @template {String} Name
+ * @template {(self: unknown, ...args: ReadonlyArray<unknown>) => Promise<unknown>} M
+ * @typedef {{ kind: 'prv_async_fn', name: `_${Name}`, method: M }} PrvAsyncFnDescriptor <Name, M>
+ */
 
 /**
- * @typedef {PubConstDescriptor<String, unknown> | PrvConstDescriptor<String, unknown> | PubFnDescriptor<String, any> | PrvFnDescriptor<String, any> | PubAsyncFnDescriptor<String, any>} AnyDescriptor
+ * @typedef {PubConstDescriptor<String, unknown> | PrvConstDescriptor<String, unknown> | PubFnDescriptor<String, any> | PrvFnDescriptor<String, any> | PubAsyncFnDescriptor<String, any> | PrvAsyncFnDescriptor<String, any>} AnyDescriptor
  */
 
       

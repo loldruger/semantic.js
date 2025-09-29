@@ -33,7 +33,13 @@ class Accessor {
      *     fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: any }]>, ...args: never) => any>(
      *         name: Name,
      *         method: M
-     *     ) => Accessor<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: M }]>
+     *     ) => Accessor<Target, [...Manifest, { kind: 'prv_fn', name: `_${Name}`, method: M }]>,
+     *     async: {
+     *         fn: <Name extends string, M extends (self: Internal.TypeCompiler.ResolveSelfTypeForBuilder<Target, [...Manifest, { kind: 'prv_async_fn', name: `_${Name}`, method: any }]>, ...args: never) => Promise<any>>(
+     *             name: Name,
+     *             method: M
+     *         ) => Accessor<Target, [...Manifest, { kind: 'prv_async_fn', name: `_${Name}`, method: M }]>
+     *     }
      * }}
      */
     prv;
@@ -71,6 +77,12 @@ class Accessor {
             fn: (name, method) => {
                 const newManifest = [...this._manifest, { kind: 'prv_fn', name: `_${name}`, method }];
                 return /** @type {*} */ (new Accessor(this._target, newManifest));
+            },
+            async: {
+                fn: (name, method) => {
+                    const newManifest = [...this._manifest, { kind: 'prv_async_fn', name: `_${name}`, method }];
+                    return /** @type {*} */ (new Accessor(this._target, newManifest));
+                }
             }
         };
     }
@@ -89,7 +101,7 @@ class Accessor {
                     enumerable: !descriptor.name.startsWith('_'),
                     configurable: true,
                 });
-            } else if (descriptor.kind === 'pub_fn' || descriptor.kind === 'prv_fn' || descriptor.kind === 'pub_async_fn') {
+            } else if (descriptor.kind === 'pub_fn' || descriptor.kind === 'prv_fn' || descriptor.kind === 'pub_async_fn' || descriptor.kind === 'prv_async_fn') {
                 pendingFns.set(descriptor.name, descriptor.method);
             }
         }
@@ -132,7 +144,12 @@ export const Impl = {};
  * @returns {Accessor<T, []>}
  */
 Impl.for = (target) => {
-    return new Accessor(target, []);
+    return /** @type {Accessor<T, []>} */ (
+        new Accessor(
+            /** @type {T} */(target),
+            /** @type {[]} */([])
+        )
+    );
 };
 
 Object.setPrototypeOf(Impl, null);
