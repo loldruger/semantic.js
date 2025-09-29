@@ -26,7 +26,7 @@ export class TaggedUnion {
      */
     variant(tag, type) {
         const fn = type
-            ? (/** @type {TypeInfo} */args) => args
+            ? (/** @type {TypeInfo} */ args) => args
             : null;
 
         this.#variants = {
@@ -35,7 +35,7 @@ export class TaggedUnion {
             [tag]: fn
         };
 
-        return /** @type {TaggedUnion<Variants & StructType<Tag, TypeInfo>>} */(this);
+        return /** @type {TaggedUnion<Variants & StructType<Tag, TypeInfo>>} */ (/** @type {unknown} */ (this));
     }
 
     /**
