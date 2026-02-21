@@ -1,0 +1,38 @@
+{
+    "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+    "agents": {
+        "atlas": {
+            "model": "github-copilot/gemini-3.1-pro-preview"
+        },
+        "sisyphus": {
+            "model": "github-copilot/gemini-3.1-pro-preview"
+        },
+        "prometheus": {
+            "model": "github-copilot/gemini-3.1-pro-preview"
+        },
+        "hephaestus": {
+            "model": "github-copilot/gemini-3.1-pro-preview"
+        },
+        "explore": {
+            "model": "github-copilot/claude-sonnet-4.6"
+        },
+        "librarian": {
+            "model": "github-copilot/claude-sonnet-4.6"
+        },
+        "oracle": {
+            "model": "github-copilot/claude-sonnet-4.6"
+        },
+        "sisyphus-junior": {
+            "model": "github-copilot/claude-sonnet-4.6"
+        },
+        "metis": {
+            "model": "github-copilot/gemini-3.1-pro-preview"
+        },
+        "momus": {
+            "model": "github-copilot/gemini-3.1-pro-preview"
+        }
+    },
+    "background_task": {
+        "staleTimeoutMs": 300000
+    }
+}
