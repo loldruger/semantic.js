@@ -1,4 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": ["oh-my-opencode"],
+  "lsp": {
+    "tsc": {
+      "command": ["npx", "tsc", "--noEmit", "-p", "jsconfig.json || true"],
+      "extensions": [".js"]
+    }
+  }
 }
