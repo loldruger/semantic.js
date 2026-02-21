@@ -1,4 +1,6 @@
 /dist
 /dependencies
 
+/.sisyphus
+
 .DS_Store
